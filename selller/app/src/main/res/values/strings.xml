@@ -10,8 +10,18 @@
     <string name="submit">添加</string>
     <string name="add_commodity">添加货物</string>
     <string name="edit_commodity">添加货物</string>
-    <string name="delete">删除</string>
+    <string name="add_commodity_image">添加图片</string>
+    <string name="delete">X</string>
     <string name="EXTRA_COMMODITY_ID">添加货物</string>
+    <string name="tab_commodity">货物</string>
+    <string name="tab_order">订单</string>
+    <string name="tab_deal">结算</string>
+
+    <string name="item_1">First Item</string>
+    <string name="item_2">Second Item</string>
+    <string name="cd_logo">logo</string>
+    <string name="open">open navigation drawer</string>
+    <string name="close">close navigation drawer</string>
 
     <string name="unit_prompt">单位</string>
     <string-array name="unit_array">

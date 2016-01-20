@@ -13,6 +13,9 @@
             android:name=".EditCommodityActivity"
             android:label="@string/edit_commodity"
             android:theme="@style/Theme.AppCompat">
+        </activity>
+        <activity android:name=".MainActivity"
+            android:theme="@style/Theme.Demo">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
