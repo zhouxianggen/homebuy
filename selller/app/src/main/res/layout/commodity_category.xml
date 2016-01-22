@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    style="@style/CommodityCategory">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="0dp"
+        android:layout_weight="0.6"
+        android:layout_height="match_parent"
+        style="@style/CommodityCategory.Tile"/>
+
+    <TextView
+        android:id="@+id/count"
+        android:layout_width="0dp"
+        android:layout_weight="0.3"
+        android:layout_height="match_parent"
+        style="@style/CommodityCategory.Count"/>
+
+    <ImageView
+        android:id="@+id/popup_menu"
+        android:layout_width="0dp"
+        android:layout_weight="0.1"
+        android:src="@drawable/ic_overflow"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

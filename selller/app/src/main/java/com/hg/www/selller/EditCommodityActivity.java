@@ -1,6 +1,5 @@
 package com.hg.www.selller;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
@@ -16,11 +15,9 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.hg.www.selller.define.Commodity;
+import com.hg.www.selller.define.CommodityItem;
 import com.hg.www.selller.util.HorizontalListView;
 
 import java.util.ArrayList;
@@ -29,7 +26,7 @@ import java.util.List;
 public class EditCommodityActivity extends AppCompatActivity {
     private static final String TAG = "EditCommodityActivity";
     private static final int RESULT_CODE_ADD_IMAGE = 1;
-    private Commodity mCommodity;
+    private CommodityItem mCommodityItem;
     private HorizontalListView mListView;
     private ImageListAdapter mAdapter = null;
 
@@ -40,7 +37,7 @@ public class EditCommodityActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String commodityId = intent.getStringExtra(getString(R.string.EXTRA_COMMODITY_ID));
         commodityId = "1"; // fix
-        mCommodity = ((MyApplication)getApplication()).getDataManager().GetCommodity(commodityId);
+        mCommodityItem = ((MyApplication)getApplication()).getDataManager().GetCommodity(commodityId);
         initializeActionBar();
         initializeView();
         mListView = (HorizontalListView) findViewById(R.id.image_list);
@@ -76,7 +73,7 @@ public class EditCommodityActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         View customView = actionBar.getCustomView();
         TextView textView = (TextView) customView.findViewById(R.id.title);
-        if (mCommodity.id.isEmpty()) {
+        if (mCommodityItem.id.isEmpty()) {
             textView.setText(getApplication().getString(R.string.add_commodity));
         } else {
             textView.setText(getApplication().getString(R.string.edit_commodity));
@@ -84,13 +81,13 @@ public class EditCommodityActivity extends AppCompatActivity {
     }
 
     private void initializeView() {
-        if (mCommodity.id.isEmpty()) {
-            ((EditText) findViewById(R.id.title)).setText(mCommodity.title);
-            ((EditText) findViewById(R.id.price)).setText(String.valueOf(mCommodity.price));
-            findViewById(R.id.option_in_stock).setSelected(mCommodity.is_in_stock);
-            findViewById(R.id.option_in_discount).setSelected(mCommodity.is_in_discount);
-            findViewById(R.id.option_support_return).setSelected(mCommodity.is_support_return);
-            ((EditText) findViewById(R.id.desc)).setText(mCommodity.desc);
+        if (mCommodityItem.id.isEmpty()) {
+            ((EditText) findViewById(R.id.title)).setText(mCommodityItem.title);
+            ((EditText) findViewById(R.id.price)).setText(String.valueOf(mCommodityItem.price));
+            findViewById(R.id.option_in_stock).setSelected(mCommodityItem.is_in_stock);
+            findViewById(R.id.option_in_discount).setSelected(mCommodityItem.is_in_discount);
+            findViewById(R.id.option_support_return).setSelected(mCommodityItem.is_support_return);
+            ((EditText) findViewById(R.id.desc)).setText(mCommodityItem.desc);
         }
     }
 

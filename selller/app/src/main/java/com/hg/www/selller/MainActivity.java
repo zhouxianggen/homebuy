@@ -161,16 +161,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    public static class CommodityFragment extends  Fragment {
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_commodity, container, false);
-            return rootView;
-        }
-    }
-
     public static class OrderFragment extends  Fragment {
 
         @Override

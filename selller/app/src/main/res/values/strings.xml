@@ -23,6 +23,9 @@
     <string name="open">open navigation drawer</string>
     <string name="close">close navigation drawer</string>
 
+    <string name="menu_rename">改名</string>
+    <string name="menu_remove">删除</string>
+
     <string name="unit_prompt">单位</string>
     <string-array name="unit_array">
         <item>件</item>

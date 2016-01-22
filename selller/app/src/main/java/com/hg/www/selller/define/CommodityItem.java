@@ -5,7 +5,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Commodity {
+public class CommodityItem {
     public String seller_id = "";
     public String id = "";
     public String barcode = "";
