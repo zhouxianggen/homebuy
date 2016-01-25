@@ -2,21 +2,37 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
+    android:layout_height="wrap_content"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:paddingRight="4dip"
+    android:paddingEnd="4dip"
+    android:gravity="center_vertical"
     style="@style/CommodityCategory">
+
+    <View
+        android:id="@+id/chip"
+        android:layout_height="match_parent"
+        android:layout_width="8dip"
+        android:background="#ff336699"
+        android:layout_marginRight="8dip"
+        />
 
     <TextView
         android:id="@+id/title"
         android:layout_width="0dp"
-        android:layout_weight="0.6"
+        android:layout_weight="0.7"
         android:layout_height="match_parent"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         style="@style/CommodityCategory.Tile"/>
 
     <TextView
         android:id="@+id/count"
         android:layout_width="0dp"
-        android:layout_weight="0.3"
+        android:layout_weight="0.2"
         android:layout_height="match_parent"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         style="@style/CommodityCategory.Count"/>
 
     <ImageView

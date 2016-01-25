@@ -10,6 +10,7 @@ public class CommodityGroup {
     }
     public String id = "";
     public String title = "";
+    public int count = 0;
     public TYPE type = TYPE.COMMODITY_ITEM;
     public List<CommodityGroup> subs = new ArrayList<>();
 }

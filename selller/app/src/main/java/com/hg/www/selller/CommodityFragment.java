@@ -15,8 +15,6 @@ import android.widget.TextView;
 
 import com.hg.www.selller.define.CommodityGroup;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,7 +54,7 @@ public class CommodityFragment extends Fragment {
 
         public void onUpdate() {
             ((MyApplication)mContext.getApplicationContext()).getDataManager().
-                    GetCommodityGroups(mCommodityGroups);
+                    getCommodityGroups(mCommodityGroups);
         }
 
         @Override

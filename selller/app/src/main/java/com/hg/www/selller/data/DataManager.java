@@ -28,7 +28,16 @@ public class DataManager {
         return commodityItem;
     }
 
-    public boolean GetCommodityGroups(List<CommodityGroup> groups) {
+    public CommodityGroup getCommodityGroup(String id) {
+        CommodityGroup group = new CommodityGroup();
+        group.id = "1";
+        group.title = "CATEGORY 1";
+        group.type = CommodityGroup.TYPE.COMMODITY_CATEGORY;
+        return group;
+    }
+
+    public String getCommodityGroups(String root, List<CommodityGroup> groups) {
+        groups.clear();
         CommodityGroup group = new CommodityGroup();
         group.id = "1";
         group.title = "CATEGORY 1";
@@ -40,6 +49,6 @@ public class DataManager {
         groups.add(group);
         groups.add(group);
         groups.add(group);
-        return true;
+        return "";
     }
 }
