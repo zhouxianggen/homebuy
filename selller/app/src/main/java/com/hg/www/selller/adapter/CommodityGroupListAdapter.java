@@ -10,10 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hg.www.selller.CommodityGroupListActivity;
-import com.hg.www.selller.MyApplication;
 import com.hg.www.selller.R;
 import com.hg.www.selller.define.CommodityGroup;
 
@@ -26,37 +24,27 @@ public class CommodityGroupListAdapter extends RecyclerView.Adapter<RecyclerView
         COMMODITY_ITEM
     }
 
-    private final Context mContext;
-    private final String mRoot;
-    private List<CommodityGroup> mGroups  = new ArrayList<>();;
+    public final Context context;
+    public final String root;
+    public List<CommodityGroup> groups = new ArrayList<>();
 
 
     public CommodityGroupListAdapter(Context context, String root) {
-        mContext = context;
-        mRoot = root;
+        this.context = context;
+        this.root = root;
     }
 
     public void onUpdate() {
-        new Thread(new Runnable() {
-            public void run() {
-                final Context context = mContext.getApplicationContext();
-                String error = ((MyApplication)context).getDataManager().
-                        getCommodityGroups(mRoot, mGroups);
-                if (!error.isEmpty()) {
-                    Toast.makeText(mContext, error, Toast.LENGTH_SHORT).show();
-                }
-            }
-        }).start();
     }
 
     @Override
     public int getItemCount() {
-        return mGroups.size();
+        return groups.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (mGroups.get(position).type == CommodityGroup.TYPE.COMMODITY_CATEGORY) {
+        if (groups.get(position).type == CommodityGroup.TYPE.COMMODITY_CATEGORY) {
             return ITEM_TYPE.COMMODITY_CATEGORY.ordinal();
         } else {
             return ITEM_TYPE.COMMODITY_ITEM.ordinal();
@@ -65,7 +53,7 @@ public class CommodityGroupListAdapter extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        CommodityGroup group = mGroups.get(position);
+        CommodityGroup group = groups.get(position);
         if (holder instanceof CommodityCategoryViewHolder) {
             ((CommodityCategoryViewHolder) holder).mGroup = group;
             ((CommodityCategoryViewHolder) holder).mTitle.setText(group.title);
@@ -79,11 +67,11 @@ public class CommodityGroupListAdapter extends RecyclerView.Adapter<RecyclerView
         if (viewType == ITEM_TYPE.COMMODITY_CATEGORY.ordinal()) {
             View view = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.commodity_category, parent, false);
-            return new CommodityCategoryViewHolder(view, mContext);
+            return new CommodityCategoryViewHolder(view, context);
         } else {
             View view = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.commodity_item, parent, false);
-            return new CommodityItemViewHolder(view, mContext);
+            return new CommodityItemViewHolder(view, context);
         }
     }
 
@@ -111,6 +99,7 @@ public class CommodityGroupListAdapter extends RecyclerView.Adapter<RecyclerView
                     });
                 }
             });
+            view.setOnClickListener(this);
         }
 
         private void showPopupMenu(View view) {
@@ -134,7 +123,8 @@ public class CommodityGroupListAdapter extends RecyclerView.Adapter<RecyclerView
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(mContext, CommodityGroupListActivity.class);
-            intent.putExtra(mContext.getString(R.string.EXTRA_COMMODITY_GROUP_ID), mGroup.id);
+            intent.putExtra(mContext.getString(R.string.EXTRA_COMMODITY_GROUP_ROOT), mGroup.id);
+            intent.putExtra(mContext.getString(R.string.EXTRA_COMMODITY_GROUP_TITLE), mGroup.title);
             mContext.startActivity(intent);
         }
     }

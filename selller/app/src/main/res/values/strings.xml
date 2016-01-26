@@ -12,8 +12,10 @@
     <string name="edit_commodity">添加货物</string>
     <string name="add_commodity_image">添加图片</string>
     <string name="delete">X</string>
-    <string name="EXTRA_COMMODITY_ID">添加货物</string>
-    <string name="EXTRA_COMMODITY_GROUP_ID">添加货物</string>
+    <string name="EXTRA_COMMODITY_ID">extra_commodity_id</string>
+    <string name="EXTRA_COMMODITY_GROUP_ID">extra_commodity_group_id</string>
+    <string name="EXTRA_COMMODITY_GROUP_ROOT">extra_commodity_group_root</string>
+    <string name="EXTRA_COMMODITY_GROUP_TITLE">extra_commodity_group_title</string>
     <string name="tab_commodity">货物</string>
     <string name="tab_order">订单</string>
     <string name="tab_deal">结算</string>

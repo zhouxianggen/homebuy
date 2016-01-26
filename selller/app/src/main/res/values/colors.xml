@@ -18,6 +18,7 @@
     <color name="drawer_item_text_checked">@color/primary</color>
 
     <color name="money">#ffd900</color>
+    <color name="count">#34a853</color>
     <color name="button">#34a853</color>
     <color name="main_background">#e8eded</color>
     <color name="sub_background">#fefefe</color>

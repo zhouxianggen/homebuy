@@ -38,17 +38,55 @@ public class DataManager {
 
     public String getCommodityGroups(String root, List<CommodityGroup> groups) {
         groups.clear();
-        CommodityGroup group = new CommodityGroup();
-        group.id = "1";
-        group.title = "CATEGORY 1";
-        group.type = CommodityGroup.TYPE.COMMODITY_CATEGORY;
-        groups.add(group);
-        groups.add(group);
-        groups.add(group);
-        groups.add(group);
-        groups.add(group);
-        groups.add(group);
-        groups.add(group);
+        if (root.equals("")) {
+            CommodityGroup group = new CommodityGroup();
+            group.id = "1";
+            group.title = "洗涤用品";
+            group.type = CommodityGroup.TYPE.COMMODITY_CATEGORY;
+            groups.add(group);
+
+            CommodityGroup group2 = new CommodityGroup();
+            group2.id = "2";
+            group2.title = "纸类";
+            group2.type = CommodityGroup.TYPE.COMMODITY_CATEGORY;
+            groups.add(group2);
+        } else if (root.equals("2")) {
+            CommodityGroup group = new CommodityGroup();
+            group.id = "21";
+            group.title = "清风抽纸4盒装";
+            group.type = CommodityGroup.TYPE.COMMODITY_ITEM;
+            groups.add(group);
+
+            CommodityGroup group2 = new CommodityGroup();
+            group2.id = "22";
+            group2.title = "心相印卷纸10包装";
+            group2.type = CommodityGroup.TYPE.COMMODITY_ITEM;
+            groups.add(group2);
+        } else if (root.equals("1")) {
+            CommodityGroup group = new CommodityGroup();
+            group.id = "11";
+            group.title = "洗洁精";
+            group.type = CommodityGroup.TYPE.COMMODITY_CATEGORY;
+            groups.add(group);
+
+            CommodityGroup group2 = new CommodityGroup();
+            group2.id = "12";
+            group2.title = "雕牌透明皂";
+            group2.type = CommodityGroup.TYPE.COMMODITY_ITEM;
+            groups.add(group2);
+        } else if (root.equals("11")) {
+            CommodityGroup group = new CommodityGroup();
+            group.id = "111";
+            group.title = "立白洗洁精";
+            group.type = CommodityGroup.TYPE.COMMODITY_ITEM;
+            groups.add(group);
+
+            CommodityGroup group2 = new CommodityGroup();
+            group2.id = "112";
+            group2.title = "白猫洗洁精";
+            group2.type = CommodityGroup.TYPE.COMMODITY_ITEM;
+            groups.add(group2);
+        }
         return "";
     }
 }
