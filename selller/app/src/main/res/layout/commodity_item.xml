@@ -1,6 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    card_view:cardBackgroundColor="#fff"
+    card_view:cardCornerRadius="2dp"
+    card_view:cardElevation="1dp">
 
-</LinearLayout>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="86dp"
+        android:background="?android:attr/selectableItemBackground">
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/dp"
+            android:scaleType="centerCrop"
+            android:id="@+id/commodity_image"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:layout_toRightOf="@id/commodity_image"
+            android:layout_toEndOf="@id/commodity_image"
+            android:layout_toLeftOf="@+id/commodity_status"
+            android:layout_toStartOf="@id/commodity_status"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/commodity_title"
+                android:layout_width="match_parent"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:layout_height="wrap_content"
+                android:textColor="@color/main_text"
+                android:text="commodity title"
+                android:textSize="@dimen/text_size_medium"/>
+
+            <TextView
+                android:id="@+id/commodity_price"
+                android:layout_width="match_parent"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_smaller"
+                android:textColor="@android:color/darker_gray"
+                android:text="价格：23.8元"/>
+
+            <TextView
+                android:id="@+id/commodity_sale"
+                android:layout_width="match_parent"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_smaller"
+                android:textColor="@android:color/darker_gray"
+                android:text="周销量：150"/>
+        </LinearLayout>
+
+        <Spinner
+            android:id="@+id/commodity_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:entries="@array/commodity_status_array"
+            android:prompt="@string/commodity_status_prompt">
+        </Spinner>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

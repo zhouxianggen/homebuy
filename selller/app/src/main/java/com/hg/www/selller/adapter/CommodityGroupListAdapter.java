@@ -12,6 +12,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.hg.www.selller.CommodityGroupListActivity;
+import com.hg.www.selller.EditCommodityActivity;
 import com.hg.www.selller.R;
 import com.hg.www.selller.define.CommodityGroup;
 
@@ -59,6 +60,8 @@ public class CommodityGroupListAdapter extends RecyclerView.Adapter<RecyclerView
             ((CommodityCategoryViewHolder) holder).mTitle.setText(group.title);
             ((CommodityCategoryViewHolder) holder).mCount.setText(String.valueOf(group.count));
         } else if (holder instanceof CommodityItemViewHolder) {
+            ((CommodityItemViewHolder) holder).mGroup = group;
+            ((CommodityItemViewHolder) holder).mTitle.setText(group.title);
         }
     }
 
@@ -129,12 +132,24 @@ public class CommodityGroupListAdapter extends RecyclerView.Adapter<RecyclerView
         }
     }
 
-    public static class CommodityItemViewHolder extends RecyclerView.ViewHolder {
+    public static class CommodityItemViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener {
         private Context mContext;
+        private TextView mTitle;
+        private CommodityGroup mGroup;
 
         public CommodityItemViewHolder(View view, Context context) {
             super(view);
             mContext = context;
+            mTitle = (TextView) view.findViewById(R.id.commodity_title);
+            view.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(mContext, EditCommodityActivity.class);
+            intent.putExtra(mContext.getString(R.string.EXTRA_COMMODITY_ITEM_ID), mGroup.id);
+            mContext.startActivity(intent);
         }
     }
 }

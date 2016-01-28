@@ -2,6 +2,7 @@
     <string name="app_name">Seller</string>
     <string name="action_settings">Settings</string>
     <string name="commodity_title">货物名称</string>
+    <string name="commodity_count">8</string>
     <string name="commodity_desc">货物描述</string>
     <string name="price">价格</string>
     <string name="option_in_stock">是否有货</string>
@@ -12,7 +13,7 @@
     <string name="edit_commodity">添加货物</string>
     <string name="add_commodity_image">添加图片</string>
     <string name="delete">X</string>
-    <string name="EXTRA_COMMODITY_ID">extra_commodity_id</string>
+    <string name="EXTRA_COMMODITY_ITEM_ID">extra_commodity_id</string>
     <string name="EXTRA_COMMODITY_GROUP_ID">extra_commodity_group_id</string>
     <string name="EXTRA_COMMODITY_GROUP_ROOT">extra_commodity_group_root</string>
     <string name="EXTRA_COMMODITY_GROUP_TITLE">extra_commodity_group_title</string>
@@ -20,6 +21,7 @@
     <string name="tab_order">订单</string>
     <string name="tab_deal">结算</string>
 
+    <string name="more">More</string>
     <string name="item_1">First Item</string>
     <string name="item_2">Second Item</string>
     <string name="cd_logo">logo</string>
@@ -34,5 +36,12 @@
         <item>件</item>
         <item>斤</item>
         <item>两</item>
+    </string-array>
+
+    <string name="commodity_status_prompt">状态</string>
+    <string-array name="commodity_status_array">
+        <item>有货</item>
+        <item>缺货</item>
+        <item>删除</item>
     </string-array>
 </resources>

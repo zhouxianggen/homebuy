@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -35,7 +36,7 @@ public class EditCommodityActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_commodity);
         Intent intent = getIntent();
-        String commodityId = intent.getStringExtra(getString(R.string.EXTRA_COMMODITY_ID));
+        String commodityId = intent.getStringExtra(getString(R.string.EXTRA_COMMODITY_ITEM_ID));
         commodityId = "1"; // fix
         mCommodityItem = ((MyApplication)getApplication()).getDataManager().GetCommodity(commodityId);
         initializeActionBar();
@@ -52,6 +53,13 @@ public class EditCommodityActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG, "onOptionsItemSelected " + String.valueOf(item.getItemId()));
+        onBackPressed();
+        return true;
+    }
+    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -70,7 +78,6 @@ public class EditCommodityActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setCustomView(R.layout.actionbar_common);
-        actionBar.setDisplayHomeAsUpEnabled(true);
         View customView = actionBar.getCustomView();
         TextView textView = (TextView) customView.findViewById(R.id.title);
         if (mCommodityItem.id.isEmpty()) {
@@ -78,6 +85,7 @@ public class EditCommodityActivity extends AppCompatActivity {
         } else {
             textView.setText(getApplication().getString(R.string.edit_commodity));
         }
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     private void initializeView() {
@@ -169,8 +177,6 @@ public class EditCommodityActivity extends AppCompatActivity {
             return view;
         }
     }
-
-    ;
 
     static class ListItemViewHolder {
         public Button deleteImageButton;

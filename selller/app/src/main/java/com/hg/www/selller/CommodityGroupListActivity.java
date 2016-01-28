@@ -90,12 +90,5 @@ public class CommodityGroupListActivity extends AppCompatActivity {
         Log.d(TAG, "onOptionsItemSelected " + String.valueOf(item.getItemId()));
         onBackPressed();
         return true;
-        //switch (item.getItemId()) {
-            //case android.R.id.home:
-                //Intent upIntent = NavUtils.getParentActivityIntent(this);
-                //NavUtils.navigateUpTo(this, upIntent);
-                //return true;
-        //}
-        //return super.onOptionsItemSelected(item);
     }
 }
