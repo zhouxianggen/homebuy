@@ -3,7 +3,6 @@ package com.hg.www.selller;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,8 +14,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hg.www.selller.adapter.CommodityGroupListAdapter;
-import com.hg.www.selller.define.CommodityGroup;
+import com.hg.www.selller.ui.adapter.CommodityGroupListAdapter;
+import com.hg.www.selller.data.define.CommodityGroup;
 
 import java.util.ArrayList;
 import java.util.List;

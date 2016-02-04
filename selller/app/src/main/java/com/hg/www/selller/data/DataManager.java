@@ -3,7 +3,7 @@ package com.hg.www.selller.data;
 import android.content.SharedPreferences;
 
 import com.hg.www.selller.MyApplication;
-import com.hg.www.selller.define.CommodityGroup;
+import com.hg.www.selller.data.define.CommodityGroup;
 import com.hg.www.selller.define.CommodityItem;
 
 import java.util.List;
