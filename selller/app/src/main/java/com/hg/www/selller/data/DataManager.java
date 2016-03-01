@@ -4,7 +4,7 @@ import android.content.SharedPreferences;
 
 import com.hg.www.selller.MyApplication;
 import com.hg.www.selller.data.define.CommodityGroup;
-import com.hg.www.selller.define.CommodityItem;
+import com.hg.www.selller.data.define.Commodity;
 
 import java.util.List;
 
@@ -16,8 +16,8 @@ public class DataManager {
         mContext = context;
     }
 
-    public CommodityItem GetCommodity(String id) {
-        CommodityItem commodityItem = new CommodityItem();
+    public Commodity GetCommodity(String id) {
+        Commodity commodityItem = new Commodity();
         if (!id.isEmpty()) {
             SharedPreferences preferences = mContext.getSharedPreferences(COMMODITY_PREFERENCES, mContext.MODE_PRIVATE);
             String str = preferences.getString(id, "");

@@ -13,33 +13,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.hg.www.selller.MyApplication;
 import com.hg.www.selller.R;
 import com.hg.www.selller.data.api.ExpressmanMessageApi;
 import com.hg.www.selller.data.api.OrderPackageApi;
-import com.hg.www.selller.data.define.Commodity;
-import com.hg.www.selller.data.define.CommodityCategory;
 import com.hg.www.selller.data.define.ExpressmanMessage;
 import com.hg.www.selller.data.define.Order;
 import com.hg.www.selller.data.define.OrderPackage;
-import com.hg.www.selller.ui.adapter.CommodityGroupListAdapter;
-import com.hg.www.selller.data.define.CommodityGroup;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommodityFragment extends Fragment {
-    private static final String TAG = CommodityFragment.class.getSimpleName();
+public class OrderFragment extends Fragment {
+    private static final String TAG = OrderFragment.class.getSimpleName();
     private Context mContext;
-	private RecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
     private MyAdapter mAdapter;
 
     private static Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message message) {
-
         }
     };
 
@@ -63,14 +56,14 @@ public class CommodityFragment extends Fragment {
     }
 
     public enum ITEM_TYPE {
-        COMMODITY_CATEGORY,
-        COMMODITY
+        EXPRESSMAN_MESSAGE,
+        ORDER_PACKAGE
     }
 
     private class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public final Context context;
-        public List<CommodityCategory> categories = new ArrayList<>();
-        public List<Commodity> commodities = new ArrayList<>();
+        public List<ExpressmanMessage> expressmanMessages = new ArrayList<>();
+        public List<OrderPackage> orderPackages = new ArrayList<>();
 
         public MyAdapter(Context context) {
             this.context = context;
@@ -78,15 +71,15 @@ public class CommodityFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return categories.size() + commodities.size();
+            return expressmanMessages.size() + orderPackages.size();
         }
 
         @Override
         public int getItemViewType(int position) {
-            if (position < categories.size()) {
-                return ITEM_TYPE.COMMODITY_CATEGORY.ordinal();
+            if (position < expressmanMessages.size()) {
+                return ITEM_TYPE.EXPRESSMAN_MESSAGE.ordinal();
             } else {
-                return ITEM_TYPE.COMMODITY.ordinal();
+                return ITEM_TYPE.ORDER_PACKAGE.ordinal();
             }
         }
 

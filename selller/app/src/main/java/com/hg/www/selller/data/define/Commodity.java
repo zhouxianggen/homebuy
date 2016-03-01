@@ -23,9 +23,9 @@ public class Commodity implements JsonSerializable {
     public List<String> images = new ArrayList<>();
     public double price = 0;
     public String unit = "";
-    public int inventory = 0;
-    public boolean in_discount = false;
-    public boolean support_return = true;
+    public int in_stock = 0;
+    public int in_discount = 0;
+    public int support_return = 1;
     public int weekly_sales = 0;
     public int monthly_sales = 0;
     public int yearly_sales = 0;
@@ -49,7 +49,7 @@ public class Commodity implements JsonSerializable {
             }
             price = jsonObject.getDouble("price");
             unit = jsonObject.getString("unit");
-            inventory = jsonObject.getInt("inventory");
+            in_stock = jsonObject.getInt("in_stock");
             in_discount = jsonObject.getBoolean("in_discount");
             support_return = jsonObject.getBoolean("support_return");
             weekly_sales = jsonObject.getInt("weekly_sales");

@@ -17,9 +17,19 @@
     <string name="EXTRA_COMMODITY_GROUP_ID">extra_commodity_group_id</string>
     <string name="EXTRA_COMMODITY_GROUP_ROOT">extra_commodity_group_root</string>
     <string name="EXTRA_COMMODITY_GROUP_TITLE">extra_commodity_group_title</string>
+    <string name="EXTRA_EXPRESSMAN_ID">extra_expressman_id</string>
     <string name="tab_commodity">货物</string>
     <string name="tab_order">订单</string>
     <string name="tab_deal">结算</string>
+
+    <string name="ORDER_STATUS_NEW">新订单</string>
+    <string name="ORDER_STATUS_ACCEPTED">待发货</string>
+    <string name="ORDER_STATUS_LOADED">已发货</string>
+    <string name="ORDER_STATUS_PAID">已收款</string>
+    <string name="ORDER_STATUS_RETURNED">已退货</string>
+    <string name="ORDER_STATUS_CLAIMED">理赔</string>
+
+    <string name="PREF_UPDATE_ORDER_INTERVAL">10</string>
 
     <string name="more">More</string>
     <string name="item_1">First Item</string>

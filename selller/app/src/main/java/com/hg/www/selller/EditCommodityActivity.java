@@ -18,7 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.hg.www.selller.define.CommodityItem;
+import com.hg.www.selller.data.define.Commodity;
 import com.hg.www.selller.util.HorizontalListView;
 
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ import java.util.List;
 public class EditCommodityActivity extends AppCompatActivity {
     private static final String TAG = "EditCommodityActivity";
     private static final int RESULT_CODE_ADD_IMAGE = 1;
-    private CommodityItem mCommodityItem;
+    private Commodity mCommodityItem;
     private HorizontalListView mListView;
     private ImageListAdapter mAdapter = null;
 
@@ -92,10 +92,10 @@ public class EditCommodityActivity extends AppCompatActivity {
         if (mCommodityItem.id.isEmpty()) {
             ((EditText) findViewById(R.id.title)).setText(mCommodityItem.title);
             ((EditText) findViewById(R.id.price)).setText(String.valueOf(mCommodityItem.price));
-            findViewById(R.id.option_in_stock).setSelected(mCommodityItem.is_in_stock);
-            findViewById(R.id.option_in_discount).setSelected(mCommodityItem.is_in_discount);
-            findViewById(R.id.option_support_return).setSelected(mCommodityItem.is_support_return);
-            ((EditText) findViewById(R.id.desc)).setText(mCommodityItem.desc);
+            findViewById(R.id.option_in_stock).setSelected(mCommodityItem.in_stock != 0);
+            findViewById(R.id.option_in_discount).setSelected(mCommodityItem.in_discount != 0);
+            findViewById(R.id.option_support_return).setSelected(mCommodityItem.support_return != 0);
+            ((EditText) findViewById(R.id.desc)).setText(mCommodityItem.description);
         }
     }
 

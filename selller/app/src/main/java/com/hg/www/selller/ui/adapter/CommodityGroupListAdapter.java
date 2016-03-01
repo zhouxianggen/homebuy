@@ -58,7 +58,7 @@ public class CommodityGroupListAdapter extends RecyclerView.Adapter<RecyclerView
         if (holder instanceof CommodityCategoryViewHolder) {
             ((CommodityCategoryViewHolder) holder).mGroup = group;
             ((CommodityCategoryViewHolder) holder).mTitle.setText(group.title);
-            ((CommodityCategoryViewHolder) holder).mCount.setText(String.valueOf(group.count));
+            //((CommodityCategoryViewHolder) holder).mCount.setText(String.valueOf(group.count));
         } else if (holder instanceof CommodityItemViewHolder) {
             ((CommodityItemViewHolder) holder).mGroup = group;
             ((CommodityItemViewHolder) holder).mTitle.setText(group.title);
@@ -89,7 +89,7 @@ public class CommodityGroupListAdapter extends RecyclerView.Adapter<RecyclerView
             super(view);
             mContext = context;
             mTitle = (TextView) view.findViewById(R.id.title);
-            mCount = (TextView) view.findViewById(R.id.count);
+            mCount = (TextView) view.findViewById(R.id.amount);
             ImageView imageView = (ImageView) view.findViewById(R.id.popup_menu);
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
