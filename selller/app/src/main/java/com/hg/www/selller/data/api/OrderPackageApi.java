@@ -32,8 +32,8 @@ public class OrderPackageApi {
     public List<OrderPackage> getPackages() {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         Cursor c = db.rawQuery(
-                "SELECT * from ?",
-                new String[]{TableSchema.OrderEntry.TABLE_NAME}
+                "SELECT * from t_order",
+                null
         );
 
         HashMap<String, List<Order>> orders = new HashMap<>();
@@ -46,7 +46,7 @@ public class OrderPackageApi {
             order.expressman_id = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_EXPRESSMAN_ID));
             order.amount = c.getInt(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_AMOUNT));
             order.payment = c.getFloat(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_ID));
-            order.status = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_ID));
+            order.status = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_STATUS));
             if (orders.get(order.status) == null) {
                 orders.put(order.status, new ArrayList<Order>());
             }

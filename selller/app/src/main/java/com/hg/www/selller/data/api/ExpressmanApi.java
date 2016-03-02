@@ -30,11 +30,10 @@ public class ExpressmanApi {
     public Expressman getExpressman(String expressman_id) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         Cursor c = db.rawQuery(
-                "SELECT * FROM ? WHERE id = ?",
-                new String[]{TableSchema.ExpressmanEntry.TABLE_NAME, expressman_id}
+                "SELECT * FROM expressman WHERE id = ?",
+                new String[]{expressman_id}
         );
 
-        List<ExpressmanMessage> messages = new ArrayList<>();
         if (c.moveToNext()) {
             Expressman expressman = new Expressman();
             expressman.id = c.getString(c.getColumnIndexOrThrow(TableSchema.ExpressmanEntry.COLUMN_NAME_ID));

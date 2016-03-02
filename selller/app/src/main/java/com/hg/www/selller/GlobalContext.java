@@ -1,16 +1,8 @@
 package com.hg.www.selller;
 
 import android.app.Application;
-import android.provider.ContactsContract;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.hg.www.selller.data.api.DataExchangeInterface;
-import com.hg.www.selller.data.define.JsonSerializable;
-
-import org.json.JSONObject;
+import com.hg.www.selller.data.db.DbHelper;
 
 import java.util.HashMap;
 
@@ -27,6 +19,7 @@ public class GlobalContext extends Application {
         super.onCreate();
 
         mContext = this;
+        DbHelper.fackData();
     }
 
     public static GlobalContext getInstance() {

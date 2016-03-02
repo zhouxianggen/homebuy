@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.hg.www.selller.ui.CommodityFragment;
+import com.hg.www.selller.ui.OrderFragment;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
@@ -160,16 +161,6 @@ public class MainActivity extends AppCompatActivity implements
                     return context.getString(R.string.tab_deal);
             }
             return null;
-        }
-    }
-
-    public static class OrderFragment extends  Fragment {
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_order, container, false);
-            return rootView;
         }
     }
 

@@ -77,6 +77,7 @@ public class CommodityService extends Service {
         String uri = GlobalContext.getInstance().getUri(path);
 
         final List<Object> objects = new ArrayList<>();
+        /*
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET, uri, null, new Response.Listener<JSONArray>() {
             @Override
@@ -106,7 +107,7 @@ public class CommodityService extends Service {
             public void onErrorResponse(VolleyError error) {
 
             }
-        });
+        });*/
         return objects;
     }
 }

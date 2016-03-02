@@ -1,4 +1,4 @@
-package com.hg.www.selller;
+package com.hg.www.selller.ui;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.hg.www.selller.R;
 import com.hg.www.selller.data.define.Commodity;
 import com.hg.www.selller.util.HorizontalListView;
 
@@ -38,7 +39,7 @@ public class EditCommodityActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String commodityId = intent.getStringExtra(getString(R.string.EXTRA_COMMODITY_ITEM_ID));
         commodityId = "1"; // fix
-        mCommodityItem = ((MyApplication)getApplication()).getDataManager().GetCommodity(commodityId);
+        mCommodityItem = new Commodity();
         initializeActionBar();
         initializeView();
         mListView = (HorizontalListView) findViewById(R.id.image_list);

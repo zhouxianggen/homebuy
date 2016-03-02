@@ -3,14 +3,14 @@
     package="com.hg.www.selller">
 
     <application
-        android:name=".MyApplication"
+        android:name=".GlobalContext"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".EditCommodityActivity"
+            android:name=".ui.EditCommodityActivity"
             android:label="@string/edit_commodity"
             android:theme="@style/Theme.AppCompat" />
         <activity
@@ -22,9 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".CommodityGroupListActivity"
-            android:parentActivityName=".MainActivity" />
+        <activity android:name=".ui.CommodityListActivity" />
         <activity android:name=".ui.PrepareOrderListActivity" />
         <activity android:name=".ui.NewOrderListActivity" />
         <activity android:name=".ui.AcceptedOrderListActivity" />

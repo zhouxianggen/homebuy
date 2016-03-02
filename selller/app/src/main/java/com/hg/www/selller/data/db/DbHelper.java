@@ -16,7 +16,7 @@ public class DbHelper extends SQLiteOpenHelper {
     private static final String COMMA_SEP = ",";
     private static final String SQL_CREATE_ORDER_TABLE =
             "CREATE TABLE " + TableSchema.OrderEntry.TABLE_NAME + " (" +
-                    TableSchema.OrderEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
+                    TableSchema.OrderEntry.COLUMN_NAME_ID + " TEXT PRIMARY KEY," +
                     TableSchema.OrderEntry.COLUMN_NAME_AGENCY_ID + TEXT_TYPE + COMMA_SEP +
                     TableSchema.OrderEntry.COLUMN_NAME_SELLER_ID + TEXT_TYPE + COMMA_SEP +
                     TableSchema.OrderEntry.COLUMN_NAME_COMMODITY_ID + TEXT_TYPE + COMMA_SEP +
@@ -30,23 +30,45 @@ public class DbHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_COMMODITY_TABLE =
             "CREATE TABLE " + TableSchema.CommodityEntry.TABLE_NAME + " (" +
-                    TableSchema.CommodityEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
+                    TableSchema.CommodityEntry.COLUMN_NAME_ID + " TEXT PRIMARY KEY," +
                     TableSchema.CommodityEntry.COLUMN_NAME_SELLER_ID + TEXT_TYPE + COMMA_SEP +
                     TableSchema.CommodityEntry.COLUMN_NAME_TITLE + TEXT_TYPE + COMMA_SEP +
-                    TableSchema.CommodityEntry.COLUMN_NAME_IMAGES + TEXT_TYPE + COMMA_SEP +
+                    TableSchema.CommodityEntry.COLUMN_NAME_THUMBNAIL + TEXT_TYPE + COMMA_SEP +
+                    TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_1 + TEXT_TYPE + COMMA_SEP +
+                    TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_2 + TEXT_TYPE + COMMA_SEP +
+                    TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_3 + TEXT_TYPE + COMMA_SEP +
+                    TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_4 + TEXT_TYPE + COMMA_SEP +
+                    TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_5 + TEXT_TYPE + COMMA_SEP +
+                    TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_6 + TEXT_TYPE + COMMA_SEP +
+                    TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_7 + TEXT_TYPE + COMMA_SEP +
+                    TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_8 + TEXT_TYPE + COMMA_SEP +
                     TableSchema.CommodityEntry.COLUMN_NAME_PRICE + REAL_TYPE + COMMA_SEP +
                     TableSchema.CommodityEntry.COLUMN_NAME_SUPPORT_RETURN + INTEGER_TYPE + COMMA_SEP +
                     TableSchema.CommodityEntry.COLUMN_NAME_IN_DISCOUNT + INTEGER_TYPE + COMMA_SEP +
                     TableSchema.CommodityEntry.COLUMN_NAME_IN_STOCK + INTEGER_TYPE + COMMA_SEP +
-                    TableSchema.CommodityEntry.COLUMN_NAME_SALE_VOLUME + INTEGER_TYPE + COMMA_SEP +
-                    TableSchema.CommodityEntry.COLUMN_NAME_RETURN_VOLUME + INTEGER_TYPE +
+                    TableSchema.CommodityEntry.COLUMN_NAME_WEEKLY_SALES + INTEGER_TYPE + COMMA_SEP +
+                    TableSchema.CommodityEntry.COLUMN_NAME_MONTHLY_SALES + INTEGER_TYPE + COMMA_SEP +
+                    TableSchema.CommodityEntry.COLUMN_NAME_WEEKLY_RETURNS + INTEGER_TYPE + COMMA_SEP +
+                    TableSchema.CommodityEntry.COLUMN_NAME_MONTHLY_RETURNS + INTEGER_TYPE + COMMA_SEP +
+                    TableSchema.CommodityEntry.COLUMN_NAME_CATEGORY + TEXT_TYPE +
                     " )";
     private static final String SQL_DELETE_COMMODITY_TABLE =
             "DROP TABLE IF EXISTS " + TableSchema.CommodityEntry.TABLE_NAME;
 
+    private static final String SQL_CREATE_COMMODITY_CATEGORY_TABLE =
+            "CREATE TABLE " + TableSchema.CommodityCategoryEntry.TABLE_NAME + " (" +
+                    TableSchema.CommodityCategoryEntry.COLUMN_NAME_ID + " TEXT PRIMARY KEY," +
+                    TableSchema.CommodityCategoryEntry.COLUMN_NAME_SELLER_ID + TEXT_TYPE + COMMA_SEP +
+                    TableSchema.CommodityCategoryEntry.COLUMN_NAME_TITLE + TEXT_TYPE + COMMA_SEP +
+                    TableSchema.CommodityCategoryEntry.COLUMN_NAME_ITEM_COUNT + INTEGER_TYPE + COMMA_SEP +
+                    TableSchema.CommodityCategoryEntry.COLUMN_NAME_PARENT + TEXT_TYPE +
+                    " )";
+    private static final String SQL_DELETE_COMMODITY_CATEGORY_TABLE =
+            "DROP TABLE IF EXISTS " + TableSchema.CommodityCategoryEntry.TABLE_NAME;
+
     private static final String SQL_CREATE_EXPRESSMAN_TABLE =
             "CREATE TABLE " + TableSchema.ExpressmanEntry.TABLE_NAME + " (" +
-                    TableSchema.ExpressmanEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
+                    TableSchema.ExpressmanEntry.COLUMN_NAME_ID + " TEXT PRIMARY KEY," +
                     TableSchema.ExpressmanEntry.COLUMN_NAME_NAME + TEXT_TYPE + COMMA_SEP +
                     TableSchema.ExpressmanEntry.COLUMN_NAME_ICON + TEXT_TYPE +
                     " )";
@@ -55,7 +77,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_EXPRESSMAN_MESSAGE_TABLE =
             "CREATE TABLE " + TableSchema.ExpressmanMessageEntry.TABLE_NAME + " (" +
-                    TableSchema.ExpressmanMessageEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
+                    TableSchema.ExpressmanMessageEntry.COLUMN_NAME_ID + " TEXT PRIMARY KEY," +
                     TableSchema.ExpressmanMessageEntry.COLUMN_NAME_TYPE + TEXT_TYPE + COMMA_SEP +
                     TableSchema.ExpressmanMessageEntry.COLUMN_NAME_TIME + TEXT_TYPE + COMMA_SEP +
                     TableSchema.ExpressmanMessageEntry.COLUMN_NAME_EXPRESSMAN_ID + TEXT_TYPE + COMMA_SEP +
@@ -70,6 +92,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_COMMODITY_TABLE);
+        db.execSQL(SQL_CREATE_COMMODITY_CATEGORY_TABLE);
         db.execSQL(SQL_CREATE_ORDER_TABLE);
         db.execSQL(SQL_CREATE_EXPRESSMAN_TABLE);
         db.execSQL(SQL_CREATE_EXPRESSMAN_MESSAGE_TABLE);
@@ -79,6 +102,7 @@ public class DbHelper extends SQLiteOpenHelper {
         // This database is only a cache for online data, so its upgrade policy is
         // to simply to discard the data and start over
         db.execSQL(SQL_DELETE_COMMODITY_TABLE);
+        db.execSQL(SQL_DELETE_COMMODITY_CATEGORY_TABLE);
         db.execSQL(SQL_DELETE_ORDER_TABLE);
         db.execSQL(SQL_DELETE_EXPRESSMAN_TABLE);
         db.execSQL(SQL_DELETE_EXPRESSMAN_MESSAGE_TABLE);
@@ -92,6 +116,7 @@ public class DbHelper extends SQLiteOpenHelper {
     static public void fackData() {
         DbHelper mDbHelper = new DbHelper(GlobalContext.getInstance());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        mDbHelper.onUpgrade(db, 0, 0);
 
         ContentValues values = new ContentValues();
         values.put(TableSchema.OrderEntry.COLUMN_NAME_ID, "order_1");
@@ -108,14 +133,24 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(TableSchema.CommodityEntry.COLUMN_NAME_ID, "order_1");
         values.put(TableSchema.CommodityEntry.COLUMN_NAME_SELLER_ID, "seller_1");
         values.put(TableSchema.CommodityEntry.COLUMN_NAME_TITLE, "立白透明皂");
-        values.put(TableSchema.CommodityEntry.COLUMN_NAME_IMAGES, "http://www.zyzjgww.com/images/201501/goods_img/897_P_1422469213669.jpg|http://www.bl-cs.com/pic/20158248536.jpg");
+        values.put(TableSchema.CommodityEntry.COLUMN_NAME_THUMBNAIL, "http://www.zyzjgww.com/images/201501/goods_img/897_P_1422469213669.jpg");
+        values.put(TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_1, "http://www.bl-cs.com/pic/20158248536.jpg");
         values.put(TableSchema.CommodityEntry.COLUMN_NAME_PRICE, 3.5);
         values.put(TableSchema.CommodityEntry.COLUMN_NAME_SUPPORT_RETURN, 1);
         values.put(TableSchema.CommodityEntry.COLUMN_NAME_IN_DISCOUNT, 0);
         values.put(TableSchema.CommodityEntry.COLUMN_NAME_IN_STOCK, 1);
-        values.put(TableSchema.CommodityEntry.COLUMN_NAME_SALE_VOLUME, 100);
-        values.put(TableSchema.CommodityEntry.COLUMN_NAME_RETURN_VOLUME, 4);
+        values.put(TableSchema.CommodityEntry.COLUMN_NAME_WEEKLY_SALES, 100);
+        values.put(TableSchema.CommodityEntry.COLUMN_NAME_WEEKLY_RETURNS, 4);
+        values.put(TableSchema.CommodityEntry.COLUMN_NAME_CATEGORY, "commodity_category_1");
         db.insert(TableSchema.CommodityEntry.TABLE_NAME, null, values);
+
+        values = new ContentValues();
+        values.put(TableSchema.CommodityCategoryEntry.COLUMN_NAME_ID, "commodity_category_1");
+        values.put(TableSchema.CommodityCategoryEntry.COLUMN_NAME_SELLER_ID, "seller_1");
+        values.put(TableSchema.CommodityCategoryEntry.COLUMN_NAME_TITLE, "洗涤用品");
+        values.put(TableSchema.CommodityCategoryEntry.COLUMN_NAME_ITEM_COUNT, 1);
+        values.put(TableSchema.CommodityCategoryEntry.COLUMN_NAME_PARENT, "root");
+        db.insert(TableSchema.CommodityCategoryEntry.TABLE_NAME, null, values);
 
         values = new ContentValues();
         values.put(TableSchema.ExpressmanEntry.COLUMN_NAME_ID, "expressman_1");
@@ -124,7 +159,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.insert(TableSchema.ExpressmanEntry.TABLE_NAME, null, values);
 
         values = new ContentValues();
-        values.put(TableSchema.ExpressmanMessageEntry.COLUMN_NAME_ID, "expressman_1");
+        values.put(TableSchema.ExpressmanMessageEntry.COLUMN_NAME_ID, "expressman_message_1");
         values.put(TableSchema.ExpressmanMessageEntry.COLUMN_NAME_TYPE, "PREPARE");
         values.put(TableSchema.ExpressmanMessageEntry.COLUMN_NAME_TIME, "2016-02-20 09:58");
         values.put(TableSchema.ExpressmanMessageEntry.COLUMN_NAME_EXPRESSMAN_ID, "expressman_1");

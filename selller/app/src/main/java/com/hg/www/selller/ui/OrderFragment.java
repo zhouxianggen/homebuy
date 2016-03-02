@@ -8,6 +8,7 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,14 +45,14 @@ public class OrderFragment extends Fragment {
         mContext = getActivity();
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        onUpdateAdapter();
-
+        mAdapter = new MyAdapter(getActivity());
+        mRecyclerView.setAdapter(mAdapter);
         return rootView;
     }
 
     public void onUpdateAdapter() {
-        mAdapter.expressmanMessages = ExpressmanMessageApi.getInstance().getMessages();
-        mAdapter.orderPackages = OrderPackageApi.getInstance().getPackages();
+        mAdapter.messages = ExpressmanMessageApi.getInstance().getMessages();
+        mAdapter.packages = OrderPackageApi.getInstance().getPackages();
         mAdapter.notifyDataSetChanged();
     }
 
@@ -62,21 +63,25 @@ public class OrderFragment extends Fragment {
 
     private class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public final Context context;
-        public List<ExpressmanMessage> expressmanMessages = new ArrayList<>();
-        public List<OrderPackage> orderPackages = new ArrayList<>();
+        public List<ExpressmanMessage> messages = new ArrayList<>();
+        public List<OrderPackage> packages = new ArrayList<>();
 
         public MyAdapter(Context context) {
             this.context = context;
+            messages = ExpressmanMessageApi.getInstance().getMessages();
+            Log.d(TAG, "get messages " + String.valueOf(messages.size()));
+            packages = OrderPackageApi.getInstance().getPackages();
+            Log.d(TAG, "get packages " + String.valueOf(packages.size()));
         }
 
         @Override
         public int getItemCount() {
-            return expressmanMessages.size() + orderPackages.size();
+            return messages.size() + packages.size();
         }
 
         @Override
         public int getItemViewType(int position) {
-            if (position < expressmanMessages.size()) {
+            if (position < messages.size()) {
                 return ITEM_TYPE.EXPRESSMAN_MESSAGE.ordinal();
             } else {
                 return ITEM_TYPE.ORDER_PACKAGE.ordinal();
@@ -86,14 +91,14 @@ public class OrderFragment extends Fragment {
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             if (holder instanceof ExpressmanMessageViewHolder) {
-                ExpressmanMessage message = expressmanMessages.get(position);
+                ExpressmanMessage message = messages.get(position);
                 ((ExpressmanMessageViewHolder) holder).mMessage = message;
                 //((ExpressmanMessageViewHolder) holder).mExpressmanIcon.set(message.expressman.icon);
                 ((ExpressmanMessageViewHolder) holder).mExpressmanName.setText(message.expressman.name);
                 ((ExpressmanMessageViewHolder) holder).mTime.setText(message.time);
                 ((ExpressmanMessageViewHolder) holder).mContent.setText(message.content);
             } else if (holder instanceof OrderPackageViewHolder) {
-                OrderPackage orderPackage = orderPackages.get(position - expressmanMessages.size());
+                OrderPackage orderPackage = packages.get(position - messages.size());
                 ((OrderPackageViewHolder) holder).mPackage = orderPackage;
                 ((OrderPackageViewHolder) holder).mTitle.setText(orderPackage.getTitle());
                 ((OrderPackageViewHolder) holder).mAount.setText(String.valueOf(orderPackage.getAmount()));

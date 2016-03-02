@@ -6,7 +6,7 @@ public final class TableSchema {
     public TableSchema() {}
 
     public static abstract class OrderEntry implements BaseColumns {
-        public static final String TABLE_NAME = "order";
+        public static final String TABLE_NAME = "t_order";
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_AGENCY_ID = "agency_id";
         public static final String COLUMN_NAME_SELLER_ID = "seller_id";
@@ -22,13 +22,33 @@ public final class TableSchema {
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_SELLER_ID = "seller_id";
         public static final String COLUMN_NAME_TITLE = "title";
-        public static final String COLUMN_NAME_IMAGES = "images";
+        public static final String COLUMN_NAME_THUMBNAIL = "thumbnail";
+        public static final String COLUMN_NAME_IMAGE_1 = "image_1";
+        public static final String COLUMN_NAME_IMAGE_2 = "image_2";
+        public static final String COLUMN_NAME_IMAGE_3 = "image_3";
+        public static final String COLUMN_NAME_IMAGE_4 = "image_4";
+        public static final String COLUMN_NAME_IMAGE_5 = "image_5";
+        public static final String COLUMN_NAME_IMAGE_6 = "image_6";
+        public static final String COLUMN_NAME_IMAGE_7 = "image_7";
+        public static final String COLUMN_NAME_IMAGE_8 = "image_8";
         public static final String COLUMN_NAME_PRICE = "price";
         public static final String COLUMN_NAME_SUPPORT_RETURN = "support_return";
         public static final String COLUMN_NAME_IN_DISCOUNT = "in_discount";
         public static final String COLUMN_NAME_IN_STOCK = "in_stock";
-        public static final String COLUMN_NAME_SALE_VOLUME = "sale_volume";
-        public static final String COLUMN_NAME_RETURN_VOLUME = "return_volume";
+        public static final String COLUMN_NAME_WEEKLY_SALES = "weekly_sales";
+        public static final String COLUMN_NAME_MONTHLY_SALES = "monthly_sales";
+        public static final String COLUMN_NAME_WEEKLY_RETURNS = "weekly_returns";
+        public static final String COLUMN_NAME_MONTHLY_RETURNS = "monthly_returns";
+        public static final String COLUMN_NAME_CATEGORY = "category";
+    }
+
+    public static abstract class CommodityCategoryEntry implements BaseColumns {
+        public static final String TABLE_NAME = "commodity_category";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_SELLER_ID = "seller_id";
+        public static final String COLUMN_NAME_TITLE = "title";
+        public static final String COLUMN_NAME_ITEM_COUNT = "item_count";
+        public static final String COLUMN_NAME_PARENT = "parent";
     }
 
     public static abstract class ExpressmanEntry implements BaseColumns {

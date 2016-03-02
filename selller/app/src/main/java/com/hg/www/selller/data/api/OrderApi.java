@@ -44,8 +44,7 @@ public class OrderApi {
         );
 
         List<Order> orders = new ArrayList<>();
-        c.moveToFirst();
-        while (c.isAfterLast() == false) {
+        while (c.moveToNext()) {
             Order order = new Order();
             order.id = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_ID));
             order.agency_id = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_AGENCY_ID));
@@ -55,7 +54,6 @@ public class OrderApi {
             order.amount = c.getInt(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_AMOUNT));
             order.payment = c.getFloat(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_ID));
             order.status = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_ID));
-            c.moveToNext();
         }
 
         return orders;

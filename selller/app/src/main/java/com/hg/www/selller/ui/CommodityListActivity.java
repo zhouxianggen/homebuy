@@ -2,20 +2,19 @@ package com.hg.www.selller.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.hg.www.selller.GlobalContext;
 import com.hg.www.selller.R;
 import com.hg.www.selller.data.api.CommodityApi;
 import com.hg.www.selller.data.api.CommodityCategoryApi;
@@ -25,38 +24,59 @@ import com.hg.www.selller.data.define.CommodityCategory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommodityFragment extends Fragment {
-    private static final String TAG = CommodityFragment.class.getSimpleName();
+public class CommodityListActivity extends AppCompatActivity {
+    private static final String TAG = "CommodityGroupList";
     private Context mContext;
-	private RecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
     private MyAdapter mAdapter;
-
-    private static Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message message) {
-
-        }
-    };
+    private String mParent;
+    private String mTitle;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_commodity, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_commodity_list);
 
-        mContext = getActivity();
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        mAdapter = new MyAdapter(mContext, "root");
-        mRecyclerView.setAdapter(mAdapter);
-        return rootView;
+        mContext = this;
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        Intent intent = getIntent();
+        mParent = intent.getStringExtra(getString(R.string.EXTRA_COMMODITY_CATEGORY_PARENT));
+        mTitle = intent.getStringExtra(getString(R.string.EXTRA_COMMODITY_CATEGORY_TITLE));
+
+        initializeActionBar();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
+        if (mAdapter == null) {
+            onUpdateAdapter();
+        }
+    }
+
+    private void initializeActionBar() {
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setCustomView(R.layout.actionbar_common);
+        View customView = actionBar.getCustomView();
+        TextView textView = (TextView) customView.findViewById(R.id.title);
+        textView.setText(mTitle);
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     public void onUpdateAdapter() {
-        mAdapter.categories = CommodityCategoryApi.getInstance().getCategories("root");
-        mAdapter.commodities = CommodityApi.getInstance().getCommodities("root");
-        Log.d(TAG, "onUpdateAdapter " + String.valueOf(mAdapter.categories.size()));
-        Log.d(TAG, "onUpdateAdapter " + String.valueOf(mAdapter.commodities.size()));
+        mAdapter.categories = CommodityCategoryApi.getInstance().getCategories(mParent);
+        mAdapter.commodities = CommodityApi.getInstance().getCommodities(mParent);
         mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG, "onOptionsItemSelected " + String.valueOf(item.getItemId()));
+        onBackPressed();
+        return true;
     }
 
     public enum ITEM_TYPE {
@@ -69,10 +89,8 @@ public class CommodityFragment extends Fragment {
         public List<CommodityCategory> categories = new ArrayList<>();
         public List<Commodity> commodities = new ArrayList<>();
 
-        public MyAdapter(Context context, String parent) {
+        public MyAdapter(Context context) {
             this.context = context;
-            categories = CommodityCategoryApi.getInstance().getCategories(parent);
-            commodities = CommodityApi.getInstance().getCommodities(parent);
         }
 
         @Override
@@ -82,7 +100,6 @@ public class CommodityFragment extends Fragment {
 
         @Override
         public int getItemViewType(int position) {
-            Log.d(TAG, "getItemViewType " + String.valueOf(position));
             if (position < categories.size()) {
                 return ITEM_TYPE.COMMODITY_CATEGORY.ordinal();
             } else {
@@ -92,12 +109,11 @@ public class CommodityFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            Log.d(TAG, "onBindViewHolder " + String.valueOf(position));
             if (holder instanceof CommodityCategoryViewHolder) {
                 CommodityCategory category = categories.get(position);
                 ((CommodityCategoryViewHolder) holder).mCommodityCategory = category;
                 ((CommodityCategoryViewHolder) holder).mTitle.setText(category.title);
-                ((CommodityCategoryViewHolder) holder).mAmount.setText(String.valueOf(category.item_count));
+                ((CommodityCategoryViewHolder) holder).mAmount.setText(category.item_count);
             } else if (holder instanceof CommodityViewHolder) {
                 Commodity commodity = commodities.get(position - categories.size());
                 ((CommodityViewHolder) holder).mCommodity = commodity;
@@ -172,5 +188,4 @@ public class CommodityFragment extends Fragment {
             }
         }
     }
-
 }
