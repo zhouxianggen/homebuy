@@ -1,4 +1,4 @@
-package com.hg.www.selller;
+package com.hg.www.selller.ui;
 
 import android.content.Context;
 import android.content.res.Configuration;
@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.hg.www.selller.R;
 import com.hg.www.selller.ui.CommodityFragment;
 import com.hg.www.selller.ui.OrderFragment;
 

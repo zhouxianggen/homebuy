@@ -130,7 +130,18 @@ public class DbHelper extends SQLiteOpenHelper {
         db.insert(TableSchema.OrderEntry.TABLE_NAME, null, values);
 
         values = new ContentValues();
-        values.put(TableSchema.CommodityEntry.COLUMN_NAME_ID, "order_1");
+        values.put(TableSchema.OrderEntry.COLUMN_NAME_ID, "order_2");
+        values.put(TableSchema.OrderEntry.COLUMN_NAME_AGENCY_ID, "agency_1");
+        values.put(TableSchema.OrderEntry.COLUMN_NAME_SELLER_ID, "seller_1");
+        values.put(TableSchema.OrderEntry.COLUMN_NAME_COMMODITY_ID, "commodity_1");
+        values.put(TableSchema.OrderEntry.COLUMN_NAME_EXPRESSMAN_ID, "expressman_1");
+        values.put(TableSchema.OrderEntry.COLUMN_NAME_AMOUNT, 2);
+        values.put(TableSchema.OrderEntry.COLUMN_NAME_PAYMENT, 7.0);
+        values.put(TableSchema.OrderEntry.COLUMN_NAME_STATUS, "new");
+        db.insert(TableSchema.OrderEntry.TABLE_NAME, null, values);
+
+        values = new ContentValues();
+        values.put(TableSchema.CommodityEntry.COLUMN_NAME_ID, "commodity_1");
         values.put(TableSchema.CommodityEntry.COLUMN_NAME_SELLER_ID, "seller_1");
         values.put(TableSchema.CommodityEntry.COLUMN_NAME_TITLE, "立白透明皂");
         values.put(TableSchema.CommodityEntry.COLUMN_NAME_THUMBNAIL, "http://www.zyzjgww.com/images/201501/goods_img/897_P_1422469213669.jpg");
@@ -155,7 +166,7 @@ public class DbHelper extends SQLiteOpenHelper {
         values = new ContentValues();
         values.put(TableSchema.ExpressmanEntry.COLUMN_NAME_ID, "expressman_1");
         values.put(TableSchema.ExpressmanEntry.COLUMN_NAME_NAME, "老李");
-        values.put(TableSchema.ExpressmanEntry.COLUMN_NAME_ICON, "https://www.google.com/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&cad=rja&uact=8&ved=0ahUKEwjzzMTVz5_LAhUBFqYKHXdyBlkQjRwIBw&url=http%3A%2F%2Fmccormickld.deviantart.com%2Fart%2FPng-Obama-Smoke-Xlarge-438633148&psig=AFQjCNELgExxn3LJZTtdHXMHFLr-8sZBmw&ust=1456926310609045");
+        values.put(TableSchema.ExpressmanEntry.COLUMN_NAME_ICON, "http://img.cool80.com/i/png/397/04.png");
         db.insert(TableSchema.ExpressmanEntry.TABLE_NAME, null, values);
 
         values = new ContentValues();

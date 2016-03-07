@@ -15,9 +15,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.NetworkImageView;
 import com.hg.www.selller.R;
 import com.hg.www.selller.data.api.ExpressmanMessageApi;
+import com.hg.www.selller.data.api.OrderApi;
 import com.hg.www.selller.data.api.OrderPackageApi;
+import com.hg.www.selller.data.api.VolleyApi;
 import com.hg.www.selller.data.define.ExpressmanMessage;
 import com.hg.www.selller.data.define.Order;
 import com.hg.www.selller.data.define.OrderPackage;
@@ -31,28 +34,34 @@ public class OrderFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private MyAdapter mAdapter;
 
-    private static Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message message) {
-        }
-    };
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView");
         View rootView = inflater.inflate(R.layout.fragment_order, container, false);
 
         mContext = getActivity();
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        mAdapter = new MyAdapter(getActivity());
-        mRecyclerView.setAdapter(mAdapter);
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        Log.d(TAG, "onResume");
+        if (mAdapter == null) {
+            mAdapter = new MyAdapter(mContext);
+            mRecyclerView.setAdapter(mAdapter);
+        }
+        onUpdateAdapter();
+        super.onResume();
     }
 
     public void onUpdateAdapter() {
         mAdapter.messages = ExpressmanMessageApi.getInstance().getMessages();
+        Log.d(TAG, "get messages " + String.valueOf(mAdapter.messages.size()));
         mAdapter.packages = OrderPackageApi.getInstance().getPackages();
+        Log.d(TAG, "get packages " + String.valueOf(mAdapter.packages.size()));
         mAdapter.notifyDataSetChanged();
     }
 
@@ -68,10 +77,6 @@ public class OrderFragment extends Fragment {
 
         public MyAdapter(Context context) {
             this.context = context;
-            messages = ExpressmanMessageApi.getInstance().getMessages();
-            Log.d(TAG, "get messages " + String.valueOf(messages.size()));
-            packages = OrderPackageApi.getInstance().getPackages();
-            Log.d(TAG, "get packages " + String.valueOf(packages.size()));
         }
 
         @Override
@@ -93,7 +98,9 @@ public class OrderFragment extends Fragment {
             if (holder instanceof ExpressmanMessageViewHolder) {
                 ExpressmanMessage message = messages.get(position);
                 ((ExpressmanMessageViewHolder) holder).mMessage = message;
-                //((ExpressmanMessageViewHolder) holder).mExpressmanIcon.set(message.expressman.icon);
+                ((ExpressmanMessageViewHolder) holder).mExpressmanIcon.setImageUrl(
+                        message.expressman.icon, VolleyApi.getInstance().getImageLoader()
+                );
                 ((ExpressmanMessageViewHolder) holder).mExpressmanName.setText(message.expressman.name);
                 ((ExpressmanMessageViewHolder) holder).mTime.setText(message.time);
                 ((ExpressmanMessageViewHolder) holder).mContent.setText(message.content);
@@ -122,7 +129,7 @@ public class OrderFragment extends Fragment {
         public class ExpressmanMessageViewHolder extends RecyclerView.ViewHolder
                 implements View.OnClickListener {
             private Context mContext;
-            private ImageView mExpressmanIcon;
+            private NetworkImageView mExpressmanIcon;
             private TextView mExpressmanName;
             private TextView mContent;
             private TextView mTime;
@@ -131,7 +138,7 @@ public class OrderFragment extends Fragment {
             public ExpressmanMessageViewHolder(View view, Context context) {
                 super(view);
                 mContext = context;
-                mExpressmanIcon = (ImageView) view.findViewById(R.id.expressman_icon);
+                mExpressmanIcon = (NetworkImageView) view.findViewById(R.id.expressman_icon);
                 mExpressmanName = (TextView) view.findViewById(R.id.expressman_name);
                 mContent = (TextView) view.findViewById(R.id.content);
                 mTime = (TextView) view.findViewById(R.id.time);
@@ -165,22 +172,22 @@ public class OrderFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                if (mPackage.status == Order.STATUS_NEW) {
+                if (mPackage.status.equals(Order.STATUS_NEW)) {
                     Intent intent = new Intent(mContext, NewOrderListActivity.class);
                     mContext.startActivity(intent);
-                } else if (mPackage.status == Order.STATUS_ACCEPTED) {
+                } else if (mPackage.status.equals(Order.STATUS_ACCEPTED)) {
                     Intent intent = new Intent(mContext, AcceptedOrderListActivity.class);
                     mContext.startActivity(intent);
-                } else if (mPackage.status == Order.STATUS_LOADED) {
+                } else if (mPackage.status.equals(Order.STATUS_LOADED)) {
                     Intent intent = new Intent(mContext, LoadedOrderListActivity.class);
                     mContext.startActivity(intent);
-                } else if (mPackage.status == Order.STATUS_PAID) {
+                } else if (mPackage.status.equals(Order.STATUS_PAID)) {
                     Intent intent = new Intent(mContext, PaidOrderListActivity.class);
                     mContext.startActivity(intent);
-                } else if (mPackage.status == Order.STATUS_RETURNED) {
+                } else if (mPackage.status.equals(Order.STATUS_RETURNED)) {
                     Intent intent = new Intent(mContext, ReturnedOrderListActivity.class);
                     mContext.startActivity(intent);
-                } else if (mPackage.status == Order.STATUS_CLAIMED) {
+                } else if (mPackage.status.equals(Order.STATUS_CLAIMED)) {
                     Intent intent = new Intent(mContext, ClaimedOrderListActivity.class);
                     mContext.startActivity(intent);
                 }

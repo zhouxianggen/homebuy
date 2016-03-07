@@ -2,6 +2,7 @@ package com.hg.www.selller.data.define;
 
 public class Order {
     public static String STATUS_NEW = "new";
+    public static String STATUS_REJECTED = "rejected";
     public static String STATUS_ACCEPTED = "accepted";
     public static String STATUS_LOADED = "loaded";
     public static String STATUS_PAID = "paid";

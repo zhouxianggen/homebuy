@@ -1,9 +1,14 @@
 package com.hg.www.selller.service;
 
+import android.content.Context;
 import android.content.Intent;
 
 import com.hg.www.selller.AppSettings;
 import com.hg.www.selller.GlobalContext;
+import com.hg.www.selller.data.api.HttpAsyncTask;
+import com.hg.www.selller.data.define.Order;
+
+import java.util.List;
 
 public class OrderService extends BasicService {
     public static final String TAG = OrderService.class.getSimpleName();
@@ -26,5 +31,14 @@ public class OrderService extends BasicService {
     }
 
     private void onActionGet() {
+    }
+
+    static public void updateServerOrders(
+            Context context,
+            List<Order> orderList,
+            int timeout,
+            HttpAsyncTask.OnSuccessListener onSuccessListener,
+            HttpAsyncTask.OnFailureListener onFailureListener) {
+        new HttpAsyncTask(context, "", "", "", onSuccessListener, onFailureListener).execute();
     }
 }

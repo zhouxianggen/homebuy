@@ -45,18 +45,51 @@ public class OrderApi {
 
         List<Order> orders = new ArrayList<>();
         while (c.moveToNext()) {
-            Order order = new Order();
-            order.id = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_ID));
-            order.agency_id = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_AGENCY_ID));
-            order.seller_id = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_SELLER_ID));
-            order.commodity_id = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_COMMODITY_ID));
-            order.expressman_id = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_EXPRESSMAN_ID));
-            order.amount = c.getInt(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_AMOUNT));
-            order.payment = c.getFloat(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_ID));
-            order.status = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_ID));
+            orders.add(CreateFromCursor(c));
         }
 
         return orders;
+    }
+
+    public List<Order> getOrders(String status) {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        Cursor c = db.rawQuery(
+                "SELECT * from t_order WHERE status=?",
+                new String[]{status}
+        );
+
+        List<Order> orders = new ArrayList<>();
+        while (c.moveToNext()) {
+            orders.add(CreateFromCursor(c));
+        }
+
+        return orders;
+    }
+
+    public int setOrderStatus(String id, String status) {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        Cursor c = db.rawQuery(
+                "UPDATE t_order SET status=? WHERE id=?",
+                new String[]{status, id}
+        );
+        return c.getCount();
+    }
+
+    public String syncOrders(List<Order> orders) {
+        return "";
+    }
+
+    public static Order CreateFromCursor(Cursor c) {
+        Order order = new Order();
+        order.id = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_ID));
+        order.agency_id = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_AGENCY_ID));
+        order.seller_id = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_SELLER_ID));
+        order.commodity_id = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_COMMODITY_ID));
+        order.expressman_id = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_EXPRESSMAN_ID));
+        order.amount = c.getInt(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_AMOUNT));
+        order.payment = c.getFloat(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_PAYMENT));
+        order.status = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_STATUS));
+        return order;
     }
 
     public boolean pullServerOrders() {

@@ -41,6 +41,28 @@
     <string name="menu_rename">改名</string>
     <string name="menu_remove">删除</string>
 
+    <string name="btn_reject">拒绝</string>
+    <string name="btn_accept">接收</string>
+    <string name="btn_ok">确认</string>
+    <string name="btn_cancel">取消</string>
+
+    <string name="ACTIVITY_NEW_ORDER">新订单</string>
+    <string name="ACTIVITY_ACCEPTED_ORDER">待发货订单</string>
+    <string name="ACTIVITY_LOADED_ORDER">已发货订单</string>
+    <string name="ACTIVITY_PAID_ORDER">已付款订单</string>
+    <string name="ACTIVITY_RETURNED_ORDER">退单</string>
+    <string name="ACTIVITY_CLAIMED_ORDER">理赔订单</string>
+
+    <string name="DIALOG_MESSAGE_REJECT_ORDER">
+        过多地拒绝订单会降低店铺的信誉，您可以设置该货物没有库存来避免用户下单
+    </string>
+    <string name="DIALOG_TITLE_REJECT_ORDER">确认操作</string>
+
+    <string name="PROGRESS_DIALOG_TITLE">正在处理</string>
+    <string name="PROGRESS_DIALOG_MESSAGE">请稍候</string>
+
+
+
     <string name="unit_prompt">单位</string>
     <string-array name="unit_array">
         <item>件</item>

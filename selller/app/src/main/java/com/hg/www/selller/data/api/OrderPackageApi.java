@@ -2,6 +2,7 @@ package com.hg.www.selller.data.api;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.hg.www.selller.GlobalContext;
 import com.hg.www.selller.data.db.DbHelper;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class OrderPackageApi {
+    private static final String TAG = OrderPackageApi.class.getSimpleName();
     private static OrderPackageApi instance = null;
     private DbHelper mDbHelper = null;
 
@@ -36,29 +38,27 @@ public class OrderPackageApi {
                 null
         );
 
-        HashMap<String, List<Order>> orders = new HashMap<>();
+        HashMap<String, List<Order>> statusOrders = new HashMap<>();
         while (c.moveToNext()) {
-            Order order = new Order();
-            order.id = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_ID));
-            order.agency_id = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_AGENCY_ID));
-            order.seller_id = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_SELLER_ID));
-            order.commodity_id = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_COMMODITY_ID));
-            order.expressman_id = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_EXPRESSMAN_ID));
-            order.amount = c.getInt(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_AMOUNT));
-            order.payment = c.getFloat(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_ID));
-            order.status = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_STATUS));
-            if (orders.get(order.status) == null) {
-                orders.put(order.status, new ArrayList<Order>());
+            Order order = OrderApi.CreateFromCursor(c);
+            if (statusOrders.get(order.status) == null) {
+                statusOrders.put(order.status, new ArrayList<Order>());
             }
-            orders.get(order.status).add(order);
+            statusOrders.get(order.status).add(order);
         }
 
+        String[] statuses = new String[]{Order.STATUS_NEW, Order.STATUS_ACCEPTED,
+            Order.STATUS_LOADED, Order.STATUS_PAID, Order.STATUS_RETURNED, Order.STATUS_CLAIMED};
         List<OrderPackage> orderPackages = new ArrayList<>();
-        for (Map.Entry<String, List<Order>> e : orders.entrySet()) {
+        for (String status : statuses) {
             OrderPackage orderPackage = new OrderPackage();
-            orderPackage.status = e.getKey();
-            orderPackage.orders = e.getValue();
+            orderPackage.status = status;
+            orderPackage.orders = statusOrders.get(status);
             orderPackages.add(orderPackage);
+            if (orderPackage.orders == null) {
+                orderPackage.orders = new ArrayList<>();
+            }
+            Log.d(TAG, "status " + status + " have " + String.valueOf(orderPackage.orders.size()));
         }
 
         return orderPackages;

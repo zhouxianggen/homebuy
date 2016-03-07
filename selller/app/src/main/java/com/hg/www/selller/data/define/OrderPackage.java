@@ -10,10 +10,16 @@ public class OrderPackage {
     public List<Order> orders = null;
 
     public int getAmount() {
+        if (orders == null) {
+            return 0;
+        }
         return orders.size();
     }
 
     public double getPayment() {
+        if (orders == null) {
+            return 0;
+        }
         double payment = 0;
         for (Order order : orders) {
             payment += order.payment;
