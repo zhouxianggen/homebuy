@@ -6,6 +6,7 @@ import android.content.Intent;
 import com.hg.www.selller.AppSettings;
 import com.hg.www.selller.GlobalContext;
 import com.hg.www.selller.data.api.HttpAsyncTask;
+import com.hg.www.selller.data.api.OrderApi;
 import com.hg.www.selller.data.define.Order;
 
 import java.util.List;

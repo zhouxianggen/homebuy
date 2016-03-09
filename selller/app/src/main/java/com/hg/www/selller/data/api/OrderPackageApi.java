@@ -54,10 +54,10 @@ public class OrderPackageApi {
             OrderPackage orderPackage = new OrderPackage();
             orderPackage.status = status;
             orderPackage.orders = statusOrders.get(status);
-            orderPackages.add(orderPackage);
             if (orderPackage.orders == null) {
                 orderPackage.orders = new ArrayList<>();
             }
+            orderPackages.add(orderPackage);
             Log.d(TAG, "status " + status + " have " + String.valueOf(orderPackage.orders.size()));
         }
 

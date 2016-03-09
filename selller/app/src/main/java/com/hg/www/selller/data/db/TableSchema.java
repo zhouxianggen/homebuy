@@ -15,6 +15,10 @@ public final class TableSchema {
         public static final String COLUMN_NAME_AMOUNT = "amount";
         public static final String COLUMN_NAME_PAYMENT = "payment";
         public static final String COLUMN_NAME_STATUS = "status";
+        public static final String COLUMN_NAME_LOADING_TIMESTAMP = "loading_timestamp";
+        public static final String COLUMN_NAME_RETURN_TIMESTAMP = "return_timestamp";
+        public static final String COLUMN_NAME_PAY_TIMESTAMP = "pay_timestamp";
+        public static final String COLUMN_NAME_SETTLE_TIMESTAMP = "settle_timestamp";
     }
 
     public static abstract class CommodityEntry implements BaseColumns {
@@ -62,8 +66,9 @@ public final class TableSchema {
         public static final String TABLE_NAME = "expressman_message";
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_TYPE = "type";
-        public static final String COLUMN_NAME_TIME = "time";
+        public static final String COLUMN_NAME_TIMESTAMP = "timestamp";
         public static final String COLUMN_NAME_EXPRESSMAN_ID = "expressman_id";
         public static final String COLUMN_NAME_CONTENT = "content";
+        public static final String COLUMN_NAME_STATUS = "status";
     }
 }

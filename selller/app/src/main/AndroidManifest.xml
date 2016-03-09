@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:name=".GlobalContext"
@@ -26,13 +27,15 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.CommodityListActivity" />
-        <activity android:name=".ui.PrepareOrderListActivity" />
+        <activity android:name=".ui.PrepareOrderListActivity" android:noHistory="true"/>
         <activity android:name=".ui.NewOrderListActivity" />
         <activity android:name=".ui.AcceptedOrderListActivity" />
         <activity android:name=".ui.LoadedOrderListActivity" />
         <activity android:name=".ui.PaidOrderListActivity" />
         <activity android:name=".ui.ReturnedOrderListActivity" />
-        <activity android:name=".ui.ClaimedOrderListActivity"></activity>
+        <activity android:name=".ui.ClaimedOrderListActivity" />
+        <activity android:name=".ui.CheckLoadingOrderListActivity" android:noHistory="true"/>
+        <activity android:name=".ui.CheckReturnOrderListActivity" android:noHistory="true" />
     </application>
 
 </manifest>

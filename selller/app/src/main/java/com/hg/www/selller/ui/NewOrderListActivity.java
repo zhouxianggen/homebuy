@@ -33,10 +33,10 @@ import java.util.List;
 
 public class NewOrderListActivity extends AppCompatActivity {
     private static final String TAG = NewOrderListActivity.class.getSimpleName();
-    private static final String SAVED_REJECTED_IDS = "rejected_ids";
-    private Context mContext;
+    private String mTitle = "";
     private RecyclerView mRecyclerView;
     private MyAdapter mAdapter;
+    private TextView mSummary;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +44,11 @@ public class NewOrderListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_list);
 
+        final Context context = this;
+        mTitle = getString(R.string.ACTIVITY_NEW_ORDER);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mSummary = (TextView) findViewById(R.id.summary);
 
         Button btn = (Button) findViewById(R.id.btn_action);
         btn.setOnClickListener(new View.OnClickListener() {
@@ -54,17 +57,22 @@ public class NewOrderListActivity extends AppCompatActivity {
                    for (Order order : mAdapter.orders) {
                        order.status = Order.STATUS_ACCEPTED;
                    }
-                   OrderService.updateServerOrders(mContext, mAdapter.orders, 4,
+                   OrderService.updateServerOrders(context, mAdapter.orders, 4,
                            new HttpAsyncTask.OnSuccessListener(){
                        @Override
                        public void onSuccess() {
-                           Intent intent = new Intent(mContext, MainActivity.class);
-                           mContext.startActivity(intent);
+                           for (Order order : mAdapter.orders) {
+                               OrderApi.getInstance().setOrderStatus(order.id, Order.STATUS_ACCEPTED);
+                           }
+                           Intent intent = new Intent(context, MainActivity.class);
+                           intent.putExtra(getString(R.string.EXTRA_FRAGMENT),
+                                   MainActivity.FRAGMENT_ORDER);
+                           context.startActivity(intent);
                        }
                    }, new HttpAsyncTask.OnFailureListener() {
                        @Override
                        public void onFailure(String errors) {
-                           Toast.makeText(mContext, errors, Toast.LENGTH_SHORT).show();
+                           Toast.makeText(context, errors, Toast.LENGTH_SHORT).show();
                        }
                    });
                }
@@ -90,13 +98,18 @@ public class NewOrderListActivity extends AppCompatActivity {
         actionBar.setCustomView(R.layout.actionbar_common);
         View customView = actionBar.getCustomView();
         TextView textView = (TextView) customView.findViewById(R.id.title);
-        textView.setText(getString(R.string.ACTIVITY_NEW_ORDER));
+        textView.setText(mTitle);
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     public void onUpdateAdapter() {
         mAdapter.orders =  OrderApi.getInstance().getOrders(Order.STATUS_NEW);
         mAdapter.notifyDataSetChanged();
+        double summary = 0;
+        for (Order order : mAdapter.orders) {
+            summary += order.payment;
+        }
+        mSummary.setText(getString(R.string.RMB) + String.valueOf(summary));
     }
 
     @Override
@@ -144,8 +157,9 @@ public class NewOrderListActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             OrderApi.getInstance().setOrderStatus(orders.get(position).id, Order.STATUS_REJECTED);
-                            orders.remove(position);
-                            notifyDataSetChanged();
+                            onUpdateAdapter();
+//                            orders.remove(position);
+//                            notifyDataSetChanged();
                         }
                     });
                     builder.setNegativeButton(R.string.btn_cancel, new DialogInterface.OnClickListener() {

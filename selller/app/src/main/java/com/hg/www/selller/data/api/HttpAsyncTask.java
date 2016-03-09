@@ -35,14 +35,14 @@ public class HttpAsyncTask extends AsyncTask<Void, Integer, String> {
 //        mProgressDialog.setMessage(GlobalContext.getInstance().getString(R.string.PROGRESS_DIALOG_MESSAGE));
 //        mProgressDialog.setCancelable(true);
 //        mProgressDialog.show();
-//        mProgressDialog = ProgressDialog.show(GlobalContext.getInstance().getApplicationContext(),
-//                GlobalContext.getInstance().getString(R.string.PROGRESS_DIALOG_TITLE),
-//                GlobalContext.getInstance().getString(R.string.PROGRESS_DIALOG_MESSAGE), true);
+        mProgressDialog = ProgressDialog.show(mContext,
+                GlobalContext.getInstance().getString(R.string.PROGRESS_DIALOG_TITLE),
+                GlobalContext.getInstance().getString(R.string.PROGRESS_DIALOG_MESSAGE), true);
     }
 
     protected String doInBackground(Void... params) {
         try {
-            Thread.sleep(2000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -53,7 +53,7 @@ public class HttpAsyncTask extends AsyncTask<Void, Integer, String> {
     }
 
     protected void onPostExecute(String result) {
-        //mProgressDialog.dismiss();
+        mProgressDialog.dismiss();
         if (result.isEmpty()) {
             mOnSuccessListener.onSuccess();
         } else {
@@ -62,7 +62,7 @@ public class HttpAsyncTask extends AsyncTask<Void, Integer, String> {
     }
 
     protected void onCancelled(String result) {
-        //mProgressDialog.dismiss();
+        mProgressDialog.dismiss();
         mOnFailureListener.onFailure(result);
     }
 

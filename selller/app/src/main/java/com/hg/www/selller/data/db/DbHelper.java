@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.hg.www.selller.GlobalContext;
+import com.hg.www.selller.data.define.ExpressmanMessage;
 
 public class DbHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
@@ -23,7 +24,11 @@ public class DbHelper extends SQLiteOpenHelper {
                     TableSchema.OrderEntry.COLUMN_NAME_EXPRESSMAN_ID + TEXT_TYPE + COMMA_SEP +
                     TableSchema.OrderEntry.COLUMN_NAME_AMOUNT + INTEGER_TYPE + COMMA_SEP +
                     TableSchema.OrderEntry.COLUMN_NAME_PAYMENT + REAL_TYPE + COMMA_SEP +
-                    TableSchema.OrderEntry.COLUMN_NAME_STATUS + TEXT_TYPE +
+                    TableSchema.OrderEntry.COLUMN_NAME_STATUS + TEXT_TYPE + COMMA_SEP +
+                    TableSchema.OrderEntry.COLUMN_NAME_LOADING_TIMESTAMP + TEXT_TYPE + COMMA_SEP +
+                    TableSchema.OrderEntry.COLUMN_NAME_RETURN_TIMESTAMP + TEXT_TYPE + COMMA_SEP +
+                    TableSchema.OrderEntry.COLUMN_NAME_PAY_TIMESTAMP + TEXT_TYPE + COMMA_SEP +
+                    TableSchema.OrderEntry.COLUMN_NAME_SETTLE_TIMESTAMP + TEXT_TYPE +
             " )";
     private static final String SQL_DELETE_ORDER_TABLE =
             "DROP TABLE IF EXISTS " + TableSchema.OrderEntry.TABLE_NAME;
@@ -79,9 +84,10 @@ public class DbHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + TableSchema.ExpressmanMessageEntry.TABLE_NAME + " (" +
                     TableSchema.ExpressmanMessageEntry.COLUMN_NAME_ID + " TEXT PRIMARY KEY," +
                     TableSchema.ExpressmanMessageEntry.COLUMN_NAME_TYPE + TEXT_TYPE + COMMA_SEP +
-                    TableSchema.ExpressmanMessageEntry.COLUMN_NAME_TIME + TEXT_TYPE + COMMA_SEP +
+                    TableSchema.ExpressmanMessageEntry.COLUMN_NAME_TIMESTAMP + TEXT_TYPE + COMMA_SEP +
                     TableSchema.ExpressmanMessageEntry.COLUMN_NAME_EXPRESSMAN_ID + TEXT_TYPE + COMMA_SEP +
-                    TableSchema.ExpressmanMessageEntry.COLUMN_NAME_CONTENT + TEXT_TYPE +
+                    TableSchema.ExpressmanMessageEntry.COLUMN_NAME_CONTENT + TEXT_TYPE + COMMA_SEP +
+                    TableSchema.ExpressmanMessageEntry.COLUMN_NAME_STATUS + TEXT_TYPE +
                     " )";
     private static final String SQL_DELETE_EXPRESSMAN_MESSAGE_TABLE =
             "DROP TABLE IF EXISTS " + TableSchema.ExpressmanMessageEntry.TABLE_NAME;
@@ -127,6 +133,10 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(TableSchema.OrderEntry.COLUMN_NAME_AMOUNT, 1);
         values.put(TableSchema.OrderEntry.COLUMN_NAME_PAYMENT, 3.5);
         values.put(TableSchema.OrderEntry.COLUMN_NAME_STATUS, "new");
+        values.put(TableSchema.OrderEntry.COLUMN_NAME_LOADING_TIMESTAMP, "1");
+        values.put(TableSchema.OrderEntry.COLUMN_NAME_RETURN_TIMESTAMP, "1");
+        values.put(TableSchema.OrderEntry.COLUMN_NAME_PAY_TIMESTAMP, "1");
+        values.put(TableSchema.OrderEntry.COLUMN_NAME_SETTLE_TIMESTAMP, "1");
         db.insert(TableSchema.OrderEntry.TABLE_NAME, null, values);
 
         values = new ContentValues();
@@ -138,6 +148,10 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(TableSchema.OrderEntry.COLUMN_NAME_AMOUNT, 2);
         values.put(TableSchema.OrderEntry.COLUMN_NAME_PAYMENT, 7.0);
         values.put(TableSchema.OrderEntry.COLUMN_NAME_STATUS, "new");
+        values.put(TableSchema.OrderEntry.COLUMN_NAME_LOADING_TIMESTAMP, "1");
+        values.put(TableSchema.OrderEntry.COLUMN_NAME_RETURN_TIMESTAMP, "1");
+        values.put(TableSchema.OrderEntry.COLUMN_NAME_PAY_TIMESTAMP, "1");
+        values.put(TableSchema.OrderEntry.COLUMN_NAME_SETTLE_TIMESTAMP, "1");
         db.insert(TableSchema.OrderEntry.TABLE_NAME, null, values);
 
         values = new ContentValues();
@@ -171,10 +185,11 @@ public class DbHelper extends SQLiteOpenHelper {
 
         values = new ContentValues();
         values.put(TableSchema.ExpressmanMessageEntry.COLUMN_NAME_ID, "expressman_message_1");
-        values.put(TableSchema.ExpressmanMessageEntry.COLUMN_NAME_TYPE, "PREPARE");
-        values.put(TableSchema.ExpressmanMessageEntry.COLUMN_NAME_TIME, "2016-02-20 09:58");
+        values.put(TableSchema.ExpressmanMessageEntry.COLUMN_NAME_TYPE, ExpressmanMessage.PREPARE_ORDER);
+        values.put(TableSchema.ExpressmanMessageEntry.COLUMN_NAME_TIMESTAMP, "2016-02-20 09:58");
         values.put(TableSchema.ExpressmanMessageEntry.COLUMN_NAME_EXPRESSMAN_ID, "expressman_1");
         values.put(TableSchema.ExpressmanMessageEntry.COLUMN_NAME_CONTENT, "请准备好订单货物");
+        values.put(TableSchema.ExpressmanMessageEntry.COLUMN_NAME_STATUS, ExpressmanMessage.STATUS_NEW);
         db.insert(TableSchema.ExpressmanMessageEntry.TABLE_NAME, null, values);
     }
 }

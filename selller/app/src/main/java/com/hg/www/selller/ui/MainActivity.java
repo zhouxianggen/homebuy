@@ -1,6 +1,7 @@
 package com.hg.www.selller.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -16,17 +17,22 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.hg.www.selller.R;
+import com.hg.www.selller.data.define.Expressman;
+import com.hg.www.selller.data.define.ExpressmanMessage;
 import com.hg.www.selller.ui.CommodityFragment;
 import com.hg.www.selller.ui.OrderFragment;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
-
+    private static final String TAG = MainActivity.class.getSimpleName();
+    public static final String FRAGMENT_ORDER = "fragment_order";
     private static final long DRAWER_CLOSE_DELAY_MS = 250;
     private static final String NAV_ITEM_ID = "navItemId";
     private final Handler mDrawerActionHandler = new Handler();
@@ -72,6 +78,21 @@ public class MainActivity extends AppCompatActivity implements
         viewPager.setAdapter(mAdapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
+        Intent intent = getIntent();
+        String fragment = intent.getStringExtra(getString(R.string.EXTRA_FRAGMENT));
+        if (fragment != null) {
+            if (fragment.equals(FRAGMENT_ORDER)) {
+                viewPager.setCurrentItem(1);
+            }
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
     private void navigate(final int itemId) {
@@ -104,10 +125,39 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        if (item.getItemId() == android.support.v7.appcompat.R.id.home) {
+        int id = item.getItemId();
+        if (id == android.support.v7.appcompat.R.id.home) {
             return mDrawerToggle.onOptionsItemSelected(item);
+        } else if (id == R.id.action_scan) {
+            Intent intent = new Intent("com.google.zxing.client.android.SCAN");
+            intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+            startActivityForResult(intent, 0);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (requestCode == 0) {
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(this, intent.getStringExtra("SCAN_RESULT"), Toast.LENGTH_SHORT).show();
+                ExpressmanMessage message = new ExpressmanMessage();
+                if (message.parseFromString(intent.getStringExtra("SCAN_RESULT"))) {
+                    if (message.type == ExpressmanMessage.CHECK_LOADING_ORDER) {
+                        Intent newIntent = new Intent(this, CheckLoadingOrderListActivity.class);
+                        newIntent.putExtra(getString(R.string.EXTRA_EXPRESSMAN_ID), message.expressman_id);
+                        newIntent.putExtra(getString(R.string.EXTRA_LOADING_TIMESTAMP), message.timestamp);
+                        startActivity(newIntent);
+                    } else if (message.type == ExpressmanMessage.CHECK_RETURN_ORDER) {
+                        Intent newIntent = new Intent(this, CheckReturnOrderListActivity.class);
+                        newIntent.putExtra(getString(R.string.EXTRA_EXPRESSMAN_ID), message.expressman_id);
+                        newIntent.putExtra(getString(R.string.EXTRA_RETURN_TIMESTAMP), message.timestamp);
+                        startActivity(newIntent);
+                    }
+                }
+            } else if (resultCode == RESULT_CANCELED) {
+            }
+        }
     }
 
     @Override
@@ -141,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements
                 case 1:
                     return new OrderFragment();
                 case 2:
-                    return new DealFragment();
+                    return new StatisticFragment();
             }
             return null;
         }
@@ -159,13 +209,13 @@ public class MainActivity extends AppCompatActivity implements
                 case 1:
                     return context.getString(R.string.tab_order);
                 case 2:
-                    return context.getString(R.string.tab_deal);
+                    return context.getString(R.string.tab_statistic);
             }
             return null;
         }
     }
 
-    public static class DealFragment extends  Fragment {
+    public static class StatisticFragment extends  Fragment {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,

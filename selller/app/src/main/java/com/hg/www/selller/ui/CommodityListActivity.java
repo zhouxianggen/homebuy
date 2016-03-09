@@ -41,7 +41,7 @@ public class CommodityListActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         Intent intent = getIntent();
-        mParent = intent.getStringExtra(getString(R.string.EXTRA_COMMODITY_CATEGORY_PARENT));
+        mParent = intent.getStringExtra(getString(R.string.EXTRA_COMMODITY_CATEGORY_ID));
         mTitle = intent.getStringExtra(getString(R.string.EXTRA_COMMODITY_CATEGORY_TITLE));
 
         initializeActionBar();
@@ -155,7 +155,7 @@ public class CommodityListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, CommodityListActivity.class);
-                intent.putExtra(mContext.getString(R.string.EXTRA_COMMODITY_CATEGORY_PARENT), mCommodityCategory.id);
+                intent.putExtra(mContext.getString(R.string.EXTRA_COMMODITY_CATEGORY_ID), mCommodityCategory.id);
                 intent.putExtra(mContext.getString(R.string.EXTRA_COMMODITY_CATEGORY_TITLE), mCommodityCategory.title);
                 mContext.startActivity(intent);
             }

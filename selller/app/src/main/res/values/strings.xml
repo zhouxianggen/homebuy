@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Seller</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">setting</string>
+    <string name="action_scan">scan</string>
     <string name="commodity_title">货物名称</string>
     <string name="commodity_count">8</string>
     <string name="commodity_desc">货物描述</string>
@@ -13,23 +14,32 @@
     <string name="edit_commodity">添加货物</string>
     <string name="add_commodity_image">添加图片</string>
     <string name="delete">X</string>
+    <string name="EXTRA_FRAGMENT">extra_fragment</string>
     <string name="EXTRA_COMMODITY_ITEM_ID">extra_commodity_id</string>
     <string name="EXTRA_COMMODITY_GROUP_ID">extra_commodity_group_id</string>
-    <string name="EXTRA_COMMODITY_CATEGORY_PARENT">extra_commodity_parent</string>
+    <string name="EXTRA_COMMODITY_CATEGORY_ID">extra_commodity_parent</string>
     <string name="EXTRA_COMMODITY_CATEGORY_TITLE">extra_commodity_category_title</string>
     <string name="EXTRA_EXPRESSMAN_ID">extra_expressman_id</string>
+    <string name="EXTRA_MESSAGE_ID">extra_message_id</string>
+    <string name="EXTRA_LOADING_TIMESTAMP">extra_loading_timestamp</string>
+    <string name="EXTRA_RETURN_TIMESTAMP">extra_return_timestamp</string>
+    <string name="FRAGMENT_ORDER">fragment_order</string>
     <string name="tab_commodity">货物</string>
     <string name="tab_order">订单</string>
-    <string name="tab_deal">结算</string>
+    <string name="tab_statistic">统计</string>
 
     <string name="ORDER_STATUS_NEW">新订单</string>
     <string name="ORDER_STATUS_ACCEPTED">待发货</string>
     <string name="ORDER_STATUS_LOADED">已发货</string>
-    <string name="ORDER_STATUS_PAID">已收款</string>
+    <string name="ORDER_STATUS_PAID">已付款</string>
     <string name="ORDER_STATUS_RETURNED">已退货</string>
     <string name="ORDER_STATUS_CLAIMED">理赔</string>
 
     <string name="PREF_UPDATE_ORDER_INTERVAL">10</string>
+    <string name="PREF_UPDATE_EXPRESSMAN_MESSAGE_INTERVAL">10</string>
+
+    <string name="RMB">¥ </string>
+
 
     <string name="more">More</string>
     <string name="item_1">First Item</string>
@@ -43,14 +53,18 @@
 
     <string name="btn_reject">拒绝</string>
     <string name="btn_accept">接收</string>
+    <string name="btn_confirm">确认</string>
     <string name="btn_ok">确认</string>
     <string name="btn_cancel">取消</string>
 
     <string name="ACTIVITY_NEW_ORDER">新订单</string>
+    <string name="ACTIVITY_PREPARE_ORDER">准备订单</string>
     <string name="ACTIVITY_ACCEPTED_ORDER">待发货订单</string>
+    <string name="ACTIVITY_CHECK_LOADING_ORDER">确认发货订单</string>
+    <string name="ACTIVITY_CHECK_RETURN_ORDER">确认退货订单</string>
     <string name="ACTIVITY_LOADED_ORDER">已发货订单</string>
     <string name="ACTIVITY_PAID_ORDER">已付款订单</string>
-    <string name="ACTIVITY_RETURNED_ORDER">退单</string>
+    <string name="ACTIVITY_RETURNED_ORDER">已退货订单</string>
     <string name="ACTIVITY_CLAIMED_ORDER">理赔订单</string>
 
     <string name="DIALOG_MESSAGE_REJECT_ORDER">
@@ -60,7 +74,6 @@
 
     <string name="PROGRESS_DIALOG_TITLE">正在处理</string>
     <string name="PROGRESS_DIALOG_MESSAGE">请稍候</string>
-
 
 
     <string name="unit_prompt">单位</string>

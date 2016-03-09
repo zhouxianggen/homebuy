@@ -17,10 +17,12 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.hg.www.selller.R;
+import com.hg.www.selller.data.api.ExpressmanApi;
 import com.hg.www.selller.data.api.ExpressmanMessageApi;
 import com.hg.www.selller.data.api.OrderApi;
 import com.hg.www.selller.data.api.OrderPackageApi;
 import com.hg.www.selller.data.api.VolleyApi;
+import com.hg.www.selller.data.define.Expressman;
 import com.hg.www.selller.data.define.ExpressmanMessage;
 import com.hg.www.selller.data.define.Order;
 import com.hg.www.selller.data.define.OrderPackage;
@@ -98,11 +100,14 @@ public class OrderFragment extends Fragment {
             if (holder instanceof ExpressmanMessageViewHolder) {
                 ExpressmanMessage message = messages.get(position);
                 ((ExpressmanMessageViewHolder) holder).mMessage = message;
-                ((ExpressmanMessageViewHolder) holder).mExpressmanIcon.setImageUrl(
-                        message.expressman.icon, VolleyApi.getInstance().getImageLoader()
-                );
-                ((ExpressmanMessageViewHolder) holder).mExpressmanName.setText(message.expressman.name);
-                ((ExpressmanMessageViewHolder) holder).mTime.setText(message.time);
+                Expressman expressman = ExpressmanApi.getInstance().getExpressman(message.expressman_id);
+                if (expressman != null) {
+                    ((ExpressmanMessageViewHolder) holder).mExpressmanIcon.setImageUrl(
+                            expressman.icon, VolleyApi.getInstance().getImageLoader()
+                    );
+                    ((ExpressmanMessageViewHolder) holder).mExpressmanName.setText(expressman.name);
+                }
+                ((ExpressmanMessageViewHolder) holder).mTime.setText(message.timestamp);
                 ((ExpressmanMessageViewHolder) holder).mContent.setText(message.content);
             } else if (holder instanceof OrderPackageViewHolder) {
                 OrderPackage orderPackage = packages.get(position - messages.size());
@@ -148,7 +153,8 @@ public class OrderFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, PrepareOrderListActivity.class);
-                intent.putExtra(mContext.getString(R.string.EXTRA_EXPRESSMAN_ID), mMessage.expressman.id);
+                intent.putExtra(mContext.getString(R.string.EXTRA_MESSAGE_ID), mMessage.id);
+                intent.putExtra(mContext.getString(R.string.EXTRA_EXPRESSMAN_ID), mMessage.expressman_id);
                 mContext.startActivity(intent);
             }
         }

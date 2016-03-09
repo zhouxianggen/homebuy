@@ -3,8 +3,6 @@ package com.hg.www.selller.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.hg.www.selller.GlobalContext;
 import com.hg.www.selller.R;
 import com.hg.www.selller.data.api.CommodityApi;
 import com.hg.www.selller.data.api.CommodityCategoryApi;
@@ -31,24 +28,27 @@ public class CommodityFragment extends Fragment {
 	private RecyclerView mRecyclerView;
     private MyAdapter mAdapter;
 
-    private static Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message message) {
-
-        }
-    };
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView");
         View rootView = inflater.inflate(R.layout.fragment_commodity, container, false);
 
         mContext = getActivity();
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        mAdapter = new MyAdapter(mContext, "root");
-        mRecyclerView.setAdapter(mAdapter);
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        Log.d(TAG, "onResume");
+        if (mAdapter == null) {
+            mAdapter = new MyAdapter(mContext);
+            mRecyclerView.setAdapter(mAdapter);
+        }
+        onUpdateAdapter();
+        super.onResume();
     }
 
     public void onUpdateAdapter() {
@@ -69,10 +69,8 @@ public class CommodityFragment extends Fragment {
         public List<CommodityCategory> categories = new ArrayList<>();
         public List<Commodity> commodities = new ArrayList<>();
 
-        public MyAdapter(Context context, String parent) {
+        public MyAdapter(Context context) {
             this.context = context;
-            categories = CommodityCategoryApi.getInstance().getCategories(parent);
-            commodities = CommodityApi.getInstance().getCommodities(parent);
         }
 
         @Override
@@ -95,7 +93,7 @@ public class CommodityFragment extends Fragment {
             Log.d(TAG, "onBindViewHolder " + String.valueOf(position));
             if (holder instanceof CommodityCategoryViewHolder) {
                 CommodityCategory category = categories.get(position);
-                ((CommodityCategoryViewHolder) holder).mCommodityCategory = category;
+                ((CommodityCategoryViewHolder) holder).mCategory = category;
                 ((CommodityCategoryViewHolder) holder).mTitle.setText(category.title);
                 ((CommodityCategoryViewHolder) holder).mAmount.setText(String.valueOf(category.item_count));
             } else if (holder instanceof CommodityViewHolder) {
@@ -126,7 +124,7 @@ public class CommodityFragment extends Fragment {
             private Context mContext;
             private TextView mTitle;
             private TextView mAmount;
-            private CommodityCategory mCommodityCategory;
+            private CommodityCategory mCategory;
 
             public CommodityCategoryViewHolder(View view, Context context) {
                 super(view);
@@ -139,8 +137,8 @@ public class CommodityFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, CommodityListActivity.class);
-                intent.putExtra(mContext.getString(R.string.EXTRA_COMMODITY_CATEGORY_PARENT), mCommodityCategory.id);
-                intent.putExtra(mContext.getString(R.string.EXTRA_COMMODITY_CATEGORY_TITLE), mCommodityCategory.title);
+                intent.putExtra(mContext.getString(R.string.EXTRA_COMMODITY_CATEGORY_ID), mCategory.id);
+                intent.putExtra(mContext.getString(R.string.EXTRA_COMMODITY_CATEGORY_TITLE), mCategory.title);
                 mContext.startActivity(intent);
             }
         }

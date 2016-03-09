@@ -29,37 +29,55 @@ public class ExpressmanMessageApi {
         return instance;
     }
 
+    public int setMessageStatus(String id, String status) {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        Cursor c = db.rawQuery(
+                "UPDATE expressman_message SET status=? WHERE id=?",
+                new String[]{status, id}
+        );
+        return c.getCount();
+    }
+
+    public ExpressmanMessage getMessage(String id) {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        Cursor c = db.rawQuery(
+                "SELECT * from expressman_message WHERE id=?",
+                new String[]{id}
+        );
+
+        if (c.moveToNext()) {
+            return CreateFromCursor(c);
+        }
+
+        return null;
+    }
+
     public List<ExpressmanMessage> getMessages() {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        String[] columns = {
-                TableSchema.ExpressmanMessageEntry.COLUMN_NAME_ID,
-                TableSchema.ExpressmanMessageEntry.COLUMN_NAME_TYPE,
-                TableSchema.ExpressmanMessageEntry.COLUMN_NAME_TIME,
-                TableSchema.ExpressmanMessageEntry.COLUMN_NAME_EXPRESSMAN_ID,
-                TableSchema.ExpressmanMessageEntry.COLUMN_NAME_CONTENT
-        };
-        Cursor c = db.query(
-                TableSchema.ExpressmanMessageEntry.TABLE_NAME,
-                columns, null, null, null, null, null
+
+        Cursor c = db.rawQuery(
+                "SELECT * from expressman_message WHERE status=?",
+                new String[]{ExpressmanMessage.STATUS_NEW}
         );
+
         Log.d(TAG, "get rows " + String.valueOf(c.getCount()));
         List<ExpressmanMessage> messages = new ArrayList<>();
         while (c.moveToNext()) {
-            ExpressmanMessage message = new ExpressmanMessage();
-            message.id = c.getString(c.getColumnIndexOrThrow(TableSchema.ExpressmanMessageEntry.COLUMN_NAME_ID));
-            message.type = c.getString(c.getColumnIndexOrThrow(TableSchema.ExpressmanMessageEntry.COLUMN_NAME_TYPE));
-            message.time = c.getString(c.getColumnIndexOrThrow(TableSchema.ExpressmanMessageEntry.COLUMN_NAME_TIME));
-            message.content = c.getString(c.getColumnIndexOrThrow(TableSchema.ExpressmanMessageEntry.COLUMN_NAME_CONTENT));
-            String expressman_id = c.getString(c.getColumnIndexOrThrow(TableSchema.ExpressmanMessageEntry.COLUMN_NAME_EXPRESSMAN_ID));
-            Expressman expressman = ExpressmanApi.getInstance().getExpressman(expressman_id);
-            if (expressman == null) {
-                Log.d(TAG, "can not get expressman " + expressman_id);
-                continue;
-            }
-            message.expressman = expressman;
-            messages.add(message);
+            messages.add(CreateFromCursor(c));
         }
 
         return messages;
+    }
+
+    public static ExpressmanMessage CreateFromCursor(Cursor c) {
+        ExpressmanMessage message = new ExpressmanMessage();
+        message.id = c.getString(c.getColumnIndexOrThrow(TableSchema.ExpressmanMessageEntry.COLUMN_NAME_ID));
+        message.type = c.getString(c.getColumnIndexOrThrow(TableSchema.ExpressmanMessageEntry.COLUMN_NAME_TYPE));
+        message.timestamp = c.getString(c.getColumnIndexOrThrow(TableSchema.ExpressmanMessageEntry.COLUMN_NAME_TIMESTAMP));
+        message.content = c.getString(c.getColumnIndexOrThrow(TableSchema.ExpressmanMessageEntry.COLUMN_NAME_CONTENT));
+        message.expressman_id = c.getString(c.getColumnIndexOrThrow(TableSchema.ExpressmanMessageEntry.COLUMN_NAME_EXPRESSMAN_ID));
+        message.status = c.getString(c.getColumnIndexOrThrow(TableSchema.ExpressmanMessageEntry.COLUMN_NAME_STATUS));
+        return message;
     }
 }

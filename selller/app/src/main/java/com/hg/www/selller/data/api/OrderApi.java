@@ -66,6 +66,51 @@ public class OrderApi {
         return orders;
     }
 
+    public List<Order> getLoadingOrders(String expressman_id, String loading_timestamp) {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        Cursor c = db.rawQuery(
+                "SELECT * from t_order WHERE expressman_id=? AND loading_timestamp=?",
+                new String[]{expressman_id, loading_timestamp}
+        );
+
+        List<Order> orders = new ArrayList<>();
+        while (c.moveToNext()) {
+            orders.add(CreateFromCursor(c));
+        }
+
+        return orders;
+    }
+
+    public List<Order> getPrepareOrders(String expressman_id) {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        Cursor c = db.rawQuery(
+                "SELECT * from t_order WHERE expressman_id=? AND status=?",
+                new String[]{expressman_id, Order.STATUS_NEW}
+        );
+
+        List<Order> orders = new ArrayList<>();
+        while (c.moveToNext()) {
+            orders.add(CreateFromCursor(c));
+        }
+
+        return orders;
+    }
+
+    public List<Order> getReturnOrders(String expressman_id, String timestamp) {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        Cursor c = db.rawQuery(
+                "SELECT * from t_order WHERE expressman_id=? AND return_timestamp=?",
+                new String[]{expressman_id, timestamp}
+        );
+
+        List<Order> orders = new ArrayList<>();
+        while (c.moveToNext()) {
+            orders.add(CreateFromCursor(c));
+        }
+
+        return orders;
+    }
+
     public int setOrderStatus(String id, String status) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         Cursor c = db.rawQuery(
@@ -89,6 +134,8 @@ public class OrderApi {
         order.amount = c.getInt(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_AMOUNT));
         order.payment = c.getFloat(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_PAYMENT));
         order.status = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_STATUS));
+        order.loading_timestamp = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_LOADING_TIMESTAMP));
+        order.return_timestamp = c.getString(c.getColumnIndexOrThrow(TableSchema.OrderEntry.COLUMN_NAME_RETURN_TIMESTAMP));
         return order;
     }
 
