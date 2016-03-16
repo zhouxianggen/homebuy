@@ -2,13 +2,14 @@
     <string name="app_name">Seller</string>
     <string name="action_settings">setting</string>
     <string name="action_scan">scan</string>
-    <string name="commodity_title">货物名称</string>
+    <string name="commodity_title">商品名称</string>
+    <string name="commodity_price">商品价格</string>
     <string name="commodity_count">8</string>
     <string name="commodity_desc">货物描述</string>
     <string name="price">价格</string>
     <string name="option_in_stock">是否有货</string>
-    <string name="option_in_discount">是否特价</string>
-    <string name="option_support_return">是否支持退货</string>
+    <string name="option_in_discount">特价商品</string>
+    <string name="option_support_return">支持退货</string>
     <string name="submit">添加</string>
     <string name="add_commodity">添加货物</string>
     <string name="edit_commodity">添加货物</string>
@@ -57,6 +58,11 @@
     <string name="btn_ok">确认</string>
     <string name="btn_cancel">取消</string>
 
+    <string name="menu_confirm">确认</string>
+
+    <string name="ACTIVITY_EDIT_COMMODITY">修改商品</string>
+    <string name="ACTIVITY_ADD_COMMODITY">添加商品</string>
+    <string name="ACTIVITY_PICK_IMAGE">选择照片</string>
     <string name="ACTIVITY_NEW_ORDER">新订单</string>
     <string name="ACTIVITY_PREPARE_ORDER">准备订单</string>
     <string name="ACTIVITY_ACCEPTED_ORDER">待发货订单</string>
@@ -89,4 +95,17 @@
         <item>缺货</item>
         <item>删除</item>
     </string-array>
+
+    <string-array name="in_stock_status_array">
+        <item>有货</item>
+        <item>缺货</item>
+    </string-array>
+    <string name="in_stock">有货</string>
+    <string name="out_of_stock">缺货</string>
+
+    <string-array name="add_image_action">
+        <item>相册</item>
+        <item>拍照</item>
+    </string-array>
+
 </resources>

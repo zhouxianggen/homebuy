@@ -3,6 +3,9 @@
     package="com.hg.www.selller">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -14,10 +17,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ui.EditCommodityActivity"
-            android:label="@string/edit_commodity"
-            android:theme="@style/Theme.AppCompat" />
-        <activity
             android:name=".ui.MainActivity"
             android:theme="@style/Theme.Demo">
             <intent-filter>
@@ -26,16 +25,26 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.EditCommodityActivity"
+            android:noHistory="true" />
         <activity android:name=".ui.CommodityListActivity" />
-        <activity android:name=".ui.PrepareOrderListActivity" android:noHistory="true"/>
+        <activity
+            android:name=".ui.PrepareOrderListActivity"
+            android:noHistory="true" />
         <activity android:name=".ui.NewOrderListActivity" />
         <activity android:name=".ui.AcceptedOrderListActivity" />
         <activity android:name=".ui.LoadedOrderListActivity" />
         <activity android:name=".ui.PaidOrderListActivity" />
         <activity android:name=".ui.ReturnedOrderListActivity" />
         <activity android:name=".ui.ClaimedOrderListActivity" />
-        <activity android:name=".ui.CheckLoadingOrderListActivity" android:noHistory="true"/>
-        <activity android:name=".ui.CheckReturnOrderListActivity" android:noHistory="true" />
+        <activity
+            android:name=".ui.CheckLoadingOrderListActivity"
+            android:noHistory="true" />
+        <activity
+            android:name=".ui.CheckReturnOrderListActivity"
+            android:noHistory="true" />
+        <activity android:name=".ui.PickImageActivity"></activity>
     </application>
 
 </manifest>

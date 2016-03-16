@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.hg.www.selller.R;
 import com.hg.www.selller.data.api.CommodityApi;
 import com.hg.www.selller.data.api.CommodityCategoryApi;
@@ -37,6 +39,16 @@ public class CommodityFragment extends Fragment {
         mContext = getActivity();
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+
+        final FloatingActionButton removeAction = (FloatingActionButton) rootView.findViewById(R.id.action_add_commodity);
+        removeAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, EditCommodityActivity.class);
+                mContext.startActivity(intent);
+            }
+        });
+
         return rootView;
     }
 

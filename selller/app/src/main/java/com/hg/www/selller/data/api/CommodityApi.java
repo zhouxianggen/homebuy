@@ -43,6 +43,10 @@ public class CommodityApi {
     }
 
     public Commodity getCommodity(String id) {
+        if (id == null) {
+            return null;
+        }
+
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         Cursor c = db.rawQuery(
                 "SELECT * from commodity WHERE id=? ",

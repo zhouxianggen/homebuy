@@ -13,13 +13,11 @@
         android:layout_height="86dp"
         android:background="?android:attr/selectableItemBackground">
 
-        <ImageView
+        <com.android.volley.toolbox.NetworkImageView
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/dp"
             android:scaleType="centerCrop"
             android:id="@+id/thumbnail"/>
 
