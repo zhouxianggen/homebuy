@@ -1,72 +1,114 @@
 package com.hg.www.selller.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.hg.www.selller.R;
+import com.hg.www.selller.data.api.BarcodeApi;
 import com.hg.www.selller.data.api.CommodityApi;
-import com.hg.www.selller.data.api.VolleyApi;
+import com.hg.www.selller.data.api.HttpAsyncTask;
+import com.hg.www.selller.data.define.Barcode;
 import com.hg.www.selller.data.define.Commodity;
-import com.hg.www.selller.ui.component.LocalNetworkImageView;
-import com.hg.www.selller.util.HorizontalListView;
+import com.hg.www.selller.service.CommodityService;
+import com.hg.www.selller.ui.toolkit.ImageDownloader;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 public class EditCommodityActivity extends AppCompatActivity {
-    private static final String TAG = NewOrderListActivity.class.getSimpleName();
+    private static final String TAG = EditCommodityActivity.class.getSimpleName();
     private Context mContext;
     private String mTitle = "";
-    private static final int RESULT_CODE_ADD_IMAGE = 1;
     private Commodity mCommodity;
-    private LinearLayout mLayImageList;
-    private ImageListAdapter mAdapter = null;
+    private final ImageDownloader imageDownloader = new ImageDownloader();
+    private EditText viewCommodityTitle;
+    private EditText viewCommodityPrice;
+    private Spinner viewInStock;
+    private CheckBox viewInDiscount;
+    private CheckBox viewSupportReturn;
+    private LinearLayout layImageList;
+    private EditText viewCommodityDesc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.edit_commodity);
+        setContentView(R.layout.activity_edit_commodity);
 
-        mContext = this;
-        mLayImageList = (LinearLayout) findViewById(R.id.lay_commodity_image);
         Intent intent = getIntent();
-        String id = intent.getStringExtra(getString(R.string.EXTRA_COMMODITY_ITEM_ID));
-        mCommodity = CommodityApi.getInstance().getCommodity(id);
-        if (mCommodity == null) {
-            mCommodity = new Commodity();
-            mTitle = getString(R.string.ACTIVITY_ADD_COMMODITY);
-        } else {
+        String commodity_id = intent.getStringExtra(getString(R.string.EXTRA_COMMODITY_ID));
+        String barcode_id = intent.getStringExtra(getString(R.string.EXTRA_COMMODITY_BARCODE_ID));
+        String category_id = intent.getStringExtra(getString(R.string.EXTRA_COMMODITY_CATEGORY_ID));
+
+        mTitle = getString(R.string.ACTIVITY_ADD_COMMODITY);
+
+        Log.d(TAG, String.format("cateogry id is %s", category_id));
+        if (category_id == null) {
+            finish();
+        } else if (barcode_id != null) {
+            Log.d(TAG, String.format("barcode id is %s", barcode_id));
+            Barcode barcode = BarcodeApi.getInstance().getBarcode(barcode_id);
+            mCommodity =  CommodityApi.getInstance().getCommodityByBarcode(barcode_id);
+            if (mCommodity == null) {
+                Log.d(TAG, String.format("can not get commodity by barcode"));
+                mCommodity = CommodityApi.getInstance().createCommodity();
+                mCommodity.category = category_id;
+                mCommodity.barcode = barcode_id;
+                if (barcode != null) {
+                    mCommodity.title = barcode.commodity_title;
+                    mCommodity.price = barcode.commodity_price;
+                }
+            } else {
+                mTitle = getString(R.string.ACTIVITY_EDIT_COMMODITY);
+            }
+        } else if (commodity_id != null) {
+            Log.d(TAG, String.format("commodity id is %s", commodity_id));
             mTitle = getString(R.string.ACTIVITY_EDIT_COMMODITY);
+            mCommodity =  CommodityApi.getInstance().getCommodity(commodity_id);
+            if (mCommodity == null) {
+                finish();
+            }
+        } else {
+            mCommodity = CommodityApi.getInstance().createCommodity();
+            mCommodity.category = category_id;
         }
 
+        if (mCommodity == null) {
+            finish();
+        }
+
+        mContext = this;
+        viewCommodityTitle = (EditText) findViewById(R.id.commodity_title);
+        viewCommodityPrice = (EditText) findViewById(R.id.commodity_price);
+        viewInStock = (Spinner) findViewById(R.id.in_stock);
+        viewInDiscount = (CheckBox) findViewById(R.id.option_in_discount);
+        viewSupportReturn = (CheckBox) findViewById(R.id.option_support_return);
+        layImageList = (LinearLayout) findViewById(R.id.lay_commodity_image);
+        viewCommodityDesc = (EditText) findViewById(R.id.commodity_desc);
+
         initializeActionBar();
+        initUI();
     }
 
     @Override
@@ -76,24 +118,34 @@ public class EditCommodityActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Log.d(TAG, "onOptionsItemSelected " + String.valueOf(item.getItemId()));
-        onBackPressed();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_edit_commodity, menu);
         return true;
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "onActivityResult with request code " + String.valueOf(requestCode));
-        Log.d(TAG, "onActivityResult with result code " + String.valueOf(resultCode));
-        if (requestCode == RESULT_CODE_ADD_IMAGE) {
-            if (resultCode == RESULT_OK) {
-                Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-                mAdapter.addImage(thumbnail);
-                mAdapter.notifyDataSetChanged();
-            }
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.menu_confirm) {
+            updateCommodity();
+
+            CommodityService.updateServerCommodity(mContext, mCommodity, 4,
+                    new HttpAsyncTask.OnSuccessListener() {
+                        @Override
+                        public void onSuccess() {
+                            CommodityApi.getInstance().insertCommodity(mCommodity); // fixme
+                            finish();
+                        }
+                    }, new HttpAsyncTask.OnFailureListener() {
+                        @Override
+                        public void onFailure(String errors) {
+                            Toast.makeText(mContext, errors, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        } else {
+            onBackPressed();
         }
+        return super.onOptionsItemSelected(item);
     }
 
     private void initializeActionBar() {
@@ -126,6 +178,31 @@ public class EditCommodityActivity extends AppCompatActivity {
                                         break;
                                     // 拍照
                                     case 1:
+                                        intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                                        startActivityForResult(intent, 222);
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        })
+                        .show();
+            } else {
+                new AlertDialogWrapper.Builder(mContext)
+                        .setItems(R.array.set_image_action, new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which) {
+                                    // 设为图标
+                                    case 0:
+                                        mCommodity.setThumbnail(path);
+                                        refreshUI();
+                                        break;
+                                    // 删除图片
+                                    case 1:
+                                        mCommodity.deleteImage(path);
+                                        refreshUI();
                                         break;
                                     default:
                                         break;
@@ -138,167 +215,100 @@ public class EditCommodityActivity extends AppCompatActivity {
 
     };
 
-    private void refreshUI() {
+    private void updateCommodity() {
+        mCommodity.title = viewCommodityTitle.getText().toString();
+        mCommodity.price = Double.parseDouble(viewCommodityPrice.getText().toString());
+        mCommodity.description = viewCommodityDesc.getText().toString();
+
+        String value = viewInStock.getSelectedItem().toString();
+        if (value.equals(getString(R.string.in_stock))) {
+            mCommodity.in_stock = 1;
+        } else {
+            mCommodity.in_stock = 0;
+        }
+
+        mCommodity.in_discount = viewInDiscount.isChecked()? 1 : 0;
+        mCommodity.support_return = viewSupportReturn.isChecked()? 1 : 0;
+    }
+
+    private void initUI() {
         if (!mCommodity.title.isEmpty()) {
-            ((EditText) findViewById(R.id.commodity_title)).setText(mCommodity.title);
+            viewCommodityTitle.setText(mCommodity.title);
         }
         if (mCommodity.price > 0) {
-            ((EditText) findViewById(R.id.commodity_price)).setText(String.valueOf(mCommodity.price));
+            viewCommodityPrice.setText(String.valueOf(mCommodity.price));
         }
         if (!mCommodity.description.isEmpty()) {
-            ((EditText) findViewById(R.id.commodity_desc)).setText(mCommodity.description);
+            viewCommodityDesc.setText(mCommodity.description);
         }
 
-        Spinner spinner = (Spinner) findViewById(R.id.in_stock);
-        ArrayAdapter adapter = (ArrayAdapter) spinner.getAdapter();
+        ArrayAdapter adapter = (ArrayAdapter) viewInStock.getAdapter();
         if (mCommodity.in_stock != 0) {
             int position = adapter.getPosition(getString(R.string.in_stock));
-            spinner.setSelection(position);
+            viewInStock.setSelection(position);
         } else {
             int position = adapter.getPosition(getString(R.string.out_of_stock));
-            spinner.setSelection(position);
+            viewInStock.setSelection(position);
         }
 
-        CheckBox checkBox = (CheckBox) findViewById(R.id.option_in_discount);
-        checkBox.setChecked(mCommodity.in_discount != 0);
-        checkBox = (CheckBox) findViewById(R.id.option_support_return);
-        checkBox.setChecked(mCommodity.support_return != 0);
+        viewInDiscount.setChecked(mCommodity.in_discount != 0);
+        viewSupportReturn.setChecked(mCommodity.support_return != 0);
+    }
+
+    private void refreshUI() {
+        layImageList.removeAllViews();
 
         List<String> images = mCommodity.getImages();
         images.add("");
         for (String path : images) {
             View view = View.inflate(this, R.layout.commodity_image, null);
-            LocalNetworkImageView imageView = (LocalNetworkImageView) view.findViewById(R.id.img);
+            ImageView imageView = (ImageView) view.findViewById(R.id.image);
 
             view.setTag(path);
             view.setOnClickListener(onPictureClickListener);
-
-            if (path.toString().startsWith("http://") || path.toString().startsWith("https://")) {
-                Log.d(TAG, "网络图片地址, path = " + path);
-                imageView.setImageUrl(path, VolleyApi.getInstance().getImageLoader());
+            if (!path.isEmpty()) {
+                imageDownloader.download(path, imageView, 80, 80);
             }
-            else if (path.toString().startsWith("content://") || path.toString().startsWith("file://")) {
-                Log.d(TAG, "本地图片地址, path = " + path);
-                try {
-                    Uri uri = Uri.parse(path);
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-                    imageView.setLocalImageBitmap(bitmap);
-                } catch (IOException e) {
-                    Log.d(TAG, "path not found" );
-                }
-            } else if (path.isEmpty()) {
-            }
-
-            mLayImageList.addView(view,
+            layImageList.addView(view,
                     new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         }
     }
 
-    class ImageListAdapter extends BaseAdapter {
-        private List<Bitmap> mImages = new ArrayList<>();
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-        ImageListAdapter() {
-            Rect rect = new Rect(0, 0, 1, 1);
-            Bitmap image = Bitmap.createBitmap(rect.width(), rect.height(), Bitmap.Config.ARGB_8888);
-            mImages.add(image);
-        }
-
-        public void deleteItem(int position) {
-            if (position + 1 < mImages.size()) {
-                mImages.remove(position);
-            }
-        }
-
-        public void addImage(Bitmap bitmap) {
-            mImages.add(mImages.size()-1, bitmap);
-        }
-
-        @Override
-        public int getCount() {
-            return mImages.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return mImages.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return mImages.get(position).hashCode();
-        }
-
-        @Override
-        public boolean areAllItemsEnabled() {
-            return true;
-        }
-
-        @Override
-        public boolean isEnabled(int position) {
-            return true;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            Log.d(TAG, "getView " + String.valueOf(position));
-            View view;
-            if (convertView != null) {
-                view = convertView;
-            } else if (position + 1 < mImages.size()) {
-                view = LayoutInflater.from(parent.getContext()).inflate(
-                        R.layout.image_list_item, null);
-                ImageView imageView = (ImageView) view.findViewById(R.id.image);
-                imageView.setImageBitmap(mImages.get(position));
-            } else {
-                view = LayoutInflater.from(parent.getContext()).inflate(
-                        R.layout.add_image_btn, null);
-            }
-            ListItemViewHolder holder = (ListItemViewHolder) view.getTag();
-            if (holder == null) {
-                holder = new ListItemViewHolder();
-                if (position + 1 < mImages.size()) {
-                    holder.deleteImageButtonOnClickListener = new DeleteImageButtonOnClickListener();
-                    holder.deleteImageButtonOnClickListener.position = position;
-                    holder.deleteImageButton = (Button) view.findViewById(R.id.btn_delete_image);
-                    holder.deleteImageButton.setOnClickListener(holder.deleteImageButtonOnClickListener);
-                } else {
-                    holder.addImageButtonOnClickListener = new AddImageButtonOnClickListener();
-                    holder.addImageButtonOnClickListener.position = position;
-                    holder.addImageButton = (Button) view.findViewById(R.id.btn_add_image);
-                    holder.addImageButton.setOnClickListener(holder.addImageButtonOnClickListener);
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == 333) {
+                if (data != null) {
+                    String[] images = data.getStringArrayExtra(getString(R.string.EXTRA_SELECTED_IMAGES));
+                    Log.d(TAG, images.toString());
+                    if (images != null) {
+                        for (String image : images) {
+                            mCommodity.addImage(image);
+                        }
+                        refreshUI();
+                    }
                 }
-                view.setTag(holder);
+            } else if (requestCode == 222) {
+                Bitmap photo = (Bitmap) data.getExtras().get("data");
+                Uri tempUri = getImageUri(getApplicationContext(), photo);
+                mCommodity.addImage(getRealPathFromURI(tempUri));
             }
-            return view;
         }
     }
 
-    static class ListItemViewHolder {
-        public Button deleteImageButton;
-        public Button addImageButton;
-        public DeleteImageButtonOnClickListener deleteImageButtonOnClickListener;
-        public AddImageButtonOnClickListener addImageButtonOnClickListener;
+    public Uri getImageUri(Context context, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
     }
 
-    class DeleteImageButtonOnClickListener implements View.OnClickListener {
-        public int position;
-
-        @Override
-        public void onClick(View view) {
-            Log.d(TAG, "delete " + String.valueOf(position));
-            mAdapter.deleteItem(position);
-            mAdapter.notifyDataSetChanged();
-        }
-    }
-
-    class AddImageButtonOnClickListener implements View.OnClickListener {
-        public int position;
-
-        @Override
-        public void onClick(View view) {
-            Log.d(TAG, "add " + String.valueOf(position));
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(intent, RESULT_CODE_ADD_IMAGE);
-        }
+    public String getRealPathFromURI(Uri uri) {
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+        return cursor.getString(idx);
     }
 }

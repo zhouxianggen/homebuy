@@ -1,6 +1,7 @@
 package com.hg.www.selller.service;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
@@ -11,8 +12,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.hg.www.selller.GlobalContext;
+import com.hg.www.selller.data.api.HttpAsyncTask;
 import com.hg.www.selller.data.define.Commodity;
 import com.hg.www.selller.data.define.CommodityCategory;
+import com.hg.www.selller.data.define.Order;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -109,5 +112,23 @@ public class CommodityService extends Service {
             }
         });*/
         return objects;
+    }
+
+    static public void updateServerCommodity(
+            Context context,
+            Commodity commodity,
+            int timeout,
+            HttpAsyncTask.OnSuccessListener onSuccessListener,
+            HttpAsyncTask.OnFailureListener onFailureListener) {
+        new HttpAsyncTask(context, "", "", "", onSuccessListener, onFailureListener).execute();
+    }
+
+    static public void updateServerCategory(
+            Context context,
+            CommodityCategory category,
+            int timeout,
+            HttpAsyncTask.OnSuccessListener onSuccessListener,
+            HttpAsyncTask.OnFailureListener onFailureListener) {
+        new HttpAsyncTask(context, "", "", "", onSuccessListener, onFailureListener).execute();
     }
 }

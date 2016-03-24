@@ -1,5 +1,7 @@
 package com.hg.www.selller.data.define;
 
+import com.hg.www.selller.GlobalContext;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 

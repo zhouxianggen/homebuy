@@ -33,11 +33,24 @@ public class DbHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_ORDER_TABLE =
             "DROP TABLE IF EXISTS " + TableSchema.OrderEntry.TABLE_NAME;
 
+    private static final String SQL_CREATE_BARCODE_TABLE =
+            "CREATE TABLE " + TableSchema.BarcodeEntry.TABLE_NAME + " (" +
+                    TableSchema.BarcodeEntry.COLUMN_NAME_ID + " TEXT PRIMARY KEY," +
+                    TableSchema.BarcodeEntry.COLUMN_NAME_SELLER_ID + TEXT_TYPE + COMMA_SEP +
+                    TableSchema.BarcodeEntry.COLUMN_NAME_COMMODITY_TITLE + TEXT_TYPE + COMMA_SEP +
+                    TableSchema.BarcodeEntry.COLUMN_NAME_COMMODITY_PRICE + REAL_TYPE + COMMA_SEP +
+                    TableSchema.BarcodeEntry.COLUMN_NAME_COMMODITY_UNIT + TEXT_TYPE +
+                    " )";
+    private static final String SQL_DELETE_BARCODE_TABLE =
+            "DROP TABLE IF EXISTS " + TableSchema.BarcodeEntry.TABLE_NAME;
+
     private static final String SQL_CREATE_COMMODITY_TABLE =
             "CREATE TABLE " + TableSchema.CommodityEntry.TABLE_NAME + " (" +
                     TableSchema.CommodityEntry.COLUMN_NAME_ID + " TEXT PRIMARY KEY," +
                     TableSchema.CommodityEntry.COLUMN_NAME_SELLER_ID + TEXT_TYPE + COMMA_SEP +
+                    TableSchema.CommodityEntry.COLUMN_NAME_BARCODE + TEXT_TYPE + COMMA_SEP +
                     TableSchema.CommodityEntry.COLUMN_NAME_TITLE + TEXT_TYPE + COMMA_SEP +
+                    TableSchema.CommodityEntry.COLUMN_NAME_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
                     TableSchema.CommodityEntry.COLUMN_NAME_THUMBNAIL + TEXT_TYPE + COMMA_SEP +
                     TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_1 + TEXT_TYPE + COMMA_SEP +
                     TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_2 + TEXT_TYPE + COMMA_SEP +
@@ -97,6 +110,7 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     public void onCreate(SQLiteDatabase db) {
+        db.execSQL(SQL_CREATE_BARCODE_TABLE);
         db.execSQL(SQL_CREATE_COMMODITY_TABLE);
         db.execSQL(SQL_CREATE_COMMODITY_CATEGORY_TABLE);
         db.execSQL(SQL_CREATE_ORDER_TABLE);
@@ -107,6 +121,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // This database is only a cache for online data, so its upgrade policy is
         // to simply to discard the data and start over
+        db.execSQL(SQL_DELETE_BARCODE_TABLE);
         db.execSQL(SQL_DELETE_COMMODITY_TABLE);
         db.execSQL(SQL_DELETE_COMMODITY_CATEGORY_TABLE);
         db.execSQL(SQL_DELETE_ORDER_TABLE);
@@ -155,9 +170,19 @@ public class DbHelper extends SQLiteOpenHelper {
         db.insert(TableSchema.OrderEntry.TABLE_NAME, null, values);
 
         values = new ContentValues();
+        values.put(TableSchema.BarcodeEntry.COLUMN_NAME_ID, "6935857300284");
+        values.put(TableSchema.BarcodeEntry.COLUMN_NAME_SELLER_ID, "seller_1");
+        values.put(TableSchema.BarcodeEntry.COLUMN_NAME_COMMODITY_TITLE, "盖力康牌乳钙咀嚼片60g");
+        values.put(TableSchema.BarcodeEntry.COLUMN_NAME_COMMODITY_PRICE, 49);
+        values.put(TableSchema.BarcodeEntry.COLUMN_NAME_COMMODITY_UNIT, "60g");
+        db.insert(TableSchema.BarcodeEntry.TABLE_NAME, null, values);
+
+        values = new ContentValues();
         values.put(TableSchema.CommodityEntry.COLUMN_NAME_ID, "commodity_1");
         values.put(TableSchema.CommodityEntry.COLUMN_NAME_SELLER_ID, "seller_1");
+        values.put(TableSchema.CommodityEntry.COLUMN_NAME_BARCODE, "123456");
         values.put(TableSchema.CommodityEntry.COLUMN_NAME_TITLE, "立白透明皂");
+        values.put(TableSchema.CommodityEntry.COLUMN_NAME_DESCRIPTION, "不伤手");
         values.put(TableSchema.CommodityEntry.COLUMN_NAME_THUMBNAIL, "http://www.zyzjgww.com/images/201501/goods_img/897_P_1422469213669.jpg");
         values.put(TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_1, "http://www.bl-cs.com/pic/20158248536.jpg");
         values.put(TableSchema.CommodityEntry.COLUMN_NAME_PRICE, 3.5);

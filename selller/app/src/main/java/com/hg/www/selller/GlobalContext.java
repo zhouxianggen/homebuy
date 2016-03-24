@@ -13,6 +13,7 @@ public class GlobalContext extends Application {
     private static GlobalContext mContext;
     private static String mServer = "";
     private static HashMap<String, String> mPathTimestamps = new HashMap<>();
+    private static String seller_id = "seller_1";
 
     @Override
     public void onCreate() {
@@ -25,6 +26,8 @@ public class GlobalContext extends Application {
     public static GlobalContext getInstance() {
         return mContext;
     }
+
+    public String getSellerId() { return seller_id; }
 
     public String getUri(String path) {
         String timestamp = mPathTimestamps.get(path);

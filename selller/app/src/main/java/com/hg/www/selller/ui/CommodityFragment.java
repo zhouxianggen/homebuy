@@ -1,6 +1,8 @@
 package com.hg.www.selller.ui;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,25 +12,26 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.EditText;
+import android.widget.Toast;
 
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.google.zxing.BarcodeFormat;
+import com.hg.scanner.barcode.decoding.DecodeFormatManager;
 import com.hg.www.selller.R;
-import com.hg.www.selller.data.api.CommodityApi;
 import com.hg.www.selller.data.api.CommodityCategoryApi;
-import com.hg.www.selller.data.define.Commodity;
+import com.hg.www.selller.data.api.HttpAsyncTask;
 import com.hg.www.selller.data.define.CommodityCategory;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.hg.www.selller.service.CommodityService;
+import com.hg.www.selller.ui.component.CommodityAdapter;
 
 public class CommodityFragment extends Fragment {
     private static final String TAG = CommodityFragment.class.getSimpleName();
+    private static final String parent = "root";
     private Context mContext;
 	private RecyclerView mRecyclerView;
-    private MyAdapter mAdapter;
+    private CommodityAdapter mAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -40,12 +43,64 @@ public class CommodityFragment extends Fragment {
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
 
-        final FloatingActionButton removeAction = (FloatingActionButton) rootView.findViewById(R.id.action_add_commodity);
-        removeAction.setOnClickListener(new View.OnClickListener() {
+        final FloatingActionButton btnScan = (FloatingActionButton) rootView.findViewById(R.id.action_scan);
+        btnScan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, CaptureActivity.class);
+                intent.putExtra("SCAN_MODE", "PRODUCT_MODE");
+                startActivityForResult(intent, 0);
+            }
+        });
+
+        final FloatingActionButton btnAddCommodity = (FloatingActionButton) rootView.findViewById(R.id.action_add_commodity);
+        btnAddCommodity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, EditCommodityActivity.class);
+                intent.putExtra(getActivity().getString(R.string.EXTRA_COMMODITY_CATEGORY_ID), parent);
                 mContext.startActivity(intent);
+            }
+        });
+
+        final FloatingActionButton btnAddCategory = (FloatingActionButton) rootView.findViewById(R.id.action_add_category);
+        btnAddCategory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater layoutInflater = LayoutInflater.from(mContext);
+                View promptView = layoutInflater.inflate(R.layout.dialog_add_category, null);
+                final EditText editText = (EditText) promptView.findViewById(R.id.input);
+
+                new AlertDialogWrapper.Builder(mContext)
+                        .setView(promptView)
+                        .setNegativeButton(R.string.btn_cancel, null)
+                        .setPositiveButton(R.string.btn_confirm, new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String title = editText.getText().toString();
+                                final CommodityCategory category = CommodityCategoryApi.getInstance().createCategory();
+                                category.title = title;
+                                category.parent = parent;
+                                if (!title.isEmpty()) {
+                                    CommodityService.updateServerCategory(mContext, category, 4,
+                                            new HttpAsyncTask.OnSuccessListener() {
+                                                @Override
+                                                public void onSuccess() {
+                                                    CommodityCategoryApi.getInstance().insertCategory(category); // fixme
+                                                    mAdapter.onUpdateAdapter();
+                                                }
+                                            }, new HttpAsyncTask.OnFailureListener() {
+                                                @Override
+                                                public void onFailure(String errors) {
+                                                    Toast.makeText(mContext, errors, Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                }
+                            }
+
+                        })
+                        .show();
             }
         });
 
@@ -54,133 +109,33 @@ public class CommodityFragment extends Fragment {
 
     @Override
     public void onResume() {
+        super.onResume();
         Log.d(TAG, "onResume");
         if (mAdapter == null) {
-            mAdapter = new MyAdapter(mContext);
+            mAdapter = new CommodityAdapter(mContext, parent);
             mRecyclerView.setAdapter(mAdapter);
         }
-        onUpdateAdapter();
-        super.onResume();
+        mAdapter.onUpdateAdapter();
     }
 
-    public void onUpdateAdapter() {
-        mAdapter.categories = CommodityCategoryApi.getInstance().getCategories("root");
-        mAdapter.commodities = CommodityApi.getInstance().getCommodities("root");
-        Log.d(TAG, "onUpdateAdapter " + String.valueOf(mAdapter.categories.size()));
-        Log.d(TAG, "onUpdateAdapter " + String.valueOf(mAdapter.commodities.size()));
-        mAdapter.notifyDataSetChanged();
-    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if (requestCode == 0) {
+            if (resultCode == Activity.RESULT_OK) {
+                String barcode = intent.getStringExtra(getString(R.string.EXTRA_SCAN_RESULT));
+                BarcodeFormat format = BarcodeFormat.values()[intent.getIntExtra(getString(R.string.EXTRA_BARCODE_FORMAT), 0)];
+                Toast.makeText(mContext, barcode, Toast.LENGTH_SHORT).show();
 
-    public enum ITEM_TYPE {
-        COMMODITY_CATEGORY,
-        COMMODITY
-    }
+                if (DecodeFormatManager.PRODUCT_FORMATS.contains(format)) {
+                    Intent newIntent = new Intent(mContext, EditCommodityActivity.class);
+                    newIntent.putExtra(getString(R.string.EXTRA_COMMODITY_CATEGORY_ID), parent);
+                    newIntent.putExtra(getString(R.string.EXTRA_COMMODITY_BARCODE_ID), barcode);
+                    mContext.startActivity(newIntent);
+                }
 
-    private class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-        public final Context context;
-        public List<CommodityCategory> categories = new ArrayList<>();
-        public List<Commodity> commodities = new ArrayList<>();
-
-        public MyAdapter(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        public int getItemCount() {
-            return categories.size() + commodities.size();
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            Log.d(TAG, "getItemViewType " + String.valueOf(position));
-            if (position < categories.size()) {
-                return ITEM_TYPE.COMMODITY_CATEGORY.ordinal();
-            } else {
-                return ITEM_TYPE.COMMODITY.ordinal();
-            }
-        }
-
-        @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            Log.d(TAG, "onBindViewHolder " + String.valueOf(position));
-            if (holder instanceof CommodityCategoryViewHolder) {
-                CommodityCategory category = categories.get(position);
-                ((CommodityCategoryViewHolder) holder).mCategory = category;
-                ((CommodityCategoryViewHolder) holder).mTitle.setText(category.title);
-                ((CommodityCategoryViewHolder) holder).mAmount.setText(String.valueOf(category.item_count));
-            } else if (holder instanceof CommodityViewHolder) {
-                Commodity commodity = commodities.get(position - categories.size());
-                ((CommodityViewHolder) holder).mCommodity = commodity;
-                //((CommodityViewHolder) holder).mThumbnail.setText(orderPackage.getTitle());
-                ((CommodityViewHolder) holder).mTitle.setText(commodity.title);
-                ((CommodityViewHolder) holder).mPrice.setText(String.valueOf(commodity.price));
-                ((CommodityViewHolder) holder).mWeeklySales.setText(String.valueOf(commodity.weekly_sales));
-            }
-        }
-
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            if (viewType == ITEM_TYPE.COMMODITY_CATEGORY.ordinal()) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(
-                        R.layout.commodity_category, parent, false);
-                return new CommodityCategoryViewHolder(view, context);
-            } else {
-                View view = LayoutInflater.from(parent.getContext()).inflate(
-                        R.layout.commodity, parent, false);
-                return new CommodityViewHolder(view, context);
-            }
-        }
-
-        public class CommodityCategoryViewHolder extends RecyclerView.ViewHolder
-                implements View.OnClickListener {
-            private Context mContext;
-            private TextView mTitle;
-            private TextView mAmount;
-            private CommodityCategory mCategory;
-
-            public CommodityCategoryViewHolder(View view, Context context) {
-                super(view);
-                mContext = context;
-                mTitle = (TextView) view.findViewById(R.id.title);
-                mAmount = (TextView) view.findViewById(R.id.amount);
-                view.setOnClickListener(this);
-            }
-
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(mContext, CommodityListActivity.class);
-                intent.putExtra(mContext.getString(R.string.EXTRA_COMMODITY_CATEGORY_ID), mCategory.id);
-                intent.putExtra(mContext.getString(R.string.EXTRA_COMMODITY_CATEGORY_TITLE), mCategory.title);
-                mContext.startActivity(intent);
-            }
-        }
-
-        public class CommodityViewHolder extends RecyclerView.ViewHolder
-                implements View.OnClickListener {
-            private Context mContext;
-            private ImageView mThumbnail;
-            private TextView mTitle;
-            private TextView mPrice;
-            private TextView mWeeklySales;
-            private Commodity mCommodity;
-
-            public CommodityViewHolder(View view, Context context) {
-                super(view);
-                mContext = context;
-                mThumbnail = (ImageView) view.findViewById(R.id.thumbnail);
-                mTitle = (TextView) view.findViewById(R.id.title);
-                mPrice = (TextView) view.findViewById(R.id.price);
-                mWeeklySales = (TextView) view.findViewById(R.id.sale_volume);
-                view.setOnClickListener(this);
-            }
-
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(mContext, EditCommodityActivity.class);
-                intent.putExtra(mContext.getString(R.string.EXTRA_COMMODITY_ITEM_ID), mCommodity.id);
-                mContext.startActivity(intent);
+            } else if (resultCode == Activity.RESULT_CANCELED) {
             }
         }
     }
-
 }

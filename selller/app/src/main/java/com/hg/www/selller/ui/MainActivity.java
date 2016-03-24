@@ -23,6 +23,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.zxing.BarcodeFormat;
+import com.hg.scanner.barcode.decoding.DecodeFormatManager;
 import com.hg.www.selller.R;
 import com.hg.www.selller.data.define.Expressman;
 import com.hg.www.selller.data.define.ExpressmanMessage;
@@ -129,8 +131,9 @@ public class MainActivity extends AppCompatActivity implements
         if (id == android.support.v7.appcompat.R.id.home) {
             return mDrawerToggle.onOptionsItemSelected(item);
         } else if (id == R.id.action_scan) {
-            Intent intent = new Intent("com.google.zxing.client.android.SCAN");
-            intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+            Intent intent = new Intent(this, CaptureActivity.class);
+            //intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+            //intent.putExtra("SCAN_MODE", "PRODUCT_MODE");
             startActivityForResult(intent, 0);
         }
         return super.onOptionsItemSelected(item);
@@ -138,21 +141,27 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
         if (requestCode == 0) {
             if (resultCode == RESULT_OK) {
-                Toast.makeText(this, intent.getStringExtra("SCAN_RESULT"), Toast.LENGTH_SHORT).show();
-                ExpressmanMessage message = new ExpressmanMessage();
-                if (message.parseFromString(intent.getStringExtra("SCAN_RESULT"))) {
-                    if (message.type == ExpressmanMessage.CHECK_LOADING_ORDER) {
-                        Intent newIntent = new Intent(this, CheckLoadingOrderListActivity.class);
-                        newIntent.putExtra(getString(R.string.EXTRA_EXPRESSMAN_ID), message.expressman_id);
-                        newIntent.putExtra(getString(R.string.EXTRA_LOADING_TIMESTAMP), message.timestamp);
-                        startActivity(newIntent);
-                    } else if (message.type == ExpressmanMessage.CHECK_RETURN_ORDER) {
-                        Intent newIntent = new Intent(this, CheckReturnOrderListActivity.class);
-                        newIntent.putExtra(getString(R.string.EXTRA_EXPRESSMAN_ID), message.expressman_id);
-                        newIntent.putExtra(getString(R.string.EXTRA_RETURN_TIMESTAMP), message.timestamp);
-                        startActivity(newIntent);
+                String result = intent.getStringExtra(getString(R.string.EXTRA_SCAN_RESULT));
+                BarcodeFormat format = BarcodeFormat.values()[intent.getIntExtra(getString(R.string.EXTRA_BARCODE_FORMAT), 0)];
+                Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
+
+                if (DecodeFormatManager.QR_CODE_FORMATS.contains(format)) {
+                    ExpressmanMessage message = new ExpressmanMessage();
+                    if (message.parseFromString(result)) {
+                        if (message.type == ExpressmanMessage.CHECK_LOADING_ORDER) {
+                            Intent newIntent = new Intent(this, CheckLoadingOrderListActivity.class);
+                            newIntent.putExtra(getString(R.string.EXTRA_EXPRESSMAN_ID), message.expressman_id);
+                            newIntent.putExtra(getString(R.string.EXTRA_LOADING_TIMESTAMP), message.timestamp);
+                            startActivity(newIntent);
+                        } else if (message.type == ExpressmanMessage.CHECK_RETURN_ORDER) {
+                            Intent newIntent = new Intent(this, CheckReturnOrderListActivity.class);
+                            newIntent.putExtra(getString(R.string.EXTRA_EXPRESSMAN_ID), message.expressman_id);
+                            newIntent.putExtra(getString(R.string.EXTRA_RETURN_TIMESTAMP), message.timestamp);
+                            startActivity(newIntent);
+                        }
                     }
                 }
             } else if (resultCode == RESULT_CANCELED) {

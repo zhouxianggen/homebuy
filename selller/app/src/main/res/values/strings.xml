@@ -3,6 +3,8 @@
     <string name="action_settings">setting</string>
     <string name="action_scan">scan</string>
     <string name="commodity_title">商品名称</string>
+    <string name="sale_info">价格：23.2  周销量：10  退货率：0.1</string>
+    <string name="hint_commodity_category">类目名称</string>
     <string name="commodity_price">商品价格</string>
     <string name="commodity_count">8</string>
     <string name="commodity_desc">货物描述</string>
@@ -16,14 +18,17 @@
     <string name="add_commodity_image">添加图片</string>
     <string name="delete">X</string>
     <string name="EXTRA_FRAGMENT">extra_fragment</string>
-    <string name="EXTRA_COMMODITY_ITEM_ID">extra_commodity_id</string>
-    <string name="EXTRA_COMMODITY_GROUP_ID">extra_commodity_group_id</string>
+    <string name="EXTRA_COMMODITY_ID">extra_commodity_id</string>
     <string name="EXTRA_COMMODITY_CATEGORY_ID">extra_commodity_parent</string>
+    <string name="EXTRA_COMMODITY_BARCODE_ID">extra_commodity_barcode</string>
     <string name="EXTRA_COMMODITY_CATEGORY_TITLE">extra_commodity_category_title</string>
     <string name="EXTRA_EXPRESSMAN_ID">extra_expressman_id</string>
     <string name="EXTRA_MESSAGE_ID">extra_message_id</string>
     <string name="EXTRA_LOADING_TIMESTAMP">extra_loading_timestamp</string>
     <string name="EXTRA_RETURN_TIMESTAMP">extra_return_timestamp</string>
+    <string name="EXTRA_SELECTED_IMAGES">extra_selected_images</string>
+    <string name="EXTRA_SCAN_RESULT">extra_scan_result</string>
+    <string name="EXTRA_BARCODE_FORMAT">extra_barcode_format</string>
     <string name="FRAGMENT_ORDER">fragment_order</string>
     <string name="tab_commodity">货物</string>
     <string name="tab_order">订单</string>
@@ -50,6 +55,7 @@
     <string name="close">close navigation drawer</string>
 
     <string name="menu_rename">改名</string>
+    <string name="menu_disable">下架</string>
     <string name="menu_remove">删除</string>
 
     <string name="btn_reject">拒绝</string>
@@ -77,9 +83,17 @@
         过多地拒绝订单会降低店铺的信誉，您可以设置该货物没有库存来避免用户下单
     </string>
     <string name="DIALOG_TITLE_REJECT_ORDER">确认操作</string>
+    <string name="DIALOG_MESSAGE_DELETE_CATEGORY">
+        确定删除这个类目
+    </string>
+    <string name="DIALOG_MESSAGE_DELETE_COMMODITY">
+        确定删除这个商品
+    </string>
 
     <string name="PROGRESS_DIALOG_TITLE">正在处理</string>
     <string name="PROGRESS_DIALOG_MESSAGE">请稍候</string>
+
+    <string name="scan_text">将条码放入框内, 即可自动扫描</string>
 
 
     <string name="unit_prompt">单位</string>
@@ -106,6 +120,11 @@
     <string-array name="add_image_action">
         <item>相册</item>
         <item>拍照</item>
+    </string-array>
+
+    <string-array name="set_image_action">
+        <item>设为图标</item>
+        <item>删除图片</item>
     </string-array>
 
 </resources>

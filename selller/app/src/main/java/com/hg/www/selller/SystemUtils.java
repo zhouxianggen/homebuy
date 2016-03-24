@@ -1,4 +1,4 @@
-package com.hg.www.selller.util;
+package com.hg.www.selller;
 
 import java.io.File;
 

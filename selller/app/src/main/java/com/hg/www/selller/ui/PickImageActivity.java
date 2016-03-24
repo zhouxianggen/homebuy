@@ -1,10 +1,9 @@
 package com.hg.www.selller.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
@@ -26,15 +25,12 @@ import android.widget.Toast;
 
 import com.hg.www.selller.GlobalContext;
 import com.hg.www.selller.R;
-import com.hg.www.selller.ui.component.LocalNetworkImageView;
 import com.hg.www.selller.ui.toolkit.ImageDownloader;
-import com.hg.www.selller.util.SystemUtils;
+import com.hg.www.selller.SystemUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 public class PickImageActivity extends AppCompatActivity
         implements AdapterView.OnItemClickListener {
@@ -77,6 +73,20 @@ public class PickImageActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_pick_picture, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.menu_confirm) {
+            Intent data = new Intent();
+            data.putExtra(getString(R.string.EXTRA_SELECTED_IMAGES), selectedFiles.toArray(new String[0]));
+            setResult(Activity.RESULT_OK, data);
+            finish();
+        } else {
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

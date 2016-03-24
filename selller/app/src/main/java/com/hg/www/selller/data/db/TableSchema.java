@@ -21,11 +21,22 @@ public final class TableSchema {
         public static final String COLUMN_NAME_SETTLE_TIMESTAMP = "settle_timestamp";
     }
 
+    public static abstract class BarcodeEntry implements BaseColumns {
+        public static final String TABLE_NAME = "barcode";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_SELLER_ID = "seller_id";
+        public static final String COLUMN_NAME_COMMODITY_TITLE = "commodity_title";
+        public static final String COLUMN_NAME_COMMODITY_PRICE = "commodity_price";
+        public static final String COLUMN_NAME_COMMODITY_UNIT = "commodity_unit";
+    }
+
     public static abstract class CommodityEntry implements BaseColumns {
         public static final String TABLE_NAME = "commodity";
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_SELLER_ID = "seller_id";
+        public static final String COLUMN_NAME_BARCODE = "barcode";
         public static final String COLUMN_NAME_TITLE = "title";
+        public static final String COLUMN_NAME_DESCRIPTION = "description";
         public static final String COLUMN_NAME_THUMBNAIL = "thumbnail";
         public static final String COLUMN_NAME_IMAGE_1 = "image_1";
         public static final String COLUMN_NAME_IMAGE_2 = "image_2";
