@@ -47,11 +47,24 @@ class MySqlApi(object):
             print e
             return None
 
-host = '10.99.20.92'
-port = 3306
-user = 'root'
-pswd = 'shenma123'
-test_db = 'test7'
-mysql_test = MySqlApi(host, port, user, pswd, test_db)
-mysql_schema = MySqlApi(host, port, user, pswd, 'INFORMATION_SCHEMA')
-mysql = mysql_test
+host1 = '10.99.20.92'
+port1 = 3306
+user1 = 'root'
+pswd1 = 'shenma123'
+db1 = 'test7'
+
+host2 = 'hg2.c7dsdrfy4wfo.us-west-2.rds.amazonaws.com'
+port2 = 3306
+user2 = 'zhouxg'
+pswd2 = 'justaguest'
+db2 = 'homebuy'
+
+mysql_schema = MySqlApi(host2, port2, user2, pswd2, 'INFORMATION_SCHEMA')
+
+#mysql_test = MySqlApi(host1, port1, user1, pswd1, db1)
+mysql_online = MySqlApi(host2, port2, user2, pswd2, db2)
+
+#mysql = mysql_test
+mysql = mysql_online
+
+

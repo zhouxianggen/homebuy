@@ -102,6 +102,6 @@ class ImageRequestHandler(tornado.web.RequestHandler):
 
 if __name__ == "__main__":
     server = tornado.httpserver.HTTPServer(SellerServer())
-    server.listen(8087)
+    server.listen(80)
     tornado.ioloop.IOLoop.instance().start()
 
