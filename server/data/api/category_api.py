@@ -10,9 +10,9 @@ CWD = os.path.dirname(os.path.abspath(__file__))
 sys.path.append('%s/../define' % CWD)
 from table_schema import *
 
-class CommodityApi(SingleResourceApi):
+class CategoryApi(SingleResourceApi):
     def __init__(self):
-        self.entry = CommodityEntry
+        self.entry = CategoryEntry
 
-instance = CommodityApi()
+instance = CategoryApi()
 

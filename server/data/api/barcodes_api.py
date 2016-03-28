@@ -14,10 +14,10 @@ sys.path.append('%s/../define' % CWD)
 from table_schema import *
 from errors import *
 
-class CommoditiesApi(MultiResourceApi):
+class BarcodesApi(MultiResourceApi):
     
     def __init__(self):
-        self.entry = CommodityEntry
+        self.entry = BarcodeEntry
 
     def get(self, seller_id, if_modified_since, count):
         resp = {}
@@ -43,9 +43,9 @@ class CommoditiesApi(MultiResourceApi):
             d = {self.entry.COLUMNS[i]:r[i] for i in range(len(self.entry.COLUMNS))}
             resources.append(d)
         resp['status'] = OK
-        resp['commodities'] = resources
+        resp['barcodes'] = resources
             
         return json.dumps(resp, ensure_ascii=False)
-       
-instance = CommoditiesApi()
+
+instance = BarcodesApi()
 

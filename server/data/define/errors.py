@@ -4,7 +4,6 @@
 __author__  = "xianggen.zhou"
 __date__    = "2016-03-23"
 
-OK = '0'
-SERVER_MYSQL_ERROR = '1'
-NPUT_DATA_ERROR = '2'
-SERVER_MYSQL_DATA_ERROR = '3'
+OK = 'ok'
+SERVER_MYSQL_ERROR = 'server mysql error'
+REQUEST_PARAM_ERROR = 'request param error'
