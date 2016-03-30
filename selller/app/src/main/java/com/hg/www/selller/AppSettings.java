@@ -17,4 +17,23 @@ public class AppSettings {
         int interval = Integer.parseInt(prefs.getString(key, "10"));
         return interval;
     }
+
+    public static int getUpdateCategoryInterval() {
+        String key = GlobalContext.getInstance().getResources().getString(R.string.PREF_UPDATE_CATEGORY_INTERVAL);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(GlobalContext.getInstance());
+        int interval = Integer.parseInt(prefs.getString(key, "10"));
+        return interval;
+    }
+
+    public static String getCategoriesServerAddress() {
+        return "http://54.149.127.185/categories";
+    }
+
+    public static String getCategoryServerAddress() {
+        return "http://54.149.127.185/category";
+    }
+
+    public static String getCommodityServerAddress() {
+        return "http://54.149.127.185/commodity";
+    }
 }

@@ -7,10 +7,6 @@ import com.hg.www.selller.GlobalContext;
 import com.hg.www.selller.data.db.DbHelper;
 import com.hg.www.selller.data.db.TableSchema;
 import com.hg.www.selller.data.define.Expressman;
-import com.hg.www.selller.data.define.ExpressmanMessage;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ExpressmanApi {
     private static ExpressmanApi instance = null;
@@ -27,20 +23,22 @@ public class ExpressmanApi {
         return instance;
     }
 
-    public Expressman getExpressman(String expressman_id) {
+    public Expressman getExpressman(int id) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         Cursor c = db.rawQuery(
-                "SELECT * FROM expressman WHERE id = ?",
-                new String[]{expressman_id}
+                String.format("SELECT * from %s WHERE %s = ? ",
+                        TableSchema.ExpressmanEntry.TABLE_NAME,
+                        TableSchema.ExpressmanEntry.COLUMN_NAME_ID),
+                new String[]{String.valueOf(id)}
         );
 
         if (c.moveToNext()) {
             Expressman expressman = new Expressman();
-            expressman.id = c.getString(c.getColumnIndexOrThrow(TableSchema.ExpressmanEntry.COLUMN_NAME_ID));
-            expressman.name = c.getString(c.getColumnIndexOrThrow(TableSchema.ExpressmanEntry.COLUMN_NAME_NAME));
-            expressman.icon = c.getString(c.getColumnIndexOrThrow(TableSchema.ExpressmanEntry.COLUMN_NAME_ICON));
-            return expressman;
+            if (expressman.parseFromCursor(c)) {
+                return expressman;
+            }
         }
+
         return null;
     }
 }

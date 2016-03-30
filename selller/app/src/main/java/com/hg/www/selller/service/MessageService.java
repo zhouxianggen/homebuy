@@ -6,19 +6,14 @@ import android.content.Intent;
 import com.hg.www.selller.AppSettings;
 import com.hg.www.selller.GlobalContext;
 import com.hg.www.selller.data.api.HttpAsyncTask;
-import com.hg.www.selller.data.api.OrderApi;
-import com.hg.www.selller.data.define.Order;
+import com.hg.www.selller.data.define.Message;
 
-import java.util.List;
-
-public class OrderService extends BasicService {
-    public static final String TAG = OrderService.class.getSimpleName();
+public class MessageService extends BasicService {
+    public static final String TAG = MessageService.class.getSimpleName();
     private static final int count = 100;
 
-    public static void startService(String action, String data) {
+    public static void startService() {
         Intent intent = new Intent(GlobalContext.getInstance(), OrderService.class);
-        intent.putExtra("data", data);
-        intent.setAction(action);
         GlobalContext.getInstance().startService(intent);
     }
 

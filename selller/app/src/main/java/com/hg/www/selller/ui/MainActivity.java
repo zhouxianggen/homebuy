@@ -26,10 +26,8 @@ import android.widget.Toast;
 import com.google.zxing.BarcodeFormat;
 import com.hg.scanner.barcode.decoding.DecodeFormatManager;
 import com.hg.www.selller.R;
-import com.hg.www.selller.data.define.Expressman;
-import com.hg.www.selller.data.define.ExpressmanMessage;
-import com.hg.www.selller.ui.CommodityFragment;
-import com.hg.www.selller.ui.OrderFragment;
+import com.hg.www.selller.data.db.TableSchema;
+import com.hg.www.selller.data.define.Message;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
@@ -149,17 +147,22 @@ public class MainActivity extends AppCompatActivity implements
                 Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
 
                 if (DecodeFormatManager.QR_CODE_FORMATS.contains(format)) {
-                    ExpressmanMessage message = new ExpressmanMessage();
+                    Message message = new Message();
                     if (message.parseFromString(result)) {
-                        if (message.type == ExpressmanMessage.CHECK_LOADING_ORDER) {
+                        String type = message.getStringProperty(TableSchema.MessageEntry.COLUMN_NAME_TYPE);
+                        if (type.equals(Message.CHECK_LOADING_ORDER)) {
                             Intent newIntent = new Intent(this, CheckLoadingOrderListActivity.class);
-                            newIntent.putExtra(getString(R.string.EXTRA_EXPRESSMAN_ID), message.expressman_id);
-                            newIntent.putExtra(getString(R.string.EXTRA_LOADING_TIMESTAMP), message.timestamp);
+                            newIntent.putExtra(getString(R.string.EXTRA_EXPRESSMAN_ID),
+                                    message.getIntProperty(TableSchema.MessageEntry.COLUMN_NAME_SENDER));
+                            newIntent.putExtra(getString(R.string.EXTRA_LOADING_TIMESTAMP),
+                                    message.getIntProperty(TableSchema.MessageEntry.COLUMN_NAME_MODIFY_TIME));
                             startActivity(newIntent);
-                        } else if (message.type == ExpressmanMessage.CHECK_RETURN_ORDER) {
+                        } else if (type.equals(Message.CHECK_RETURN_ORDER)) {
                             Intent newIntent = new Intent(this, CheckReturnOrderListActivity.class);
-                            newIntent.putExtra(getString(R.string.EXTRA_EXPRESSMAN_ID), message.expressman_id);
-                            newIntent.putExtra(getString(R.string.EXTRA_RETURN_TIMESTAMP), message.timestamp);
+                            newIntent.putExtra(getString(R.string.EXTRA_EXPRESSMAN_ID),
+                                    message.getIntProperty(TableSchema.MessageEntry.COLUMN_NAME_SENDER));
+                            newIntent.putExtra(getString(R.string.EXTRA_RETURN_TIMESTAMP),
+                                    message.getIntProperty(TableSchema.MessageEntry.COLUMN_NAME_MODIFY_TIME));
                             startActivity(newIntent);
                         }
                     }

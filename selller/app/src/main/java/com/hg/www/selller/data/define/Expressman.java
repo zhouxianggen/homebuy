@@ -1,7 +1,7 @@
 package com.hg.www.selller.data.define;
 
-public class Expressman {
-    public String id = "";
-    public String name = "";
-    public String icon = "";
+import com.hg.www.selller.data.db.TableSchema;
+
+public class Expressman extends TableRecord {
+    private static TableSchema.Column[] columns = TableSchema.ExpressmanEntry.COLUMNS;
 }

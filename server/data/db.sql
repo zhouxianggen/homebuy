@@ -23,13 +23,11 @@ DROP TABLE IF EXISTS `agency`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `agency` (
-  `id` varchar(255) NOT NULL,
+  `id` bigint(20) NOT NULL,
   `title` text NOT NULL,
   `pswd` varchar(255) NOT NULL,
-  `pos` text NOT NULL,
-  `expressman_id` varchar(255) NOT NULL,
-  `sales_volumn` int(11) NOT NULL DEFAULT '0',
-  `return_volumn` int(11) NOT NULL DEFAULT '0',
+  `address` text NOT NULL,
+  `modify_time` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -57,7 +55,7 @@ CREATE TABLE `barcode` (
   `item_size` varchar(255) NOT NULL,
   `unit_no` varchar(64) NOT NULL,
   `product_area` varchar(255) NOT NULL,
-  `modify_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modify_time` bigint(20) NOT NULL,
   PRIMARY KEY (`seller_id`,`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -174,6 +172,34 @@ INSERT INTO `expressman` VALUES (1,'小周','','http://img1.gtimg.com/ent/pics/h
 UNLOCK TABLES;
 
 --
+-- Table structure for table `message`
+--
+
+DROP TABLE IF EXISTS `message`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `message` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `type` varchar(255) NOT NULL,
+  `content` text NOT NULL,
+  `sender` bigint(20) NOT NULL,
+  `receiver` bigint(20) NOT NULL,
+  `status` varchar(255) NOT NULL,
+  `modify_time` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `message`
+--
+
+LOCK TABLES `message` WRITE;
+/*!40000 ALTER TABLE `message` DISABLE KEYS */;
+/*!40000 ALTER TABLE `message` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `order`
 --
 
@@ -182,18 +208,12 @@ DROP TABLE IF EXISTS `order`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `order` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `agency_id` varchar(255) NOT NULL,
-  `seller_id` varchar(255) NOT NULL,
-  `commodity_id` varchar(255) NOT NULL,
-  `expressman_id` varchar(255) NOT NULL,
+  `agency_id` bigint(20) NOT NULL,
+  `seller_id` bigint(20) NOT NULL,
+  `commodity_id` bigint(20) NOT NULL,
+  `expressman_id` bigint(20) NOT NULL,
   `amount` int(11) NOT NULL,
-  `payment` int(11) NOT NULL,
-  `service_payment` int(11) NOT NULL,
-  `agency_check_order_time` datetime NOT NULL,
-  `seller_check_goods_time` datetime NOT NULL,
-  `expressman_check_goods_time` datetime NOT NULL,
-  `expressman_check_payment_time` datetime NOT NULL,
-  `system_check_payment_time` datetime NOT NULL,
+  `payment` double NOT NULL,
   `status` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -253,4 +273,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-03-28 18:26:46
+-- Dump completed on 2016-03-30 14:28:39

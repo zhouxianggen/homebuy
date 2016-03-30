@@ -53,6 +53,15 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden">
         </activity>
+
+        <service android:name="com.hg.www.selller.service.CategoryService" android:exported="true">
+            <intent-filter>
+                <action android:name="com.hg.www.ACTION_GET"/>
+                <action android:name="com.hg.www.ACTION_POST"/>
+                <action android:name="com.hg.www.ACTION_UPDATE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

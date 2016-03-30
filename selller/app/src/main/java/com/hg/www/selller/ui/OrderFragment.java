@@ -3,8 +3,6 @@ package com.hg.www.selller.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,18 +10,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.hg.www.selller.R;
 import com.hg.www.selller.data.api.ExpressmanApi;
-import com.hg.www.selller.data.api.ExpressmanMessageApi;
-import com.hg.www.selller.data.api.OrderApi;
+import com.hg.www.selller.data.api.MessageApi;
 import com.hg.www.selller.data.api.OrderPackageApi;
 import com.hg.www.selller.data.api.VolleyApi;
+import com.hg.www.selller.data.db.TableSchema;
 import com.hg.www.selller.data.define.Expressman;
-import com.hg.www.selller.data.define.ExpressmanMessage;
+import com.hg.www.selller.data.define.Message;
 import com.hg.www.selller.data.define.Order;
 import com.hg.www.selller.data.define.OrderPackage;
 
@@ -60,7 +57,7 @@ public class OrderFragment extends Fragment {
     }
 
     public void onUpdateAdapter() {
-        mAdapter.messages = ExpressmanMessageApi.getInstance().getMessages();
+        mAdapter.messages = MessageApi.getInstance().getMessages();
         Log.d(TAG, "get messages " + String.valueOf(mAdapter.messages.size()));
         mAdapter.packages = OrderPackageApi.getInstance().getPackages();
         Log.d(TAG, "get packages " + String.valueOf(mAdapter.packages.size()));
@@ -74,7 +71,7 @@ public class OrderFragment extends Fragment {
 
     private class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public final Context context;
-        public List<ExpressmanMessage> messages = new ArrayList<>();
+        public List<Message> messages = new ArrayList<>();
         public List<OrderPackage> packages = new ArrayList<>();
 
         public MyAdapter(Context context) {
@@ -98,17 +95,22 @@ public class OrderFragment extends Fragment {
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             if (holder instanceof ExpressmanMessageViewHolder) {
-                ExpressmanMessage message = messages.get(position);
+                Message message = messages.get(position);
                 ((ExpressmanMessageViewHolder) holder).mMessage = message;
-                Expressman expressman = ExpressmanApi.getInstance().getExpressman(message.expressman_id);
+                Expressman expressman = ExpressmanApi.getInstance().getExpressman(
+                        message.getIntProperty(TableSchema.ExpressmanEntry.COLUMN_NAME_ID));
                 if (expressman != null) {
                     ((ExpressmanMessageViewHolder) holder).mExpressmanIcon.setImageUrl(
-                            expressman.icon, VolleyApi.getInstance().getImageLoader()
+                            expressman.getStringProperty(TableSchema.ExpressmanEntry.COLUMN_NAME_THUMBNAIL),
+                            VolleyApi.getInstance().getImageLoader()
                     );
-                    ((ExpressmanMessageViewHolder) holder).mExpressmanName.setText(expressman.name);
+                    ((ExpressmanMessageViewHolder) holder).mExpressmanName.setText(
+                            expressman.getStringProperty(TableSchema.ExpressmanEntry.COLUMN_NAME_NAME));
                 }
-                ((ExpressmanMessageViewHolder) holder).mTime.setText(message.timestamp);
-                ((ExpressmanMessageViewHolder) holder).mContent.setText(message.content);
+                ((ExpressmanMessageViewHolder) holder).mTime.setText(
+                        message.getStringProperty(TableSchema.MessageEntry.COLUMN_NAME_MODIFY_TIME));
+                ((ExpressmanMessageViewHolder) holder).mContent.setText(
+                        message.getStringProperty(TableSchema.MessageEntry.COLUMN_NAME_CONTENT));
             } else if (holder instanceof OrderPackageViewHolder) {
                 OrderPackage orderPackage = packages.get(position - messages.size());
                 ((OrderPackageViewHolder) holder).mPackage = orderPackage;
@@ -138,7 +140,7 @@ public class OrderFragment extends Fragment {
             private TextView mExpressmanName;
             private TextView mContent;
             private TextView mTime;
-            private ExpressmanMessage mMessage;
+            private Message mMessage;
 
             public ExpressmanMessageViewHolder(View view, Context context) {
                 super(view);
@@ -153,8 +155,8 @@ public class OrderFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, PrepareOrderListActivity.class);
-                intent.putExtra(mContext.getString(R.string.EXTRA_MESSAGE_ID), mMessage.id);
-                intent.putExtra(mContext.getString(R.string.EXTRA_EXPRESSMAN_ID), mMessage.expressman_id);
+                intent.putExtra(mContext.getString(R.string.EXTRA_MESSAGE_ID), mMessage.getIntProperty(TableSchema.MessageEntry.COLUMN_NAME_ID));
+                intent.putExtra(mContext.getString(R.string.EXTRA_EXPRESSMAN_ID), mMessage.getIntProperty(TableSchema.MessageEntry.COLUMN_NAME_SENDER));
                 mContext.startActivity(intent);
             }
         }

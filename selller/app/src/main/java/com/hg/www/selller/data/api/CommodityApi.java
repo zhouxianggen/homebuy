@@ -8,7 +8,8 @@ import com.hg.www.selller.GlobalContext;
 import com.hg.www.selller.data.db.DbHelper;
 import com.hg.www.selller.data.db.TableSchema;
 import com.hg.www.selller.data.define.Commodity;
-import com.hg.www.selller.data.define.Order;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,78 +31,74 @@ public class CommodityApi {
 
     public Commodity createCommodity() {
         Commodity commodity = new Commodity();
-        commodity.seller_id = GlobalContext.getInstance().getSellerId();
-        Long tsLong = System.currentTimeMillis()/1000;
-        String ts = tsLong.toString();
-        commodity.id = commodity.seller_id + ts;
+        commodity.setIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_SELLER_ID, GlobalContext.getInstance().getSellerId());
         return commodity;
     }
 
-    public boolean deleteCommodity(Commodity commodity) {
+    public boolean deleteCommodity(int id) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         return db.delete(TableSchema.CommodityEntry.TABLE_NAME,
-                TableSchema.CommodityEntry.COLUMN_NAME_ID + "=?",
-                new String[] {commodity.id}) > 0;
+                String.format("%s = ?", TableSchema.CommodityEntry.COLUMN_NAME_ID),
+                new String[] {String.valueOf(id)}) > 0;
     }
 
-    public boolean insertCommodity(Commodity commodity) {
+    public boolean insertCommodity(JSONObject object) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         ContentValues insertValues = new ContentValues();
-        insertValues.put(TableSchema.CommodityEntry.COLUMN_NAME_ID, commodity.id);
-        insertValues.put(TableSchema.CommodityEntry.COLUMN_NAME_SELLER_ID, commodity.seller_id);
-        insertValues.put(TableSchema.CommodityEntry.COLUMN_NAME_BARCODE, commodity.barcode);
-        insertValues.put(TableSchema.CommodityEntry.COLUMN_NAME_TITLE, commodity.title);
-        insertValues.put(TableSchema.CommodityEntry.COLUMN_NAME_DESCRIPTION, commodity.description);
-        insertValues.put(TableSchema.CommodityEntry.COLUMN_NAME_THUMBNAIL, commodity.thumbnail);
-        insertValues.put(TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_1, commodity.image_1);
-        insertValues.put(TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_2, commodity.image_2);
-        insertValues.put(TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_3, commodity.image_3);
-        insertValues.put(TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_4, commodity.image_4);
-        insertValues.put(TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_5, commodity.image_5);
-        insertValues.put(TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_6, commodity.image_6);
-        insertValues.put(TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_7, commodity.image_7);
-        insertValues.put(TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_8, commodity.image_8);
-        insertValues.put(TableSchema.CommodityEntry.COLUMN_NAME_PRICE, commodity.price);
-        insertValues.put(TableSchema.CommodityEntry.COLUMN_NAME_IN_STOCK, commodity.in_stock);
-        insertValues.put(TableSchema.CommodityEntry.COLUMN_NAME_IN_DISCOUNT, commodity.in_discount);
-        insertValues.put(TableSchema.CommodityEntry.COLUMN_NAME_SUPPORT_RETURN, commodity.support_return);
-        insertValues.put(TableSchema.CommodityEntry.COLUMN_NAME_WEEKLY_SALES, commodity.weekly_sales);
-        insertValues.put(TableSchema.CommodityEntry.COLUMN_NAME_MONTHLY_SALES, commodity.monthly_sales);
-        insertValues.put(TableSchema.CommodityEntry.COLUMN_NAME_WEEKLY_RETURNS, commodity.weekly_returns);
-        insertValues.put(TableSchema.CommodityEntry.COLUMN_NAME_MONTHLY_RETURNS, commodity.monthly_returns);
-        insertValues.put(TableSchema.CommodityEntry.COLUMN_NAME_CATEGORY, commodity.category);
-        db.insert(TableSchema.CommodityEntry.TABLE_NAME, null, insertValues);
+
+        try {
+            for (TableSchema.Column column : TableSchema.CommodityEntry.COLUMNS) {
+                if (column.type == TableSchema.ColumnType.TEXT_TYPE) {
+                    insertValues.put(column.name, object.getString(column.name));
+                } else if (column.type == TableSchema.ColumnType.INTEGER_TYPE) {
+                    insertValues.put(column.name, object.getInt(column.name));
+                } else if (column.type == TableSchema.ColumnType.REAL_TYPE) {
+                    insertValues.put(column.name, object.getDouble(column.name));
+                } else {
+                    return false;
+                }
+            }
+        } catch (org.json.JSONException e) {
+            return false;
+        }
+
+        db.replace(TableSchema.CommodityEntry.TABLE_NAME, null, insertValues);
         return true;
     }
 
-    public List<Commodity> getCommodities(String category) {
+    public List<Commodity> getCommodities(int category) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         Cursor c = db.rawQuery(
-                "SELECT * from commodity WHERE category=? ",
-                new String[]{category}
+                String.format("SELECT * from %s WHERE %s = ?",
+                        TableSchema.CommodityEntry.TABLE_NAME, TableSchema.CommodityEntry.COLUMN_NAME_CATEGORY_ID),
+                new String[]{String.valueOf(category)}
         );
 
         List<Commodity> commodities = new ArrayList<>();
         while (c.moveToNext()) {
-            commodities.add(CreateFromCursor(c));
+            Commodity commodity = new Commodity();
+            if (commodity.parseFromCursor(c)) {
+                commodities.add(commodity);
+            }
         }
 
         return commodities;
     }
 
-    public Commodity getCommodity(String id) {
-        if (id == null) {
-            return null;
-        }
-
+    public Commodity getCommodity(int id) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         Cursor c = db.rawQuery(
-                "SELECT * from commodity WHERE id=? ",
-                new String[]{id}
+                String.format("SELECT * from %s WHERE %s = ? ",
+                        TableSchema.CommodityEntry.TABLE_NAME,
+                        TableSchema.CommodityEntry.COLUMN_NAME_ID),
+                new String[]{String.valueOf(id)}
         );
 
         if (c.moveToNext()) {
-            return CreateFromCursor(c);
+            Commodity commodity = new Commodity();
+            if (commodity.parseFromCursor(c)) {
+                return commodity;
+            }
         }
 
         return null;
@@ -114,40 +111,20 @@ public class CommodityApi {
 
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         Cursor c = db.rawQuery(
-                "SELECT * from commodity WHERE barcode=? ",
+                String.format("SELECT * from %s WHERE %s = ? ",
+                        TableSchema.CommodityEntry.TABLE_NAME,
+                        TableSchema.CommodityEntry.COLUMN_NAME_BARCODE),
                 new String[]{barcode}
         );
 
         if (c.moveToNext()) {
-            return CreateFromCursor(c);
+            Commodity commodity = new Commodity();
+            if (commodity.parseFromCursor(c)) {
+                return commodity;
+            }
         }
 
         return null;
     }
 
-    private Commodity CreateFromCursor(Cursor c) {
-        Commodity commodity = new Commodity();
-        commodity.id = c.getString(c.getColumnIndexOrThrow(TableSchema.CommodityEntry.COLUMN_NAME_ID));
-        commodity.seller_id = c.getString(c.getColumnIndexOrThrow(TableSchema.CommodityEntry.COLUMN_NAME_SELLER_ID));
-        commodity.title = c.getString(c.getColumnIndexOrThrow(TableSchema.CommodityEntry.COLUMN_NAME_TITLE));
-        commodity.thumbnail = c.getString(c.getColumnIndexOrThrow(TableSchema.CommodityEntry.COLUMN_NAME_THUMBNAIL));
-        commodity.image_1 = c.getString(c.getColumnIndexOrThrow(TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_1));
-        commodity.image_2 = c.getString(c.getColumnIndexOrThrow(TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_2));
-        commodity.image_3 = c.getString(c.getColumnIndexOrThrow(TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_3));
-        commodity.image_4 = c.getString(c.getColumnIndexOrThrow(TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_4));
-        commodity.image_5 = c.getString(c.getColumnIndexOrThrow(TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_5));
-        commodity.image_6 = c.getString(c.getColumnIndexOrThrow(TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_6));
-        commodity.image_7 = c.getString(c.getColumnIndexOrThrow(TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_7));
-        commodity.image_8 = c.getString(c.getColumnIndexOrThrow(TableSchema.CommodityEntry.COLUMN_NAME_IMAGE_8));
-        commodity.price = c.getFloat(c.getColumnIndexOrThrow(TableSchema.CommodityEntry.COLUMN_NAME_PRICE));
-        commodity.in_stock = c.getInt(c.getColumnIndexOrThrow(TableSchema.CommodityEntry.COLUMN_NAME_IN_STOCK));
-        commodity.in_discount = c.getInt(c.getColumnIndexOrThrow(TableSchema.CommodityEntry.COLUMN_NAME_IN_DISCOUNT));
-        commodity.support_return = c.getInt(c.getColumnIndexOrThrow(TableSchema.CommodityEntry.COLUMN_NAME_SUPPORT_RETURN));
-        commodity.weekly_sales = c.getInt(c.getColumnIndexOrThrow(TableSchema.CommodityEntry.COLUMN_NAME_WEEKLY_SALES));
-        commodity.weekly_returns = c.getInt(c.getColumnIndexOrThrow(TableSchema.CommodityEntry.COLUMN_NAME_WEEKLY_RETURNS));
-        commodity.monthly_sales = c.getInt(c.getColumnIndexOrThrow(TableSchema.CommodityEntry.COLUMN_NAME_MONTHLY_SALES));
-        commodity.monthly_returns = c.getInt(c.getColumnIndexOrThrow(TableSchema.CommodityEntry.COLUMN_NAME_MONTHLY_RETURNS));
-        commodity.category = c.getString(c.getColumnIndexOrThrow(TableSchema.CommodityEntry.COLUMN_NAME_CATEGORY));
-        return commodity;
-    }
 }

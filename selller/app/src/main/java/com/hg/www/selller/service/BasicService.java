@@ -7,28 +7,24 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.hg.www.selller.GlobalContext;
-import com.hg.www.selller.data.define.Commodity;
-import com.hg.www.selller.data.define.CommodityCategory;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 
 public class BasicService extends Service {
     public static final String TAG = BasicService.class.getSimpleName();
     public static final String ACTION_GET = "com.hg.www.ACTION_GET";
+    public static final String ACTION_POST = "com.hg.www.ACTION_POST";
     public static final String ACTION_UPDATE = "com.hg.www.ACTION_UPDATE";
+    public static final String RESP_STATUS_OK = "ok";
+
+    protected static void clearAlarm() {
+        Log.d(TAG, "clear unread block");
+
+        AlarmManager am = (AlarmManager) GlobalContext.getInstance().getSystemService(ALARM_SERVICE);
+        am.cancel(getOperation());
+    }
 
     @Override
     public void onCreate() {
@@ -52,10 +48,18 @@ public class BasicService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent != null ? intent.getAction() : "";
+        Log.d(TAG, String.format("on start command [%s]", action));
 
         if (ACTION_GET.equals(action)) {
             resetTheTime();
             onActionGet();
+        } else if (ACTION_POST.equals(action)) {
+            if (intent != null) {
+                String data = intent.getStringExtra("data");
+                if (data != null) {
+                    onActionPost(data);
+                }
+            }
         }
         else if (ACTION_UPDATE.equals(action)) {
             resetTheTime();
@@ -64,7 +68,10 @@ public class BasicService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private void onActionGet() {
+    protected void onActionGet() {
+    }
+
+    protected void onActionPost(String data) {
     }
 
     private void resetTheTime() {
@@ -78,11 +85,11 @@ public class BasicService extends Service {
         am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), getOperation());
     }
 
-    private int getUpdateInterval() {
+    protected int getUpdateInterval() {
         return 10;
     }
 
-    private static PendingIntent getOperation() {
+    protected static PendingIntent getOperation() {
         Intent intent = new Intent();
         intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
         intent.setAction(ACTION_GET);

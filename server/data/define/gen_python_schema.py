@@ -29,10 +29,14 @@ def gen_schema(table_name, column_names, class_name):
     return '\n'.join(wlns) + '\n'
 
 tables = []
-tables.append(('seller', 'SellerEntry'))
-tables.append(('commodity', 'CommodityEntry'))
-tables.append(('category', 'CategoryEntry'))
+tables.append(('agency', 'AgencyEntry'))
 tables.append(('barcode', 'BarcodeEntry'))
+tables.append(('category', 'CategoryEntry'))
+tables.append(('commodity', 'CommodityEntry'))
+tables.append(('expressman', 'ExpressmanEntry'))
+tables.append(('message', 'MessageEntry'))
+tables.append(('order', 'OrderEntry'))
+tables.append(('seller', 'SellerEntry'))
 
 wlns = []
 wlns.append('#!/usr/bin/env python\n')

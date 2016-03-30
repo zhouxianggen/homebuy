@@ -25,10 +25,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.hg.www.selller.AppSettings;
 import com.hg.www.selller.R;
 import com.hg.www.selller.data.api.BarcodeApi;
 import com.hg.www.selller.data.api.CommodityApi;
 import com.hg.www.selller.data.api.HttpAsyncTask;
+import com.hg.www.selller.data.db.TableSchema;
 import com.hg.www.selller.data.define.Barcode;
 import com.hg.www.selller.data.define.Commodity;
 import com.hg.www.selller.service.CommodityService;
@@ -56,42 +58,42 @@ public class EditCommodityActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_commodity);
 
-        Intent intent = getIntent();
-        String commodity_id = intent.getStringExtra(getString(R.string.EXTRA_COMMODITY_ID));
-        String barcode_id = intent.getStringExtra(getString(R.string.EXTRA_COMMODITY_BARCODE_ID));
-        String category_id = intent.getStringExtra(getString(R.string.EXTRA_COMMODITY_CATEGORY_ID));
-
         mTitle = getString(R.string.ACTIVITY_ADD_COMMODITY);
 
-        Log.d(TAG, String.format("cateogry id is %s", category_id));
-        if (category_id == null) {
+        Intent intent = getIntent();
+        int commodityId = intent.getIntExtra(getString(R.string.EXTRA_COMMODITY_ID), -1);
+        String barcodeNumber = intent.getStringExtra(getString(R.string.EXTRA_COMMODITY_BARCODE_ID));
+        int categoryId = intent.getIntExtra(getString(R.string.EXTRA_COMMODITY_CATEGORY_ID), -1);
+        Log.d(TAG, String.format("commodity id [%d], category id [%d]", commodityId, categoryId));
+
+        if (categoryId == -1) {
             finish();
-        } else if (barcode_id != null) {
-            Log.d(TAG, String.format("barcode id is %s", barcode_id));
-            Barcode barcode = BarcodeApi.getInstance().getBarcode(barcode_id);
-            mCommodity =  CommodityApi.getInstance().getCommodityByBarcode(barcode_id);
+        } else if (barcodeNumber != null && !barcodeNumber.isEmpty()) {
+            Log.d(TAG, String.format("barcode [%s]", barcodeNumber));
+            Barcode barcode = BarcodeApi.getInstance().getBarcode(barcodeNumber);
+            mCommodity =  CommodityApi.getInstance().getCommodityByBarcode(barcodeNumber);
             if (mCommodity == null) {
                 Log.d(TAG, String.format("can not get commodity by barcode"));
                 mCommodity = CommodityApi.getInstance().createCommodity();
-                mCommodity.category = category_id;
-                mCommodity.barcode = barcode_id;
+                mCommodity.setIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_CATEGORY_ID, categoryId);
+                mCommodity.setStringProperty(TableSchema.CommodityEntry.COLUMN_NAME_BARCODE, barcodeNumber);
                 if (barcode != null) {
-                    mCommodity.title = barcode.commodity_title;
-                    mCommodity.price = barcode.commodity_price;
+                    mCommodity.setStringProperty(TableSchema.CommodityEntry.COLUMN_NAME_TITLE,
+                            barcode.getStringProperty(TableSchema.BarcodeEntry.COLUMN_NAME_ITEM_NAME));
+                    // // FIXME: 2016/3/29 set price her
                 }
             } else {
                 mTitle = getString(R.string.ACTIVITY_EDIT_COMMODITY);
             }
-        } else if (commodity_id != null) {
-            Log.d(TAG, String.format("commodity id is %s", commodity_id));
+        } else if (commodityId != -1) {
             mTitle = getString(R.string.ACTIVITY_EDIT_COMMODITY);
-            mCommodity =  CommodityApi.getInstance().getCommodity(commodity_id);
+            mCommodity =  CommodityApi.getInstance().getCommodity(commodityId);
             if (mCommodity == null) {
                 finish();
             }
         } else {
             mCommodity = CommodityApi.getInstance().createCommodity();
-            mCommodity.category = category_id;
+            mCommodity.setIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_CATEGORY_ID, categoryId);
         }
 
         if (mCommodity == null) {
@@ -129,11 +131,10 @@ public class EditCommodityActivity extends AppCompatActivity {
         if (id == R.id.menu_confirm) {
             updateCommodity();
 
-            CommodityService.updateServerCommodity(mContext, mCommodity, 4,
+            new HttpAsyncTask(this, "POST", AppSettings.getCommodityServerAddress(), mCommodity.toString(),
                     new HttpAsyncTask.OnSuccessListener() {
                         @Override
-                        public void onSuccess() {
-                            CommodityApi.getInstance().insertCommodity(mCommodity); // fixme
+                        public void onSuccess(String result) {
                             finish();
                         }
                     }, new HttpAsyncTask.OnFailureListener() {
@@ -141,7 +142,7 @@ public class EditCommodityActivity extends AppCompatActivity {
                         public void onFailure(String errors) {
                             Toast.makeText(mContext, errors, Toast.LENGTH_SHORT).show();
                         }
-                    });
+                    }, true).execute();
         } else {
             onBackPressed();
         }
@@ -196,7 +197,8 @@ public class EditCommodityActivity extends AppCompatActivity {
                                 switch (which) {
                                     // 设为图标
                                     case 0:
-                                        mCommodity.setThumbnail(path);
+                                        mCommodity.setStringProperty(
+                                                TableSchema.CommodityEntry.COLUMN_NAME_THUMBNAIL, path);
                                         refreshUI();
                                         break;
                                     // 删除图片
@@ -216,34 +218,51 @@ public class EditCommodityActivity extends AppCompatActivity {
     };
 
     private void updateCommodity() {
-        mCommodity.title = viewCommodityTitle.getText().toString();
-        mCommodity.price = Double.parseDouble(viewCommodityPrice.getText().toString());
-        mCommodity.description = viewCommodityDesc.getText().toString();
+        mCommodity.setStringProperty(
+                TableSchema.CommodityEntry.COLUMN_NAME_TITLE,
+                viewCommodityTitle.getText().toString());
+
+        mCommodity.setFloatProperty(
+                TableSchema.CommodityEntry.COLUMN_NAME_PRICE,
+                Float.parseFloat(viewCommodityPrice.getText().toString()));
+
+        mCommodity.setStringProperty(
+                TableSchema.CommodityEntry.COLUMN_NAME_DESCRIPTION,
+                viewCommodityDesc.getText().toString());
 
         String value = viewInStock.getSelectedItem().toString();
-        if (value.equals(getString(R.string.in_stock))) {
-            mCommodity.in_stock = 1;
-        } else {
-            mCommodity.in_stock = 0;
-        }
+        mCommodity.setIntProperty(
+                TableSchema.CommodityEntry.COLUMN_NAME_IN_STOCK,
+                value.equals(getString(R.string.in_stock))? 1 : 0);
 
-        mCommodity.in_discount = viewInDiscount.isChecked()? 1 : 0;
-        mCommodity.support_return = viewSupportReturn.isChecked()? 1 : 0;
+        mCommodity.setIntProperty(
+                TableSchema.CommodityEntry.COLUMN_NAME_IN_DISCOUNT,
+                viewInDiscount.isChecked()? 1 : 0);
+
+        mCommodity.setIntProperty(
+                TableSchema.CommodityEntry.COLUMN_NAME_SUPPORT_RETURN,
+                viewSupportReturn.isChecked()? 1 : 0);
     }
 
     private void initUI() {
-        if (!mCommodity.title.isEmpty()) {
-            viewCommodityTitle.setText(mCommodity.title);
+        String title = mCommodity.getStringProperty(TableSchema.CommodityEntry.COLUMN_NAME_TITLE);
+        if (title != null && !title.isEmpty()) {
+            viewCommodityTitle.setText(title);
         }
-        if (mCommodity.price > 0) {
-            viewCommodityPrice.setText(String.valueOf(mCommodity.price));
+
+        float price = mCommodity.getFloatProperty(TableSchema.CommodityEntry.COLUMN_NAME_PRICE);
+        if (price > 0) {
+            viewCommodityPrice.setText(String.valueOf(price));
         }
-        if (!mCommodity.description.isEmpty()) {
-            viewCommodityDesc.setText(mCommodity.description);
+
+        String desc = mCommodity.getStringProperty(TableSchema.CommodityEntry.COLUMN_NAME_DESCRIPTION);
+        if (desc != null && !desc.isEmpty()) {
+            viewCommodityDesc.setText(desc);
         }
 
         ArrayAdapter adapter = (ArrayAdapter) viewInStock.getAdapter();
-        if (mCommodity.in_stock != 0) {
+        int in_stock = mCommodity.getIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_IN_STOCK);
+        if (in_stock != 0) {
             int position = adapter.getPosition(getString(R.string.in_stock));
             viewInStock.setSelection(position);
         } else {
@@ -251,8 +270,11 @@ public class EditCommodityActivity extends AppCompatActivity {
             viewInStock.setSelection(position);
         }
 
-        viewInDiscount.setChecked(mCommodity.in_discount != 0);
-        viewSupportReturn.setChecked(mCommodity.support_return != 0);
+        int in_discount = mCommodity.getIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_IN_DISCOUNT);
+        viewInDiscount.setChecked(in_discount != 0);
+
+        int support_return = mCommodity.getIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_SUPPORT_RETURN);
+        viewSupportReturn.setChecked(support_return != 0);
     }
 
     private void refreshUI() {

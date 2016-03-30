@@ -2,6 +2,7 @@ package com.hg.www.selller.data.define;
 
 import com.hg.www.selller.GlobalContext;
 import com.hg.www.selller.R;
+import com.hg.www.selller.data.db.TableSchema;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class OrderPackage {
         }
         double payment = 0;
         for (Order order : orders) {
-            payment += order.payment;
+            payment += order.getFloatProperty(TableSchema.OrderEntry.COLUMN_NAME_PAYMENT);
         }
         return payment;
     }

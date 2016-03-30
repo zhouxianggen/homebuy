@@ -22,18 +22,21 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.zxing.BarcodeFormat;
 import com.hg.scanner.barcode.decoding.DecodeFormatManager;
 import com.hg.www.selller.R;
-import com.hg.www.selller.data.api.CommodityCategoryApi;
+import com.hg.www.selller.data.api.CategoryApi;
 import com.hg.www.selller.data.api.HttpAsyncTask;
-import com.hg.www.selller.data.define.CommodityCategory;
+import com.hg.www.selller.data.db.TableSchema;
+import com.hg.www.selller.data.define.Category;
+import com.hg.www.selller.service.BasicService;
+import com.hg.www.selller.service.CategoryService;
 import com.hg.www.selller.service.CommodityService;
 import com.hg.www.selller.ui.component.CommodityAdapter;
 
 public class CommodityListActivity extends AppCompatActivity {
-    private static final String TAG = "CommodityGroupList";
+    private static final String TAG = CommodityListActivity.class.getSimpleName();
     private Context mContext;
     private RecyclerView mRecyclerView;
     private CommodityAdapter mAdapter;
-    private String mCategoryId;
+    private int mCategoryId;
     private String mCategoryTitle;
 
     @Override
@@ -44,9 +47,9 @@ public class CommodityListActivity extends AppCompatActivity {
         mContext = this;
 
         Intent intent = getIntent();
-        mCategoryId = intent.getStringExtra(getString(R.string.EXTRA_COMMODITY_CATEGORY_ID));
+        mCategoryId = intent.getIntExtra(getString(R.string.EXTRA_COMMODITY_CATEGORY_ID), -1);
         mCategoryTitle = intent.getStringExtra(getString(R.string.EXTRA_COMMODITY_CATEGORY_TITLE));
-        if (mCategoryId == null || mCategoryTitle == null) {
+        if (mCategoryId == -1 || mCategoryTitle == null) {
             finish();
         }
 
@@ -89,24 +92,10 @@ public class CommodityListActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 String title = editText.getText().toString();
-                                final CommodityCategory category = CommodityCategoryApi.getInstance().createCategory();
-                                category.title = title;
-                                category.parent = mCategoryId;
-                                if (!title.isEmpty()) {
-                                    CommodityService.updateServerCategory(mContext, category, 4,
-                                            new HttpAsyncTask.OnSuccessListener() {
-                                                @Override
-                                                public void onSuccess() {
-                                                    CommodityCategoryApi.getInstance().insertCategory(category); // fixme
-                                                    mAdapter.onUpdateAdapter();
-                                                }
-                                            }, new HttpAsyncTask.OnFailureListener() {
-                                                @Override
-                                                public void onFailure(String errors) {
-                                                    Toast.makeText(mContext, errors, Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                }
+                                final Category category = CategoryApi.getInstance().createCategory();
+                                category.setStringProperty(TableSchema.CategoryEntry.COLUMN_NAME_TITLE, title);
+                                category.setIntProperty(TableSchema.CategoryEntry.COLUMN_NAME_PARENT, mCategoryId);
+                                CategoryService.startService(BasicService.ACTION_POST, category.toString());
                             }
 
                         })

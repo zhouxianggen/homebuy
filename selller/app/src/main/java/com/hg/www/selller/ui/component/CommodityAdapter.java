@@ -19,11 +19,14 @@ import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.android.volley.toolbox.NetworkImageView;
 import com.hg.www.selller.R;
 import com.hg.www.selller.data.api.CommodityApi;
-import com.hg.www.selller.data.api.CommodityCategoryApi;
+import com.hg.www.selller.data.api.CategoryApi;
 import com.hg.www.selller.data.api.HttpAsyncTask;
 import com.hg.www.selller.data.api.VolleyApi;
+import com.hg.www.selller.data.db.TableSchema;
 import com.hg.www.selller.data.define.Commodity;
-import com.hg.www.selller.data.define.CommodityCategory;
+import com.hg.www.selller.data.define.Category;
+import com.hg.www.selller.service.BasicService;
+import com.hg.www.selller.service.CategoryService;
 import com.hg.www.selller.service.CommodityService;
 import com.hg.www.selller.ui.CommodityListActivity;
 import com.hg.www.selller.ui.EditCommodityActivity;
@@ -38,11 +41,11 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
     private static final String TAG = CommodityAdapter.class.getSimpleName();
     public final Context context;
-    public final String root;
-    public List<CommodityCategory> categories = new ArrayList<>();
+    public final int root;
+    public List<Category> categories = new ArrayList<>();
     public List<Commodity> commodities = new ArrayList<>();
 
-    public CommodityAdapter(Context context, String root) {
+    public CommodityAdapter(Context context, int root) {
         this.context = context;
         this.root = root;
     }
@@ -65,29 +68,32 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder " + String.valueOf(position));
-        if (holder instanceof CommodityCategoryViewHolder) {
-            CommodityCategory category = categories.get(position);
-            CommodityCategoryViewHolder h = (CommodityCategoryViewHolder) holder;
+        if (holder instanceof CategoryViewHolder) {
+            Category category = categories.get(position);
+            CategoryViewHolder h = (CategoryViewHolder) holder;
             h.mCategory = category;
-            h.mTitle.setText(category.title);
-            h.mAmount.setText(String.valueOf(category.item_count));
+            h.mTitle.setText(category.getStringProperty(TableSchema.CategoryEntry.COLUMN_NAME_TITLE));
         } else if (holder instanceof CommodityViewHolder) {
             Commodity commodity = commodities.get(position - categories.size());
             CommodityViewHolder h = (CommodityViewHolder) holder;
             h.mCommodity = commodity;
             h.mThumbnail.setImageUrl(
-                    commodity.thumbnail, VolleyApi.getInstance().getImageLoader()
+                    commodity.getStringProperty(TableSchema.CommodityEntry.COLUMN_NAME_THUMBNAIL),
+                    VolleyApi.getInstance().getImageLoader()
             );
-            h.mTitle.setText(commodity.title);
+            h.mTitle.setText(commodity.getStringProperty(TableSchema.CommodityEntry.COLUMN_NAME_TITLE));
             h.mSaleInfo.setText(String.format(
                     "价格：%.2f  周销量：%d  退货量：%d",
-                    commodity.price, commodity.weekly_sales, commodity.weekly_returns));
+                    0.1, 2, 2));
 
             //h.mSupportReturn.setLayoutParams(new LinearLayout.LayoutParams(h.mSupportReturn.getMeasuredHeight(), h.mSupportReturn.getMeasuredHeight()));
-            h.mSupportReturn.setVisibility((commodity.support_return != 0) ? View.VISIBLE : View.GONE);
-            h.mInDiscount.setVisibility((commodity.in_discount != 0)? View.VISIBLE : View.GONE);
-            h.mInStock.setVisibility((commodity.in_stock != 0)? View.VISIBLE : View.GONE);
-            h.mOutOfStock.setVisibility((commodity.in_stock == 0)? View.VISIBLE : View.GONE);
+            boolean support_result = commodity.getIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_SUPPORT_RETURN) != 0;
+            h.mSupportReturn.setVisibility(support_result ? View.VISIBLE : View.GONE);
+            boolean in_discount = commodity.getIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_IN_DISCOUNT) != 0;
+            h.mInDiscount.setVisibility(in_discount? View.VISIBLE : View.GONE);
+            boolean in_stock = commodity.getIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_IN_STOCK) != 0;
+            h.mInStock.setVisibility(in_stock? View.VISIBLE : View.GONE);
+            h.mOutOfStock.setVisibility(in_stock? View.GONE : View.VISIBLE);
         }
     }
 
@@ -96,7 +102,7 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         if (viewType == ITEM_TYPE.COMMODITY_CATEGORY.ordinal()) {
             View view = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.commodity_category, parent, false);
-            return new CommodityCategoryViewHolder(view, context);
+            return new CategoryViewHolder(view, context);
         } else {
             View view = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.commodity, parent, false);
@@ -105,20 +111,20 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     public void onUpdateAdapter() {
-        categories = CommodityCategoryApi.getInstance().getCategories(root);
+        categories = CategoryApi.getInstance().getCategories(root);
         commodities = CommodityApi.getInstance().getCommodities(root);
         Log.d(TAG, String.format("get %d categories, %d commodities", categories.size(), commodities.size()));
         notifyDataSetChanged();
     }
 
-    public class CommodityCategoryViewHolder extends RecyclerView.ViewHolder
+    public class CategoryViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
         private Context mContext;
         private TextView mTitle;
         private TextView mAmount;
-        private CommodityCategory mCategory;
+        private Category mCategory;
 
-        public CommodityCategoryViewHolder(View view, Context context) {
+        public CategoryViewHolder(View view, Context context) {
             super(view);
             mContext = context;
             mTitle = (TextView) view.findViewById(R.id.title);
@@ -149,7 +155,7 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                             LayoutInflater layoutInflater = LayoutInflater.from(mContext);
                             View promptView = layoutInflater.inflate(R.layout.dialog_add_category, null);
                             final EditText editText = (EditText) promptView.findViewById(R.id.input);
-                            editText.setText(mCategory.title);
+                            editText.setText(mCategory.getStringProperty(TableSchema.CategoryEntry.COLUMN_NAME_TITLE));
 
                             new AlertDialogWrapper.Builder(mContext)
                                     .setView(promptView)
@@ -160,21 +166,8 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                         public void onClick(DialogInterface dialog, int which) {
                                             String title = editText.getText().toString();
                                             if (!title.isEmpty()) {
-                                                mCategory.title = title;
-                                                CommodityService.updateServerCategory(mContext, mCategory, 4,
-                                                        new HttpAsyncTask.OnSuccessListener() {
-                                                            @Override
-                                                            public void onSuccess() {
-                                                                CommodityCategoryApi.getInstance().deleteCategory(mCategory);
-                                                                CommodityCategoryApi.getInstance().insertCategory(mCategory); // fixme
-                                                                onUpdateAdapter();
-                                                            }
-                                                        }, new HttpAsyncTask.OnFailureListener() {
-                                                            @Override
-                                                            public void onFailure(String errors) {
-                                                                Toast.makeText(mContext, errors, Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        });
+                                                mCategory.setStringProperty(TableSchema.CategoryEntry.COLUMN_NAME_TITLE, title);
+                                                CategoryService.startService(BasicService.ACTION_POST, mCategory.toString());
                                             }
                                         }
 
@@ -189,19 +182,8 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            CommodityService.updateServerCategory(mContext, mCategory, 4,
-                                                    new HttpAsyncTask.OnSuccessListener() {
-                                                        @Override
-                                                        public void onSuccess() {
-                                                            CommodityCategoryApi.getInstance().deleteCategory(mCategory); // fixme
-                                                            onUpdateAdapter();
-                                                        }
-                                                    }, new HttpAsyncTask.OnFailureListener() {
-                                                        @Override
-                                                        public void onFailure(String errors) {
-                                                            Toast.makeText(mContext, errors, Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    });
+                                            mCategory.setStringProperty(TableSchema.CategoryEntry.COLUMN_NAME_STATUS, "deleted");
+                                            CategoryService.startService(BasicService.ACTION_POST, mCategory.toString());
                                         }
 
                                     })
@@ -217,8 +199,10 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(mContext, CommodityListActivity.class);
-            intent.putExtra(mContext.getString(R.string.EXTRA_COMMODITY_CATEGORY_ID), mCategory.id);
-            intent.putExtra(mContext.getString(R.string.EXTRA_COMMODITY_CATEGORY_TITLE), mCategory.title);
+            intent.putExtra(mContext.getString(R.string.EXTRA_COMMODITY_CATEGORY_ID),
+                    String.valueOf(mCategory.getIntProperty(TableSchema.CategoryEntry.COLUMN_NAME_ID)));
+            intent.putExtra(mContext.getString(R.string.EXTRA_COMMODITY_CATEGORY_TITLE),
+                    mCategory.getStringProperty(TableSchema.CategoryEntry.COLUMN_NAME_TITLE));
             mContext.startActivity(intent);
         }
     }
@@ -268,21 +252,8 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 public boolean onMenuItemClick(MenuItem menuItem) {
                     switch (menuItem.getItemId()) {
                         case R.id.menu_disable:
-                            mCommodity.in_stock = 0;
-                            CommodityService.updateServerCommodity(mContext, mCommodity, 4,
-                                    new HttpAsyncTask.OnSuccessListener() {
-                                        @Override
-                                        public void onSuccess() {
-                                            CommodityApi.getInstance().deleteCommodity(mCommodity);
-                                            CommodityApi.getInstance().insertCommodity(mCommodity); // fixme
-                                            onUpdateAdapter();
-                                        }
-                                    }, new HttpAsyncTask.OnFailureListener() {
-                                        @Override
-                                        public void onFailure(String errors) {
-                                            Toast.makeText(mContext, errors, Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
+                            mCommodity.setIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_IN_STOCK, 0);
+                            CommodityService.startService(BasicService.ACTION_POST, mCommodity.toString());
                             return true;
                         case R.id.menu_remove:
                             new AlertDialogWrapper.Builder(mContext)
@@ -292,19 +263,8 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            CommodityService.updateServerCommodity(mContext, mCommodity, 4,
-                                                    new HttpAsyncTask.OnSuccessListener() {
-                                                        @Override
-                                                        public void onSuccess() {
-                                                            CommodityApi.getInstance().deleteCommodity(mCommodity); // fixme
-                                                            onUpdateAdapter();
-                                                        }
-                                                    }, new HttpAsyncTask.OnFailureListener() {
-                                                        @Override
-                                                        public void onFailure(String errors) {
-                                                            Toast.makeText(mContext, errors, Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    });
+                                            mCommodity.setStringProperty(TableSchema.CommodityEntry.COLUMN_NAME_STATUS, "deleted");
+                                            CommodityService.startService(BasicService.ACTION_POST, mCommodity.toString());
                                         }
 
                                     })
@@ -320,7 +280,8 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(mContext, EditCommodityActivity.class);
-            intent.putExtra(mContext.getString(R.string.EXTRA_COMMODITY_ID), mCommodity.id);
+            intent.putExtra(mContext.getString(R.string.EXTRA_COMMODITY_ID),
+                    String.valueOf(mCommodity.getIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_ID)));
             mContext.startActivity(intent);
         }
     }
