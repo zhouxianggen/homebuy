@@ -36,4 +36,8 @@ public class AppSettings {
     public static String getCommodityServerAddress() {
         return "http://54.149.127.185/commodity";
     }
+
+    public static String getCommoditiesServerAddress() {
+        return "http://54.149.127.185/commodities";
+    }
 }

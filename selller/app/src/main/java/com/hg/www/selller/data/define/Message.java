@@ -3,7 +3,10 @@ package com.hg.www.selller.data.define;
 import com.hg.www.selller.data.db.TableSchema;
 
 public class Message extends TableRecord {
-    private static TableSchema.Column[] columns = TableSchema.MessageEntry.COLUMNS;
+    {
+        TAG = Message.class.getSimpleName();
+        columns = TableSchema.MessageEntry.COLUMNS;
+    }
     public static String STATUS_NEW = "new";
     public static String STATUS_CHECKED = "checked";
     public static String PREPARE_ORDER = "PREPARE_ORDER";

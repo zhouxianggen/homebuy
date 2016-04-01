@@ -8,14 +8,17 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.hg.www.selller.GlobalContext;
+import com.hg.www.selller.R;
+import com.hg.www.selller.data.api.RestfulApi;
+
+import org.json.JSONObject;
 
 import java.util.Calendar;
 
 
-public class BasicService extends Service {
+public class BasicService extends Service implements HttpInterface {
     public static final String TAG = BasicService.class.getSimpleName();
     public static final String ACTION_GET = "com.hg.www.ACTION_GET";
-    public static final String ACTION_POST = "com.hg.www.ACTION_POST";
     public static final String ACTION_UPDATE = "com.hg.www.ACTION_UPDATE";
     public static final String RESP_STATUS_OK = "ok";
 
@@ -51,27 +54,45 @@ public class BasicService extends Service {
         Log.d(TAG, String.format("on start command [%s]", action));
 
         if (ACTION_GET.equals(action)) {
+            new HttpAsyncTask(null, this).doGet();
             resetTheTime();
-            onActionGet();
-        } else if (ACTION_POST.equals(action)) {
-            if (intent != null) {
-                String data = intent.getStringExtra("data");
-                if (data != null) {
-                    onActionPost(data);
-                }
-            }
-        }
-        else if (ACTION_UPDATE.equals(action)) {
-            resetTheTime();
+        } else if (ACTION_UPDATE.equals(action)) {
+            new HttpAsyncTask(null, this).doGet();
         }
 
         return super.onStartCommand(intent, flags, startId);
     }
 
-    protected void onActionGet() {
+    public String get() {
+        return "";
     }
 
-    protected void onActionPost(String data) {
+    public String post(String data) {
+        return "";
+    }
+
+    public String doPost(String url, String data) {
+        Log.d(TAG, String.format("post url is [%s]", url));
+
+        String result = RestfulApi.getInstance().post(url, data);
+        if (result.isEmpty()) {
+            return GlobalContext.getInstance().getString(R.string.REMOTE_SERVER_ERROR);
+        }
+
+        try {
+            Log.d(TAG, String.format("result [%s]", result.subSequence(0, 20)));
+            JSONObject object = new JSONObject(result);
+            String status = object.getString("status");
+            if (!status.equals(RESP_STATUS_OK)) {
+                Log.d(TAG, String.format("resp status : [%s]", status));
+                return GlobalContext.getInstance().getString(R.string.REMOTE_SERVER_ERROR);
+            }
+
+            return get();
+        } catch (org.json.JSONException e) {
+            Log.d(TAG, String.format("json exception : [%s]", e.toString()));
+            return GlobalContext.getInstance().getString(R.string.REMOTE_SERVER_ERROR);
+        }
     }
 
     private void resetTheTime() {

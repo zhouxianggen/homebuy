@@ -22,18 +22,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.AlertDialogWrapper;
-import com.hg.www.selller.AppSettings;
 import com.hg.www.selller.R;
 import com.hg.www.selller.data.api.BarcodeApi;
 import com.hg.www.selller.data.api.CommodityApi;
-import com.hg.www.selller.data.api.HttpAsyncTask;
 import com.hg.www.selller.data.db.TableSchema;
 import com.hg.www.selller.data.define.Barcode;
 import com.hg.www.selller.data.define.Commodity;
-import com.hg.www.selller.service.CommodityService;
 import com.hg.www.selller.ui.toolkit.ImageDownloader;
 
 import java.io.ByteArrayOutputStream;
@@ -63,7 +59,7 @@ public class EditCommodityActivity extends AppCompatActivity {
         Intent intent = getIntent();
         int commodityId = intent.getIntExtra(getString(R.string.EXTRA_COMMODITY_ID), -1);
         String barcodeNumber = intent.getStringExtra(getString(R.string.EXTRA_COMMODITY_BARCODE_ID));
-        int categoryId = intent.getIntExtra(getString(R.string.EXTRA_COMMODITY_CATEGORY_ID), -1);
+        int categoryId = intent.getIntExtra(getString(R.string.EXTRA_CATEGORY_ID), -1);
         Log.d(TAG, String.format("commodity id [%d], category id [%d]", commodityId, categoryId));
 
         if (categoryId == -1) {
@@ -131,18 +127,18 @@ public class EditCommodityActivity extends AppCompatActivity {
         if (id == R.id.menu_confirm) {
             updateCommodity();
 
-            new HttpAsyncTask(this, "POST", AppSettings.getCommodityServerAddress(), mCommodity.toString(),
-                    new HttpAsyncTask.OnSuccessListener() {
-                        @Override
-                        public void onSuccess(String result) {
-                            finish();
-                        }
-                    }, new HttpAsyncTask.OnFailureListener() {
-                        @Override
-                        public void onFailure(String errors) {
-                            Toast.makeText(mContext, errors, Toast.LENGTH_SHORT).show();
-                        }
-                    }, true).execute();
+//            new HttpAsyncTask(this, "POST", AppSettings.getCommodityServerAddress(), mCommodity.toString(),
+//                    new HttpAsyncTask.OnSuccessListener() {
+//                        @Override
+//                        public void onSuccess(String result) {
+//                            finish();
+//                        }
+//                    }, new HttpAsyncTask.OnFailureListener() {
+//                        @Override
+//                        public void onFailure(String errors) {
+//                            Toast.makeText(mContext, errors, Toast.LENGTH_SHORT).show();
+//                        }
+//                    }, true).execute();
         } else {
             onBackPressed();
         }

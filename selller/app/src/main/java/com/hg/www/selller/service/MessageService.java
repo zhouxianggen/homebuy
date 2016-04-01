@@ -1,12 +1,8 @@
 package com.hg.www.selller.service;
 
-import android.content.Context;
 import android.content.Intent;
 
-import com.hg.www.selller.AppSettings;
 import com.hg.www.selller.GlobalContext;
-import com.hg.www.selller.data.api.HttpAsyncTask;
-import com.hg.www.selller.data.define.Message;
 
 public class MessageService extends BasicService {
     public static final String TAG = MessageService.class.getSimpleName();

@@ -10,16 +10,16 @@
 
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="90dp"
+        android:layout_height="80dp"
         android:background="?android:attr/selectableItemBackground">
 
         <com.android.volley.toolbox.NetworkImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="4dp"
+            android:layout_marginLeft="5dp"
             android:scaleType="centerInside"
             android:id="@+id/thumbnail"/>
 
@@ -30,8 +30,8 @@
             android:layout_toEndOf="@id/thumbnail"
             android:layout_toLeftOf="@+id/popup_menu"
             android:layout_toStartOf="@id/popup_menu"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
             android:orientation="vertical">
 
             <TextView
@@ -44,26 +44,55 @@
                 android:gravity="center_vertical|start"
                 android:textColor="@color/main_text"
                 android:text="@string/commodity_title"
-                android:textSize="@dimen/text_size_primary"/>
+                android:textSize="17sp" />
 
-            <TextView
-                android:id="@+id/sale_info"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:ellipsize="end"
-                android:singleLine="true"
                 android:layout_height="0dp"
                 android:layout_weight="30"
-                android:gravity="center_vertical|start"
-                android:textSize="@dimen/text_size_secondary"
-                android:textColor="@android:color/darker_gray"
-                android:text="@string/sale_info"/>
+                android:orientation="horizontal">
+
+                <LinearLayout style="@style/PairWrapper">
+                    <TextView
+                        style="@style/IndicateText"
+                        android:text="价格:"/>
+
+                    <TextView android:id="@+id/price"
+                        style="@style/ValueText"
+                        android:textColor="@color/money"
+                        android:text="24.5"/>
+                </LinearLayout>
+
+                <LinearLayout style="@style/PairWrapper">
+                    <TextView
+                        style="@style/IndicateText"
+                        android:text="周销量:"/>
+
+                    <TextView android:id="@+id/sales"
+                        style="@style/ValueText"
+                        android:textColor="@color/count"
+                        android:text="18"/>
+                </LinearLayout>
+
+                <LinearLayout style="@style/PairWrapper">
+                    <TextView
+                        style="@style/IndicateText"
+                        android:text="周退货:"/>
+
+                    <TextView android:id="@+id/returns"
+                        style="@style/ValueText"
+                        android:textColor="@color/notify"
+                        android:text="1"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="20"
                 android:paddingTop="2dp"
-                android:paddingBottom="4dp"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -75,11 +104,6 @@
                     android:id="@+id/in_discount"
                     style="@style/CommodityOptionImageView"
                     android:src="@drawable/in_discount"/>
-
-                <ImageView
-                    android:id="@+id/in_stock"
-                    style="@style/CommodityOptionImageView"
-                    android:src="@drawable/in_stock"/>
 
                 <ImageView
                     android:id="@+id/outof_stock"

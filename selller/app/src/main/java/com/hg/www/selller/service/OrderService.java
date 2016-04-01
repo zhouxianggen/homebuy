@@ -1,15 +1,8 @@
 package com.hg.www.selller.service;
 
-import android.content.Context;
 import android.content.Intent;
 
-import com.hg.www.selller.AppSettings;
 import com.hg.www.selller.GlobalContext;
-import com.hg.www.selller.data.api.HttpAsyncTask;
-import com.hg.www.selller.data.api.OrderApi;
-import com.hg.www.selller.data.define.Order;
-
-import java.util.List;
 
 public class OrderService extends BasicService {
     public static final String TAG = OrderService.class.getSimpleName();

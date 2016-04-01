@@ -7,6 +7,7 @@ import android.util.Log;
 import com.hg.www.selller.data.db.DbHelper;
 import com.hg.www.selller.service.BasicService;
 import com.hg.www.selller.service.CategoryService;
+import com.hg.www.selller.service.CommodityService;
 
 import java.util.HashMap;
 
@@ -28,8 +29,9 @@ public class GlobalContext extends Application {
         DbHelper mDbHelper = new DbHelper(GlobalContext.getInstance());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         mDbHelper.onUpgrade(db, 0, 0);
-        Log.d(TAG, "global context start server");
-        CategoryService.startService(BasicService.ACTION_GET, "");
+
+        CategoryService.startService(BasicService.ACTION_UPDATE);
+        CommodityService.startService(BasicService.ACTION_UPDATE);
     }
 
     public static GlobalContext getInstance() {

@@ -8,7 +8,10 @@ import java.util.ArrayList;
  * 商品数据格式
  */
 public class Commodity extends TableRecord {
-    private static TableSchema.Column[] columns = TableSchema.CommodityEntry.COLUMNS;
+    {
+        TAG = Commodity.class.getSimpleName();
+        columns = TableSchema.CommodityEntry.COLUMNS;
+    }
 
     public void deleteImage(String path) {
 

@@ -25,7 +25,6 @@
             android:theme="@style/Theme.Demo">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -57,7 +56,13 @@
         <service android:name="com.hg.www.selller.service.CategoryService" android:exported="true">
             <intent-filter>
                 <action android:name="com.hg.www.ACTION_GET"/>
-                <action android:name="com.hg.www.ACTION_POST"/>
+                <action android:name="com.hg.www.ACTION_UPDATE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </service>
+        <service android:name="com.hg.www.selller.service.CommodityService" android:exported="true">
+            <intent-filter>
+                <action android:name="com.hg.www.ACTION_GET"/>
                 <action android:name="com.hg.www.ACTION_UPDATE"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>

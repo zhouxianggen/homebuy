@@ -3,6 +3,7 @@ package com.hg.www.selller.data.api;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.hg.www.selller.GlobalContext;
 import com.hg.www.selller.data.db.DbHelper;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CategoryApi {
+    public static final String TAG = CategoryApi.class.getSimpleName();
     private static CategoryApi instance = null;
     private DbHelper mDbHelper = null;
 
@@ -48,10 +50,12 @@ public class CategoryApi {
                 } else if (column.type == TableSchema.ColumnType.REAL_TYPE) {
                     insertValues.put(column.name, object.getDouble(column.name));
                 } else {
+                    Log.e(TAG, String.format("error column type for [%s]", column.name));
                     return false;
                 }
             }
         } catch (org.json.JSONException e) {
+            Log.d(TAG, String.format("insert category exception [%s]", e.toString()));
             return false;
         }
 
@@ -69,9 +73,11 @@ public class CategoryApi {
     public List<Category> getCategories(int parent) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         Cursor c = db.rawQuery(
-                String.format("SELECT * from %s WHERE %s = ?",
-                        TableSchema.CategoryEntry.TABLE_NAME, TableSchema.CategoryEntry.COLUMN_NAME_PARENT),
-                new String[]{String.valueOf(parent)}
+                String.format("SELECT * from %s WHERE %s = %d",
+                        TableSchema.CategoryEntry.TABLE_NAME,
+                        TableSchema.CategoryEntry.COLUMN_NAME_PARENT,
+                        parent),
+                null
         );
 
         List<Category> categories = new ArrayList<>();
@@ -82,6 +88,7 @@ public class CategoryApi {
             }
         }
 
+        Log.d(TAG, String.format("get [%d] categories for parent [%d]", categories.size(), parent));
         return categories;
     }
 
@@ -94,9 +101,11 @@ public class CategoryApi {
                         TableSchema.CategoryEntry.COLUMN_NAME_MODIFY_TIME),
                 null
         );
+        int t = 0;
         if (c.moveToNext()) {
-            return c.getInt(c.getColumnIndexOrThrow(TableSchema.CategoryEntry.COLUMN_NAME_MODIFY_TIME));
+            t = c.getInt(c.getColumnIndexOrThrow(TableSchema.CategoryEntry.COLUMN_NAME_MODIFY_TIME));
         }
-        return 0;
+        Log.d(TAG, String.format("get last modify time [%d]", t));
+        return t;
     }
 }

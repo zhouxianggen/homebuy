@@ -81,7 +81,7 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                                 public void onClick(DialogInterface dialog, int which) {
                                     order.setStringProperty(
                                             TableSchema.OrderEntry.COLUMN_NAME_STATUS, Order.STATUS_REJECTED);
-                                    OrderService.startService(BasicService.ACTION_POST, order.toString());
+                                    //OrderService.startService(BasicService.ACTION_POST, order.toString());
                                 }
 
                             })
