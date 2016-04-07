@@ -25,16 +25,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.AlertDialogWrapper;
-import com.hg.www.selller.AppSettings;
+import com.hg.www.selller.GlobalContext;
 import com.hg.www.selller.R;
 import com.hg.www.selller.data.api.BarcodeApi;
 import com.hg.www.selller.data.api.CommodityApi;
-import com.hg.www.selller.data.api.HttpAsyncTask;
 import com.hg.www.selller.data.db.TableSchema;
 import com.hg.www.selller.data.define.Barcode;
 import com.hg.www.selller.data.define.Commodity;
-import com.hg.www.selller.service.CommodityService;
+import com.hg.www.selller.service.CommodityUploadTask;
 import com.hg.www.selller.ui.toolkit.ImageDownloader;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
@@ -47,9 +47,8 @@ public class EditCommodityActivity extends AppCompatActivity {
     private final ImageDownloader imageDownloader = new ImageDownloader();
     private EditText viewCommodityTitle;
     private EditText viewCommodityPrice;
-    private Spinner viewInStock;
     private CheckBox viewInDiscount;
-    private CheckBox viewSupportReturn;
+    private CheckBox viewInStock;
     private LinearLayout layImageList;
     private EditText viewCommodityDesc;
 
@@ -61,9 +60,9 @@ public class EditCommodityActivity extends AppCompatActivity {
         mTitle = getString(R.string.ACTIVITY_ADD_COMMODITY);
 
         Intent intent = getIntent();
+        int categoryId = intent.getIntExtra(getString(R.string.EXTRA_CATEGORY_ID), -1);
         int commodityId = intent.getIntExtra(getString(R.string.EXTRA_COMMODITY_ID), -1);
         String barcodeNumber = intent.getStringExtra(getString(R.string.EXTRA_COMMODITY_BARCODE_ID));
-        int categoryId = intent.getIntExtra(getString(R.string.EXTRA_COMMODITY_CATEGORY_ID), -1);
         Log.d(TAG, String.format("commodity id [%d], category id [%d]", commodityId, categoryId));
 
         if (categoryId == -1) {
@@ -80,7 +79,6 @@ public class EditCommodityActivity extends AppCompatActivity {
                 if (barcode != null) {
                     mCommodity.setStringProperty(TableSchema.CommodityEntry.COLUMN_NAME_TITLE,
                             barcode.getStringProperty(TableSchema.BarcodeEntry.COLUMN_NAME_ITEM_NAME));
-                    // // FIXME: 2016/3/29 set price her
                 }
             } else {
                 mTitle = getString(R.string.ACTIVITY_EDIT_COMMODITY);
@@ -103,9 +101,8 @@ public class EditCommodityActivity extends AppCompatActivity {
         mContext = this;
         viewCommodityTitle = (EditText) findViewById(R.id.commodity_title);
         viewCommodityPrice = (EditText) findViewById(R.id.commodity_price);
-        viewInStock = (Spinner) findViewById(R.id.in_stock);
+        viewInStock = (CheckBox) findViewById(R.id.option_in_stock);
         viewInDiscount = (CheckBox) findViewById(R.id.option_in_discount);
-        viewSupportReturn = (CheckBox) findViewById(R.id.option_support_return);
         layImageList = (LinearLayout) findViewById(R.id.lay_commodity_image);
         viewCommodityDesc = (EditText) findViewById(R.id.commodity_desc);
 
@@ -130,19 +127,13 @@ public class EditCommodityActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.menu_confirm) {
             updateCommodity();
-
-            new HttpAsyncTask(this, "POST", AppSettings.getCommodityServerAddress(), mCommodity.toString(),
-                    new HttpAsyncTask.OnSuccessListener() {
-                        @Override
-                        public void onSuccess(String result) {
-                            finish();
-                        }
-                    }, new HttpAsyncTask.OnFailureListener() {
-                        @Override
-                        public void onFailure(String errors) {
-                            Toast.makeText(mContext, errors, Toast.LENGTH_SHORT).show();
-                        }
-                    }, true).execute();
+            String errors = new CommodityUploadTask(mContext).upload(mCommodity);
+            if (!errors.isEmpty()) {
+                Log.d(TAG, String.format("error is [%s]", errors));
+                Toast.makeText(GlobalContext.getInstance(), errors, Toast.LENGTH_SHORT).show();
+            } else {
+                finish();
+            }
         } else {
             onBackPressed();
         }
@@ -230,18 +221,13 @@ public class EditCommodityActivity extends AppCompatActivity {
                 TableSchema.CommodityEntry.COLUMN_NAME_DESCRIPTION,
                 viewCommodityDesc.getText().toString());
 
-        String value = viewInStock.getSelectedItem().toString();
-        mCommodity.setIntProperty(
-                TableSchema.CommodityEntry.COLUMN_NAME_IN_STOCK,
-                value.equals(getString(R.string.in_stock))? 1 : 0);
-
         mCommodity.setIntProperty(
                 TableSchema.CommodityEntry.COLUMN_NAME_IN_DISCOUNT,
                 viewInDiscount.isChecked()? 1 : 0);
 
         mCommodity.setIntProperty(
-                TableSchema.CommodityEntry.COLUMN_NAME_SUPPORT_RETURN,
-                viewSupportReturn.isChecked()? 1 : 0);
+                TableSchema.CommodityEntry.COLUMN_NAME_IN_STOCK,
+                viewInStock.isChecked()? 1 : 0);
     }
 
     private void initUI() {
@@ -260,28 +246,18 @@ public class EditCommodityActivity extends AppCompatActivity {
             viewCommodityDesc.setText(desc);
         }
 
-        ArrayAdapter adapter = (ArrayAdapter) viewInStock.getAdapter();
-        int in_stock = mCommodity.getIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_IN_STOCK);
-        if (in_stock != 0) {
-            int position = adapter.getPosition(getString(R.string.in_stock));
-            viewInStock.setSelection(position);
-        } else {
-            int position = adapter.getPosition(getString(R.string.out_of_stock));
-            viewInStock.setSelection(position);
-        }
-
         int in_discount = mCommodity.getIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_IN_DISCOUNT);
         viewInDiscount.setChecked(in_discount != 0);
 
-        int support_return = mCommodity.getIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_SUPPORT_RETURN);
-        viewSupportReturn.setChecked(support_return != 0);
+        int in_stock = mCommodity.getIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_IN_STOCK);
+        viewInStock.setChecked(in_stock != 0);
     }
 
     private void refreshUI() {
         layImageList.removeAllViews();
 
         List<String> images = mCommodity.getImages();
-        images.add("");
+        images.add(0, "");
         for (String path : images) {
             View view = View.inflate(this, R.layout.commodity_image, null);
             ImageView imageView = (ImageView) view.findViewById(R.id.image);
@@ -289,7 +265,17 @@ public class EditCommodityActivity extends AppCompatActivity {
             view.setTag(path);
             view.setOnClickListener(onPictureClickListener);
             if (!path.isEmpty()) {
-                imageDownloader.download(path, imageView, 80, 80);
+                imageView.setImageResource(R.drawable.loading_image);
+                if (path.toString().startsWith("http://") || path.toString().startsWith("https://")) {
+                    Picasso.with(mContext)
+                            .load(path)
+                            .resize(80, 80)
+                            .into(imageView);
+                } else {
+                    imageDownloader.download(path, imageView, 80, 80);
+                }
+            } else {
+                //imageView.setImageResource(R.drawable.add_image);
             }
             layImageList.addView(view,
                     new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -307,6 +293,7 @@ public class EditCommodityActivity extends AppCompatActivity {
                     Log.d(TAG, images.toString());
                     if (images != null) {
                         for (String image : images) {
+                            Log.d(TAG, String.format("add image [%s]", image));
                             mCommodity.addImage(image);
                         }
                         refreshUI();

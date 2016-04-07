@@ -7,6 +7,7 @@
     <string name="hint_commodity_category">类目名称</string>
     <string name="commodity_price">商品价格</string>
     <string name="commodity_count">8</string>
+    <string name="commodity_images">货物图片</string>
     <string name="commodity_desc">货物描述</string>
     <string name="price">价格</string>
     <string name="option_in_stock">是否有货</string>
@@ -19,9 +20,9 @@
     <string name="delete">X</string>
     <string name="EXTRA_FRAGMENT">extra_fragment</string>
     <string name="EXTRA_COMMODITY_ID">extra_commodity_id</string>
-    <string name="EXTRA_COMMODITY_CATEGORY_ID">extra_commodity_parent</string>
+    <string name="EXTRA_CATEGORY_ID">extra_category_id</string>
     <string name="EXTRA_COMMODITY_BARCODE_ID">extra_commodity_barcode</string>
-    <string name="EXTRA_COMMODITY_CATEGORY_TITLE">extra_commodity_category_title</string>
+    <string name="EXTRA_CATEGORY_TITLE">extra_commodity_category_title</string>
     <string name="EXTRA_EXPRESSMAN_ID">extra_expressman_id</string>
     <string name="EXTRA_MESSAGE_ID">extra_message_id</string>
     <string name="EXTRA_LOADING_TIMESTAMP">extra_loading_timestamp</string>
@@ -57,6 +58,7 @@
 
     <string name="menu_rename">改名</string>
     <string name="menu_disable">下架</string>
+    <string name="menu_enable">上架</string>
     <string name="menu_remove">删除</string>
 
     <string name="btn_action">action</string>
@@ -81,6 +83,9 @@
     <string name="ACTIVITY_PAID_ORDER">已付款订单</string>
     <string name="ACTIVITY_RETURNED_ORDER">已退货订单</string>
     <string name="ACTIVITY_CLAIMED_ORDER">理赔订单</string>
+
+    <string name="REMOTE_SERVER_ERROR">服务器出了点问题</string>
+    <string name="NETWORK_ERROR">网络出了点问题</string>
 
     <string name="DIALOG_MESSAGE_REJECT_ORDER">
         过多地拒绝订单会降低店铺的信誉，您可以设置该货物没有库存来避免用户下单

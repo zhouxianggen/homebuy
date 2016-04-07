@@ -3,7 +3,6 @@ package com.hg.www.selller.data.api;
 import android.util.Log;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.client.HttpClient;
 
 import java.io.BufferedInputStream;
 import java.io.DataOutputStream;
@@ -27,9 +26,11 @@ public class RestfulApi {
 
     public String get(String address) {
         try {
+            Log.d(TAG, String.format("get from [%s]", address));
             URL url = new URL(address);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
+            conn.connect();
             InputStream in = new BufferedInputStream(conn.getInputStream());
             return IOUtils.toString(in, "UTF-8");
         } catch (Exception e) {

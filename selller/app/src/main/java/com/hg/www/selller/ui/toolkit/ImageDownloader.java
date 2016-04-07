@@ -54,7 +54,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * A local cache of downloaded images is maintained internally to improve performance.
  */
 public class ImageDownloader {
-    private static final String TAG = "ImageDownloader";
+    private static final String TAG = ImageDownloader.class.getSimpleName();
 
     /**
      * Download the specified image from the Internet and binds it to the provided ImageView. The
@@ -65,6 +65,7 @@ public class ImageDownloader {
      * @param imageView The ImageView to bind the downloaded image to.
      */
     public void download(String url, ImageView imageView, int reqWidth, int reqHeight) {
+        Log.d(TAG, String.format("download [%s]", url));
         resetPurgeTimer();
         Bitmap bitmap = getBitmapFromCache(url);
 
@@ -133,6 +134,7 @@ public class ImageDownloader {
     }
 
     Bitmap downloadBitmap(String url, int reqWidth, int reqHeight) {
+        Log.d(TAG, "download bitmap");
         if (url.toString().startsWith("http://") || url.toString().startsWith("https://")) {
             return BitmapToolkit.decodeSampledBitmapFromUrl(url, reqWidth, reqHeight);
         } else {

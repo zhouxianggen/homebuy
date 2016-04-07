@@ -3,7 +3,10 @@ package com.hg.www.selller.data.define;
 import com.hg.www.selller.data.db.TableSchema;
 
 public class Order extends TableRecord {
-    private static TableSchema.Column[] columns = TableSchema.OrderEntry.COLUMNS;
+    {
+        TAG = Order.class.getSimpleName();
+        columns = TableSchema.OrderEntry.COLUMNS;
+    }
     public static String STATUS_NEW = "new";
     public static String STATUS_REJECTED = "rejected";
     public static String STATUS_ACCEPTED = "accepted";

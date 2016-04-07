@@ -17,17 +17,17 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.android.volley.toolbox.NetworkImageView;
+import com.hg.www.selller.GlobalContext;
 import com.hg.www.selller.R;
 import com.hg.www.selller.data.api.CommodityApi;
 import com.hg.www.selller.data.api.CategoryApi;
-import com.hg.www.selller.data.api.HttpAsyncTask;
 import com.hg.www.selller.data.api.VolleyApi;
 import com.hg.www.selller.data.db.TableSchema;
 import com.hg.www.selller.data.define.Commodity;
 import com.hg.www.selller.data.define.Category;
-import com.hg.www.selller.service.BasicService;
 import com.hg.www.selller.service.CategoryService;
 import com.hg.www.selller.service.CommodityService;
+import com.hg.www.selller.service.HttpAsyncTask;
 import com.hg.www.selller.ui.CommodityListActivity;
 import com.hg.www.selller.ui.EditCommodityActivity;
 
@@ -35,33 +35,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    public enum ITEM_TYPE {
-        COMMODITY_CATEGORY,
-        COMMODITY
-    }
     private static final String TAG = CommodityAdapter.class.getSimpleName();
+    private static final int CATEGORY_ITEM_TYPE = 1;
+    private static final int COMMODITY_ITEM_TYPE = 2;
     public final Context context;
     public final int root;
-    public List<Category> categories = new ArrayList<>();
-    public List<Commodity> commodities = new ArrayList<>();
+    public List<Object> objects;
 
     public CommodityAdapter(Context context, int root) {
         this.context = context;
         this.root = root;
+        this.objects = new ArrayList<>();
     }
 
     @Override
     public int getItemCount() {
-        return categories.size() + commodities.size();
+        return objects.size();
     }
 
     @Override
     public int getItemViewType(int position) {
         Log.d(TAG, "getItemViewType " + String.valueOf(position));
-        if (position < categories.size()) {
-            return ITEM_TYPE.COMMODITY_CATEGORY.ordinal();
+        Object object = objects.get(position);
+        if (object instanceof Category) {
+            return CATEGORY_ITEM_TYPE;
         } else {
-            return ITEM_TYPE.COMMODITY.ordinal();
+            return COMMODITY_ITEM_TYPE;
         }
     }
 
@@ -69,39 +68,35 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder " + String.valueOf(position));
         if (holder instanceof CategoryViewHolder) {
-            Category category = categories.get(position);
+            Category category = (Category) objects.get(position);
             CategoryViewHolder h = (CategoryViewHolder) holder;
-            h.mCategory = category;
-            h.mTitle.setText(category.getStringProperty(TableSchema.CategoryEntry.COLUMN_NAME_TITLE));
+            h.category = category;
+            h.viewTitle.setText(category.getStringProperty(TableSchema.CategoryEntry.COLUMN_NAME_TITLE));
+            h.viewCount.setText(String.valueOf(category.getIntProperty(TableSchema.CategoryEntry.COLUMN_NAME_ID)));
         } else if (holder instanceof CommodityViewHolder) {
-            Commodity commodity = commodities.get(position - categories.size());
+            Commodity commodity = (Commodity) objects.get(position);
             CommodityViewHolder h = (CommodityViewHolder) holder;
-            h.mCommodity = commodity;
-            h.mThumbnail.setImageUrl(
+            h.commodity = commodity;
+            h.viewThumbnail.setImageUrl(
                     commodity.getStringProperty(TableSchema.CommodityEntry.COLUMN_NAME_THUMBNAIL),
                     VolleyApi.getInstance().getImageLoader()
             );
-            h.mTitle.setText(commodity.getStringProperty(TableSchema.CommodityEntry.COLUMN_NAME_TITLE));
-            h.mSaleInfo.setText(String.format(
-                    "价格：%.2f  周销量：%d  退货量：%d",
-                    0.1, 2, 2));
-
-            //h.mSupportReturn.setLayoutParams(new LinearLayout.LayoutParams(h.mSupportReturn.getMeasuredHeight(), h.mSupportReturn.getMeasuredHeight()));
+            h.viewTitle.setText(commodity.getStringProperty(TableSchema.CommodityEntry.COLUMN_NAME_TITLE));
             boolean support_result = commodity.getIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_SUPPORT_RETURN) != 0;
-            h.mSupportReturn.setVisibility(support_result ? View.VISIBLE : View.GONE);
+            h.viewSupportReturn.setVisibility(support_result ? View.VISIBLE : View.GONE);
             boolean in_discount = commodity.getIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_IN_DISCOUNT) != 0;
-            h.mInDiscount.setVisibility(in_discount? View.VISIBLE : View.GONE);
+            h.viewInDiscount.setVisibility(in_discount ? View.VISIBLE : View.GONE);
             boolean in_stock = commodity.getIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_IN_STOCK) != 0;
-            h.mInStock.setVisibility(in_stock? View.VISIBLE : View.GONE);
-            h.mOutOfStock.setVisibility(in_stock? View.GONE : View.VISIBLE);
+            h.viewOutofStock.setVisibility(in_stock ? View.GONE : View.VISIBLE);
         }
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == ITEM_TYPE.COMMODITY_CATEGORY.ordinal()) {
+        Log.d(TAG, String.format("onCreateViewHolder view type [%d]", viewType));
+        if (viewType == CATEGORY_ITEM_TYPE) {
             View view = LayoutInflater.from(parent.getContext()).inflate(
-                    R.layout.commodity_category, parent, false);
+                    R.layout.category, parent, false);
             return new CategoryViewHolder(view, context);
         } else {
             View view = LayoutInflater.from(parent.getContext()).inflate(
@@ -110,25 +105,37 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-    public void onUpdateAdapter() {
-        categories = CategoryApi.getInstance().getCategories(root);
-        commodities = CommodityApi.getInstance().getCommodities(root);
+    public void clear() {
+        objects.clear();
+        notifyDataSetChanged();
+    }
+
+    public void update() {
+        objects.clear();
+        List<Category> categories = CategoryApi.getInstance().getCategories(root);
+        List<Commodity> commodities = CommodityApi.getInstance().getCommodities(root);
         Log.d(TAG, String.format("get %d categories, %d commodities", categories.size(), commodities.size()));
+        for (Category c : categories) {
+            objects.add((Object) c);
+        }
+        for (Commodity c : commodities) {
+            objects.add((Object) c);
+        }
         notifyDataSetChanged();
     }
 
     public class CategoryViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
-        private Context mContext;
-        private TextView mTitle;
-        private TextView mAmount;
-        private Category mCategory;
+        private Context context;
+        private TextView viewTitle;
+        private TextView viewCount;
+        private Category category;
 
         public CategoryViewHolder(View view, Context context) {
             super(view);
-            mContext = context;
-            mTitle = (TextView) view.findViewById(R.id.title);
-            mAmount = (TextView) view.findViewById(R.id.amount);
+            this.context = context;
+            viewTitle = (TextView) view.findViewById(R.id.title);
+            viewCount = (TextView) view.findViewById(R.id.count);
             ImageView imageView = (ImageView) view.findViewById(R.id.popup_menu);
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -145,19 +152,19 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
 
         private void showPopupMenu(View view) {
-            PopupMenu popupMenu = new PopupMenu(mContext, view);
-            popupMenu.inflate(R.menu.menu_set_commodity_category);
+            PopupMenu popupMenu = new PopupMenu(context, view);
+            popupMenu.inflate(R.menu.menu_set_category);
             popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem menuItem) {
                     switch (menuItem.getItemId()) {
                         case R.id.menu_rename:
-                            LayoutInflater layoutInflater = LayoutInflater.from(mContext);
+                            LayoutInflater layoutInflater = LayoutInflater.from(context);
                             View promptView = layoutInflater.inflate(R.layout.dialog_add_category, null);
                             final EditText editText = (EditText) promptView.findViewById(R.id.input);
-                            editText.setText(mCategory.getStringProperty(TableSchema.CategoryEntry.COLUMN_NAME_TITLE));
+                            editText.setText(category.getStringProperty(TableSchema.CategoryEntry.COLUMN_NAME_TITLE));
 
-                            new AlertDialogWrapper.Builder(mContext)
+                            new AlertDialogWrapper.Builder(context)
                                     .setView(promptView)
                                     .setNegativeButton(R.string.btn_cancel, null)
                                     .setPositiveButton(R.string.btn_confirm, new DialogInterface.OnClickListener() {
@@ -166,24 +173,43 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                         public void onClick(DialogInterface dialog, int which) {
                                             String title = editText.getText().toString();
                                             if (!title.isEmpty()) {
-                                                mCategory.setStringProperty(TableSchema.CategoryEntry.COLUMN_NAME_TITLE, title);
-                                                CategoryService.startService(BasicService.ACTION_POST, mCategory.toString());
+                                                category.setStringProperty(TableSchema.CategoryEntry.COLUMN_NAME_TITLE, title);
+                                                new HttpAsyncTask(context, new CategoryService(),
+                                                        new HttpAsyncTask.OnFinishedListener() {
+                                                            @Override
+                                                            public void onFinished(String errors) {
+                                                                if (errors.isEmpty()) {
+                                                                    update();
+                                                                } else {
+                                                                    Toast.makeText(GlobalContext.getInstance(), errors, Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            }
+                                                        }).doPost(category.toString());
                                             }
                                         }
-
                                     })
                                     .show();
                             return true;
                         case R.id.menu_remove:
-                            new AlertDialogWrapper.Builder(mContext)
+                            new AlertDialogWrapper.Builder(context)
                                     .setMessage(R.string.DIALOG_MESSAGE_DELETE_CATEGORY)
                                     .setNegativeButton(R.string.btn_cancel, null)
                                     .setPositiveButton(R.string.btn_confirm, new DialogInterface.OnClickListener() {
 
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            mCategory.setStringProperty(TableSchema.CategoryEntry.COLUMN_NAME_STATUS, "deleted");
-                                            CategoryService.startService(BasicService.ACTION_POST, mCategory.toString());
+                                            category.setStringProperty(TableSchema.CategoryEntry.COLUMN_NAME_STATUS, "deleted");
+                                            new HttpAsyncTask(context, new CategoryService(),
+                                                    new HttpAsyncTask.OnFinishedListener() {
+                                                        @Override
+                                                        public void onFinished(String errors) {
+                                                            if (errors.isEmpty()) {
+                                                                update();
+                                                            } else {
+                                                                Toast.makeText(GlobalContext.getInstance(), errors, Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                    }).doPost(category.toString());
                                         }
 
                                     })
@@ -198,37 +224,39 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(mContext, CommodityListActivity.class);
-            intent.putExtra(mContext.getString(R.string.EXTRA_COMMODITY_CATEGORY_ID),
-                    String.valueOf(mCategory.getIntProperty(TableSchema.CategoryEntry.COLUMN_NAME_ID)));
-            intent.putExtra(mContext.getString(R.string.EXTRA_COMMODITY_CATEGORY_TITLE),
-                    mCategory.getStringProperty(TableSchema.CategoryEntry.COLUMN_NAME_TITLE));
-            mContext.startActivity(intent);
+            Intent intent = new Intent(context, CommodityListActivity.class);
+            intent.putExtra(context.getString(R.string.EXTRA_CATEGORY_ID),
+                    category.getIntProperty(TableSchema.CategoryEntry.COLUMN_NAME_ID));
+            intent.putExtra(context.getString(R.string.EXTRA_CATEGORY_TITLE),
+                    category.getStringProperty(TableSchema.CategoryEntry.COLUMN_NAME_TITLE));
+            context.startActivity(intent);
         }
     }
 
     public class CommodityViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
-        private Context mContext;
-        private NetworkImageView mThumbnail;
-        private TextView mTitle;
-        private TextView mSaleInfo;
-        private ImageView mSupportReturn;
-        private ImageView mInDiscount;
-        private ImageView mInStock;
-        private ImageView mOutOfStock;
-        private Commodity mCommodity;
+        private Context context;
+        private NetworkImageView viewThumbnail;
+        private TextView viewTitle;
+        private TextView viewPrice;
+        private TextView viewSales;
+        private TextView viewReturns;
+        private ImageView viewSupportReturn;
+        private ImageView viewInDiscount;
+        private ImageView viewOutofStock;
+        private Commodity commodity;
 
         public CommodityViewHolder(View view, Context context) {
             super(view);
-            mContext = context;
-            mThumbnail = (NetworkImageView) view.findViewById(R.id.thumbnail);
-            mTitle = (TextView) view.findViewById(R.id.title);
-            mSaleInfo = (TextView) view.findViewById(R.id.sale_info);
-            mSupportReturn = (ImageView) view.findViewById(R.id.support_return);
-            mInDiscount = (ImageView) view.findViewById(R.id.in_discount);
-            mInStock = (ImageView) view.findViewById(R.id.in_stock);
-            mOutOfStock = (ImageView) view.findViewById(R.id.outof_stock);
+            this.context = context;
+            viewThumbnail = (NetworkImageView) view.findViewById(R.id.thumbnail);
+            viewTitle = (TextView) view.findViewById(R.id.title);
+            viewPrice = (TextView) view.findViewById(R.id.price);
+            viewSales = (TextView) view.findViewById(R.id.sales);
+            viewReturns = (TextView) view.findViewById(R.id.returns);
+            viewSupportReturn = (ImageView) view.findViewById(R.id.support_return);
+            viewInDiscount = (ImageView) view.findViewById(R.id.in_discount);
+            viewOutofStock = (ImageView) view.findViewById(R.id.outof_stock);
             ImageView imageView = (ImageView) view.findViewById(R.id.popup_menu);
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -245,26 +273,64 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
 
         private void showPopupMenu(View view) {
-            PopupMenu popupMenu = new PopupMenu(mContext, view);
-            popupMenu.inflate(R.menu.menu_set_commodity);
+            PopupMenu popupMenu = new PopupMenu(context, view);
+            if (commodity.getIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_IN_STOCK) != 0) {
+                popupMenu.inflate(R.menu.menu_set_commodity_1);
+            } else {
+                popupMenu.inflate(R.menu.menu_set_commodity_2);
+            }
             popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem menuItem) {
                     switch (menuItem.getItemId()) {
                         case R.id.menu_disable:
-                            mCommodity.setIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_IN_STOCK, 0);
-                            CommodityService.startService(BasicService.ACTION_POST, mCommodity.toString());
+                            commodity.setIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_IN_STOCK, 0);
+                            new HttpAsyncTask(context, new CommodityService(),
+                                    new HttpAsyncTask.OnFinishedListener() {
+                                        @Override
+                                        public void onFinished(String errors) {
+                                            if (errors.isEmpty()) {
+                                                update();
+                                            } else {
+                                                Toast.makeText(GlobalContext.getInstance(), errors, Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    }).doPost(commodity.toString());
+                            return true;
+                        case R.id.menu_enable:
+                            commodity.setIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_IN_STOCK, 1);
+                            new HttpAsyncTask(context, new CommodityService(),
+                                    new HttpAsyncTask.OnFinishedListener() {
+                                        @Override
+                                        public void onFinished(String errors) {
+                                            if (errors.isEmpty()) {
+                                                update();
+                                            } else {
+                                                Toast.makeText(GlobalContext.getInstance(), errors, Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    }).doPost(commodity.toString());
                             return true;
                         case R.id.menu_remove:
-                            new AlertDialogWrapper.Builder(mContext)
+                            new AlertDialogWrapper.Builder(context)
                                     .setMessage(R.string.DIALOG_MESSAGE_DELETE_COMMODITY)
                                     .setNegativeButton(R.string.btn_cancel, null)
                                     .setPositiveButton(R.string.btn_confirm, new DialogInterface.OnClickListener() {
 
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            mCommodity.setStringProperty(TableSchema.CommodityEntry.COLUMN_NAME_STATUS, "deleted");
-                                            CommodityService.startService(BasicService.ACTION_POST, mCommodity.toString());
+                                            commodity.setStringProperty(TableSchema.CommodityEntry.COLUMN_NAME_STATUS, "deleted");
+                                            new HttpAsyncTask(context, new CommodityService(),
+                                                    new HttpAsyncTask.OnFinishedListener() {
+                                                        @Override
+                                                        public void onFinished(String errors) {
+                                                            if (errors.isEmpty()) {
+                                                                update();
+                                                            } else {
+                                                                Toast.makeText(GlobalContext.getInstance(), errors, Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                    }).doPost(commodity.toString());
                                         }
 
                                     })
@@ -279,10 +345,12 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(mContext, EditCommodityActivity.class);
-            intent.putExtra(mContext.getString(R.string.EXTRA_COMMODITY_ID),
-                    String.valueOf(mCommodity.getIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_ID)));
-            mContext.startActivity(intent);
+            Intent intent = new Intent(context, EditCommodityActivity.class);
+            intent.putExtra(context.getString(R.string.EXTRA_COMMODITY_ID),
+                    commodity.getIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_ID));
+            intent.putExtra(context.getString(R.string.EXTRA_CATEGORY_ID),
+                    root);
+            context.startActivity(intent);
         }
     }
 }
