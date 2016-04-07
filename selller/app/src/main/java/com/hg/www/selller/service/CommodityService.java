@@ -79,6 +79,12 @@ public class CommodityService extends BasicService {
 
     public String post(String data) {
         String server = AppSettings.getCommodityServerAddress();
-        return doPost(server, data);
+        String errors = doPost(server, data);
+        if (errors.isEmpty()) {
+            return get();
+        } else {
+            Log.d(TAG, String.format("post get errors [%s]", errors));
+            return errors;
+        }
     }
 }

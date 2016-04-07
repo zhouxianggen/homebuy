@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.hg.www.selller.data.db.TableSchema;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +14,7 @@ import java.util.Map;
  */
 public class TableRecord {
     protected String TAG = TableRecord.class.getSimpleName();
-    protected Map<String, Object> properties;
+    protected Map<String, Object> properties = new HashMap<String, Object>();
     protected TableSchema.Column[] columns = new TableSchema.Column[]{};
 
     public String toString() {
@@ -24,7 +25,12 @@ public class TableRecord {
                 s += ", ";
             }
             if (column.type == TableSchema.ColumnType.TEXT_TYPE) {
-                s += String.format("\"%s\": \"%s\"", column.name, getStringProperty(column.name));
+                try {
+                    String value = URLEncoder.encode(getStringProperty(column.name), "utf-8");
+                    s += String.format("\"%s\": \"%s\"", column.name, value);
+                } catch (java.io.UnsupportedEncodingException e) {
+                    s += String.format("\"%s\": \"%s\"", column.name, getStringProperty(column.name));
+                }
             } else if (column.type == TableSchema.ColumnType.INTEGER_TYPE) {
                 s += String.format("\"%s\": %d", column.name, getIntProperty(column.name));
             } else if (column.type == TableSchema.ColumnType.REAL_TYPE) {

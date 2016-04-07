@@ -153,7 +153,7 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         private void showPopupMenu(View view) {
             PopupMenu popupMenu = new PopupMenu(context, view);
-            popupMenu.inflate(R.menu.menu_set_commodity_category);
+            popupMenu.inflate(R.menu.menu_set_category);
             popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem menuItem) {
@@ -174,13 +174,19 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                             String title = editText.getText().toString();
                                             if (!title.isEmpty()) {
                                                 category.setStringProperty(TableSchema.CategoryEntry.COLUMN_NAME_TITLE, title);
-                                                String result = new HttpAsyncTask(context, new CategoryService()).doPost(category.toString());
-                                                if (!result.isEmpty()) {
-                                                    Toast.makeText(GlobalContext.getInstance(), result, Toast.LENGTH_SHORT).show();
-                                                }
+                                                new HttpAsyncTask(context, new CategoryService(),
+                                                        new HttpAsyncTask.OnFinishedListener() {
+                                                            @Override
+                                                            public void onFinished(String errors) {
+                                                                if (errors.isEmpty()) {
+                                                                    update();
+                                                                } else {
+                                                                    Toast.makeText(GlobalContext.getInstance(), errors, Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            }
+                                                        }).doPost(category.toString());
                                             }
                                         }
-
                                     })
                                     .show();
                             return true;
@@ -193,10 +199,17 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             category.setStringProperty(TableSchema.CategoryEntry.COLUMN_NAME_STATUS, "deleted");
-                                            String result = new HttpAsyncTask(context, new CategoryService()).doPost(category.toString());
-                                            if (!result.isEmpty()) {
-                                                Toast.makeText(GlobalContext.getInstance(), result, Toast.LENGTH_SHORT).show();
-                                            }
+                                            new HttpAsyncTask(context, new CategoryService(),
+                                                    new HttpAsyncTask.OnFinishedListener() {
+                                                        @Override
+                                                        public void onFinished(String errors) {
+                                                            if (errors.isEmpty()) {
+                                                                update();
+                                                            } else {
+                                                                Toast.makeText(GlobalContext.getInstance(), errors, Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                    }).doPost(category.toString());
                                         }
 
                                     })
@@ -261,17 +274,42 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         private void showPopupMenu(View view) {
             PopupMenu popupMenu = new PopupMenu(context, view);
-            popupMenu.inflate(R.menu.menu_set_commodity);
+            if (commodity.getIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_IN_STOCK) != 0) {
+                popupMenu.inflate(R.menu.menu_set_commodity_1);
+            } else {
+                popupMenu.inflate(R.menu.menu_set_commodity_2);
+            }
             popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem menuItem) {
                     switch (menuItem.getItemId()) {
                         case R.id.menu_disable:
                             commodity.setIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_IN_STOCK, 0);
-                            String result = new HttpAsyncTask(context, new CommodityService()).doPost(commodity.toString());
-                            if (!result.isEmpty()) {
-                                Toast.makeText(GlobalContext.getInstance(), result, Toast.LENGTH_SHORT).show();
-                            }
+                            new HttpAsyncTask(context, new CommodityService(),
+                                    new HttpAsyncTask.OnFinishedListener() {
+                                        @Override
+                                        public void onFinished(String errors) {
+                                            if (errors.isEmpty()) {
+                                                update();
+                                            } else {
+                                                Toast.makeText(GlobalContext.getInstance(), errors, Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    }).doPost(commodity.toString());
+                            return true;
+                        case R.id.menu_enable:
+                            commodity.setIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_IN_STOCK, 1);
+                            new HttpAsyncTask(context, new CommodityService(),
+                                    new HttpAsyncTask.OnFinishedListener() {
+                                        @Override
+                                        public void onFinished(String errors) {
+                                            if (errors.isEmpty()) {
+                                                update();
+                                            } else {
+                                                Toast.makeText(GlobalContext.getInstance(), errors, Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    }).doPost(commodity.toString());
                             return true;
                         case R.id.menu_remove:
                             new AlertDialogWrapper.Builder(context)
@@ -282,10 +320,17 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             commodity.setStringProperty(TableSchema.CommodityEntry.COLUMN_NAME_STATUS, "deleted");
-                                            String result = new HttpAsyncTask(context, new CommodityService()).doPost(commodity.toString());
-                                            if (!result.isEmpty()) {
-                                                Toast.makeText(GlobalContext.getInstance(), result, Toast.LENGTH_SHORT).show();
-                                            }
+                                            new HttpAsyncTask(context, new CommodityService(),
+                                                    new HttpAsyncTask.OnFinishedListener() {
+                                                        @Override
+                                                        public void onFinished(String errors) {
+                                                            if (errors.isEmpty()) {
+                                                                update();
+                                                            } else {
+                                                                Toast.makeText(GlobalContext.getInstance(), errors, Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                    }).doPost(commodity.toString());
                                         }
 
                                     })
@@ -302,7 +347,9 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         public void onClick(View v) {
             Intent intent = new Intent(context, EditCommodityActivity.class);
             intent.putExtra(context.getString(R.string.EXTRA_COMMODITY_ID),
-                    String.valueOf(commodity.getIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_ID)));
+                    commodity.getIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_ID));
+            intent.putExtra(context.getString(R.string.EXTRA_CATEGORY_ID),
+                    root);
             context.startActivity(intent);
         }
     }

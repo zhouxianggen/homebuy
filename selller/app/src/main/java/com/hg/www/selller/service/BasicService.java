@@ -54,10 +54,10 @@ public class BasicService extends Service implements HttpInterface {
         Log.d(TAG, String.format("on start command [%s]", action));
 
         if (ACTION_GET.equals(action)) {
-            new HttpAsyncTask(null, this).doGet();
+            new HttpAsyncTask(null, this, null).doGet();
             resetTheTime();
         } else if (ACTION_UPDATE.equals(action)) {
-            new HttpAsyncTask(null, this).doGet();
+            new HttpAsyncTask(null, this, null).doGet();
         }
 
         return super.onStartCommand(intent, flags, startId);
@@ -80,7 +80,7 @@ public class BasicService extends Service implements HttpInterface {
         }
 
         try {
-            Log.d(TAG, String.format("result [%s]", result.subSequence(0, 20)));
+            Log.d(TAG, String.format("result [%s]", result.subSequence(0, Math.min(result.length(), 20))));
             JSONObject object = new JSONObject(result);
             String status = object.getString("status");
             if (!status.equals(RESP_STATUS_OK)) {

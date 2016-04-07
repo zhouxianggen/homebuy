@@ -74,5 +74,8 @@ public class AddCommodityButton {
                         .show();
             }
         });
+        if (parent != 0) {
+            btnAddCategory.setVisibility(View.GONE);
+        }
     }
 }

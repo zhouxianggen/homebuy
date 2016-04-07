@@ -12,26 +12,45 @@ public class HttpAsyncTask extends AsyncTask<String, Integer, String> {
     public static final String TAG = HttpAsyncTask.class.getSimpleName();
     private final Context context;
     private HttpInterface httpInterface;
-    private String result;
+    private OnFinishedListener onFinishedListener = new OnFinishedListener() {
+        @Override
+        public void onFinished(String errors) {
+
+        }
+    };
     ProgressDialog progressDialog = null;
 
-    public HttpAsyncTask(Context context, HttpInterface httpInterface) {
+    public HttpAsyncTask(Context context, HttpInterface httpInterface, OnFinishedListener onFinishedListener) {
         this.context = context;
         this.httpInterface = httpInterface;
+        if (onFinishedListener != null) {
+            this.onFinishedListener = onFinishedListener;
+        }
     }
 
-    public String doGet() {
+    private void dismissDialog() {
+        try {
+            if ((this.progressDialog != null) && this.progressDialog.isShowing()) {
+                this.progressDialog.dismiss();
+            }
+        } catch (final IllegalArgumentException e) {
+            // Handle or log or ignore
+        } catch (final Exception e) {
+            // Handle or log or ignore
+        } finally {
+            this.progressDialog = null;
+        }
+    }
+
+    public void doGet() {
         execute();
-        return result;
     }
 
-    public String doPost(String data) {
+    public void doPost(String data) {
         execute(data);
-        return result;
     }
 
     protected void onPreExecute() {
-        this.result = "";
         if (context != null) {
             progressDialog = ProgressDialog.show(context,
                     GlobalContext.getInstance().getString(R.string.PROGRESS_DIALOG_TITLE),
@@ -60,15 +79,15 @@ public class HttpAsyncTask extends AsyncTask<String, Integer, String> {
 
     protected void onPostExecute(String result) {
         Log.d(TAG, String.format("onPostExecute, result [%s]", result));
-        if (progressDialog != null) {
-            progressDialog.dismiss();
-        }
-        this.result = result;
+        dismissDialog();
+        this.onFinishedListener.onFinished(result);
     }
 
     protected void onCancelled(String result) {
-        if (progressDialog != null) {
-            progressDialog.dismiss();
-        }
+        dismissDialog();
+    }
+
+    public interface OnFinishedListener {
+        void onFinished(String errors);
     }
 }

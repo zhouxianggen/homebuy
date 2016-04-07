@@ -12,6 +12,7 @@ import com.hg.www.selller.data.define.Commodity;
 
 import org.json.JSONObject;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +36,7 @@ public class CommodityApi {
         Commodity commodity = new Commodity();
         commodity.setIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_SELLER_ID,
                 GlobalContext.getInstance().getSellerId());
+        commodity.setIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_IN_STOCK, 1);
         return commodity;
     }
 
