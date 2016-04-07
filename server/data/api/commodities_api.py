@@ -46,6 +46,6 @@ class CommoditiesApi(MultiResourceApi):
         resp['commodities'] = resources
             
         return json.dumps(resp, ensure_ascii=False)
-       
+
 instance = CommoditiesApi()
 

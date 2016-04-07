@@ -85,6 +85,7 @@ class CategoriesRequestHandler(tornado.web.RequestHandler):
         seller_id = self.get_argument('seller_id')
         if_modified_since = self.get_argument('if_modified_since', '0')
         count = self.get_argument('count', '100')
+        print 'CategoriesRequestHandler: [%s][%s][%s]' % (seller_id, if_modified_since, count)
         resp = categories_api.instance.get(seller_id, if_modified_since, count)
         self.write(resp)
 

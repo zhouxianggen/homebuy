@@ -22,6 +22,10 @@ class CategoriesApi(MultiResourceApi):
     def get(self, seller_id, if_modified_since, count):
         resp = {}
 
+        if not seller_id.isdigit():
+            resp['status'] = REQUEST_PARAM_ERROR
+            return json.dumps(resp, ensure_ascii=False)
+        seller_id = int(seller_id)
         if not if_modified_since.isdigit():
             resp['status'] = REQUEST_PARAM_ERROR
             return json.dumps(resp, ensure_ascii=False)
@@ -31,7 +35,8 @@ class CategoriesApi(MultiResourceApi):
             return json.dumps(resp, ensure_ascii=False)
         count = int(count)
 
-        where = "WHERE %s='%s' AND %s>=%d" % (self.entry.COLUMN_NAME_SELLER_ID, seller_id, self.entry.COLUMN_NAME_MODIFY_TIME, if_modified_since)
+        where = "WHERE %s=%s AND %s>=%d" % (self.entry.COLUMN_NAME_SELLER_ID, seller_id, self.entry.COLUMN_NAME_MODIFY_TIME, if_modified_since)
+        print where
         other = "ORDER BY %s LIMIT %d" % (self.entry.COLUMN_NAME_MODIFY_TIME, count)
         rows = mysql.select(self.entry.TABLE_NAME, self.entry.COLUMNS, where, other)
         if rows == None:
