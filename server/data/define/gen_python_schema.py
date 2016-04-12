@@ -8,12 +8,12 @@ import os, sys
 import codecs
 CWD = os.path.dirname(os.path.abspath(__file__))
 sys.path.append('%s/../api' % CWD)
-from mysql_api import mysql_test, test_db
+from mysql_api import mysql, db
 
 def get_columns(db_name, table_name):
     columns = ['COLUMN_NAME']
     where = "where TABLE_SCHEMA='%s' and TABLE_NAME='%s'" % (db_name, table_name)
-    rows = mysql_test.select('INFORMATION_SCHEMA.COLUMNS', columns, where)
+    rows = mysql.select('INFORMATION_SCHEMA.COLUMNS', columns, where)
     return [x[0] for x in rows]
 
 def gen_schema(table_name, column_names, class_name):
@@ -42,7 +42,7 @@ wlns = []
 wlns.append('#!/usr/bin/env python\n')
 
 for tn, cn in tables:
-    columns = get_columns(test_db, tn)
+    columns = get_columns(db, tn)
     wlns.append('#')
     wlns.append('# schema for table %s' % tn)
     wlns.append('#')

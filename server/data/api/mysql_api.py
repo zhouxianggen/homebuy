@@ -66,5 +66,5 @@ mysql_online = MySqlApi(host2, port2, user2, pswd2, db2)
 
 #mysql = mysql_test
 mysql = mysql_online
-
+db = db2
 

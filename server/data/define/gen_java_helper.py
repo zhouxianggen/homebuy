@@ -8,12 +8,12 @@ import os, sys
 import codecs
 CWD = os.path.dirname(os.path.abspath(__file__))
 sys.path.append('%s/../api' % CWD)
-from mysql_api import mysql_test, test_db
+from mysql_api import mysql, db
 
 def get_columns(db_name, table_name):
     columns = ['COLUMN_NAME', 'DATA_TYPE', 'COLUMN_KEY']
     where = "where TABLE_SCHEMA='%s' and TABLE_NAME='%s'" % (db_name, table_name)
-    rows = mysql_test.select('INFORMATION_SCHEMA.COLUMNS', columns, where)
+    rows = mysql.select('INFORMATION_SCHEMA.COLUMNS', columns, where)
     return rows
 
 def gen_schema(table_name, columns, entry_name):
@@ -84,7 +84,7 @@ TAIL = """
 content = HEADER
 
 for tn, en in tables:
-    columns = get_columns(test_db, tn)
+    columns = get_columns(db, tn)
     content += gen_schema(tn, columns, en)
 
 content += '    public void onCreate(SQLiteDatabase db) {\n'
