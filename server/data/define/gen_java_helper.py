@@ -9,6 +9,7 @@ import codecs
 CWD = os.path.dirname(os.path.abspath(__file__))
 sys.path.append('%s/../api' % CWD)
 from mysql_api import mysql, db
+from tables import tables, package_name
 
 def get_columns(db_name, table_name):
     columns = ['COLUMN_NAME', 'DATA_TYPE', 'COLUMN_KEY']
@@ -42,18 +43,8 @@ def gen_schema(table_name, columns, entry_name):
     s += '            "DROP TABLE IF EXISTS " + TableSchema.%s.TABLE_NAME;\n\n' % entry_name
     return s
 
-tables = []
-tables.append(('agency', 'AgencyEntry'))
-tables.append(('barcode', 'BarcodeEntry'))
-tables.append(('category', 'CategoryEntry'))
-tables.append(('commodity', 'CommodityEntry'))
-tables.append(('expressman', 'ExpressmanEntry'))
-tables.append(('message', 'MessageEntry'))
-tables.append(('order', 'OrderEntry'))
-tables.append(('seller', 'SellerEntry'))
-
-HEADER = """
-package com.hg.www.selller.data.db;
+HEADER = "package %s" % package_name
+HEADER += """
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

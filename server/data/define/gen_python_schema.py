@@ -9,6 +9,7 @@ import codecs
 CWD = os.path.dirname(os.path.abspath(__file__))
 sys.path.append('%s/../api' % CWD)
 from mysql_api import mysql, db
+from tables import tables
 
 def get_columns(db_name, table_name):
     columns = ['COLUMN_NAME']
@@ -27,16 +28,6 @@ def gen_schema(table_name, column_names, class_name):
         ns.append('COLUMN_NAME_%s' % n.upper())
     wlns.append('\n\tCOLUMNS = [%s]' % ', '.join(ns))
     return '\n'.join(wlns) + '\n'
-
-tables = []
-tables.append(('agency', 'AgencyEntry'))
-tables.append(('barcode', 'BarcodeEntry'))
-tables.append(('category', 'CategoryEntry'))
-tables.append(('commodity', 'CommodityEntry'))
-tables.append(('expressman', 'ExpressmanEntry'))
-tables.append(('message', 'MessageEntry'))
-tables.append(('order', 'OrderEntry'))
-tables.append(('seller', 'SellerEntry'))
 
 wlns = []
 wlns.append('#!/usr/bin/env python\n')
