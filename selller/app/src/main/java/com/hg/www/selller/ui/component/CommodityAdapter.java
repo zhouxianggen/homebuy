@@ -72,7 +72,7 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             CategoryViewHolder h = (CategoryViewHolder) holder;
             h.category = category;
             h.viewTitle.setText(category.getStringProperty(TableSchema.CategoryEntry.COLUMN_NAME_TITLE));
-            h.viewCount.setText(String.valueOf(category.getIntProperty(TableSchema.CategoryEntry.COLUMN_NAME_ID)));
+            h.viewCount.setText(String.valueOf(category.getIntProperty(TableSchema.CategoryEntry.COLUMN_NAME_ITEM_COUNT)));
         } else if (holder instanceof CommodityViewHolder) {
             Commodity commodity = (Commodity) objects.get(position);
             CommodityViewHolder h = (CommodityViewHolder) holder;
@@ -82,8 +82,9 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     VolleyApi.getInstance().getImageLoader()
             );
             h.viewTitle.setText(commodity.getStringProperty(TableSchema.CommodityEntry.COLUMN_NAME_TITLE));
-            boolean support_result = commodity.getIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_SUPPORT_RETURN) != 0;
-            h.viewSupportReturn.setVisibility(support_result ? View.VISIBLE : View.GONE);
+            h.viewPrice.setText(String.valueOf(commodity.getFloatProperty(TableSchema.CommodityEntry.COLUMN_NAME_PRICE)));
+            h.viewSales.setText(String.valueOf(commodity.getIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_WEEKLY_SALES)));
+            h.viewReturns.setText(String.valueOf(commodity.getIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_WEEKLY_RETURNS)));
             boolean in_discount = commodity.getIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_IN_DISCOUNT) != 0;
             h.viewInDiscount.setVisibility(in_discount ? View.VISIBLE : View.GONE);
             boolean in_stock = commodity.getIntProperty(TableSchema.CommodityEntry.COLUMN_NAME_IN_STOCK) != 0;
@@ -241,7 +242,6 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         private TextView viewPrice;
         private TextView viewSales;
         private TextView viewReturns;
-        private ImageView viewSupportReturn;
         private ImageView viewInDiscount;
         private ImageView viewOutofStock;
         private Commodity commodity;
@@ -254,7 +254,6 @@ public class CommodityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             viewPrice = (TextView) view.findViewById(R.id.price);
             viewSales = (TextView) view.findViewById(R.id.sales);
             viewReturns = (TextView) view.findViewById(R.id.returns);
-            viewSupportReturn = (ImageView) view.findViewById(R.id.support_return);
             viewInDiscount = (ImageView) view.findViewById(R.id.in_discount);
             viewOutofStock = (ImageView) view.findViewById(R.id.outof_stock);
             ImageView imageView = (ImageView) view.findViewById(R.id.popup_menu);

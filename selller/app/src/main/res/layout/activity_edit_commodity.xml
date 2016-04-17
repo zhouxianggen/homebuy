@@ -39,7 +39,7 @@
                     android:id="@+id/commodity_price"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="number"
+                    android:inputType="numberDecimal"
                     android:hint="@string/commodity_price"
                     android:theme="@style/MyEditText"/>
             </android.support.design.widget.TextInputLayout>

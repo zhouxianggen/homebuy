@@ -2,6 +2,7 @@ package com.hg.www.selller.ui;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,13 +14,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.google.zxing.BarcodeFormat;
 import com.hg.scanner.barcode.decoding.DecodeFormatManager;
 import com.hg.www.selller.GlobalContext;
 import com.hg.www.selller.R;
+import com.hg.www.selller.data.api.CategoryApi;
+import com.hg.www.selller.data.db.TableSchema;
+import com.hg.www.selller.data.define.Category;
 import com.hg.www.selller.service.CategoryService;
+import com.hg.www.selller.service.HttpAsyncTask;
 import com.hg.www.selller.ui.component.AddCommodityButton;
 import com.hg.www.selller.ui.component.CommodityAdapter;
 
@@ -74,6 +81,40 @@ public class CommodityFragment extends Fragment {
                 android.R.color.holo_red_light);
 
         addCommodityButton = new AddCommodityButton(this, rootView, parent);
+        addCommodityButton.btnAddCategory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater layoutInflater = LayoutInflater.from(mContext);
+                View promptView = layoutInflater.inflate(R.layout.dialog_add_category, null);
+                final EditText editText = (EditText) promptView.findViewById(R.id.input);
+
+                new AlertDialogWrapper.Builder(mContext)
+                        .setView(promptView)
+                        .setNegativeButton(R.string.btn_cancel, null)
+                        .setPositiveButton(R.string.btn_confirm, new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String title = editText.getText().toString();
+                                final Category category = CategoryApi.getInstance().createCategory();
+                                category.setStringProperty(TableSchema.CategoryEntry.COLUMN_NAME_TITLE, title);
+                                category.setIntProperty(TableSchema.CategoryEntry.COLUMN_NAME_PARENT, parent);
+                                new HttpAsyncTask(mContext, new CategoryService(),
+                                        new HttpAsyncTask.OnFinishedListener() {
+                                            @Override
+                                            public void onFinished(String errors) {
+                                                if (errors.isEmpty()) {
+                                                    mAdapter.update();
+                                                } else {
+                                                    Toast.makeText(GlobalContext.getInstance(), errors, Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        }).doPost(category.toString());
+                            }
+                        })
+                        .show();
+            }
+        });
 
         return rootView;
     }

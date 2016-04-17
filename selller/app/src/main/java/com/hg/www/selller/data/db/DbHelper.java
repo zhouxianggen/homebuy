@@ -13,11 +13,11 @@ public class DbHelper extends SQLiteOpenHelper {
     private static final String INTEGER_TYPE = " INTEGER";
     private static final String REAL_TYPE = " REAL";
     private static final String COMMA_SEP = ",";
-
+    
     public DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
-
+    
     private static final String SQL_CREATE_AGENCY_TABLE =
             "CREATE TABLE " + TableSchema.AgencyEntry.TABLE_NAME + " (" +
                     TableSchema.AgencyEntry.COLUMN_NAME_ID + INTEGER_TYPE + COMMA_SEP +
@@ -26,8 +26,8 @@ public class DbHelper extends SQLiteOpenHelper {
                     TableSchema.AgencyEntry.COLUMN_NAME_ADDRESS + TEXT_TYPE + COMMA_SEP +
                     TableSchema.AgencyEntry.COLUMN_NAME_MODIFY_TIME + INTEGER_TYPE + COMMA_SEP +
                     PRIMARY + " (" +
-                    TableSchema.AgencyEntry.COLUMN_NAME_ID + ") " +
-                    " )";
+                        TableSchema.AgencyEntry.COLUMN_NAME_ID + ") " + 
+            " )";
     private static final String SQL_DELETE_AGENCY_TABLE =
             "DROP TABLE IF EXISTS " + TableSchema.AgencyEntry.TABLE_NAME;
 
@@ -41,9 +41,9 @@ public class DbHelper extends SQLiteOpenHelper {
                     TableSchema.BarcodeEntry.COLUMN_NAME_PRODUCT_AREA + TEXT_TYPE + COMMA_SEP +
                     TableSchema.BarcodeEntry.COLUMN_NAME_MODIFY_TIME + INTEGER_TYPE + COMMA_SEP +
                     PRIMARY + " (" +
-                    TableSchema.BarcodeEntry.COLUMN_NAME_SELLER_ID + COMMA_SEP +
-                    TableSchema.BarcodeEntry.COLUMN_NAME_CODE + ") " +
-                    " )";
+                        TableSchema.BarcodeEntry.COLUMN_NAME_SELLER_ID + COMMA_SEP + 
+                        TableSchema.BarcodeEntry.COLUMN_NAME_CODE + ") " + 
+            " )";
     private static final String SQL_DELETE_BARCODE_TABLE =
             "DROP TABLE IF EXISTS " + TableSchema.BarcodeEntry.TABLE_NAME;
 
@@ -57,11 +57,12 @@ public class DbHelper extends SQLiteOpenHelper {
                     TableSchema.CategoryEntry.COLUMN_NAME_IMAGE_2 + TEXT_TYPE + COMMA_SEP +
                     TableSchema.CategoryEntry.COLUMN_NAME_IMAGE_3 + TEXT_TYPE + COMMA_SEP +
                     TableSchema.CategoryEntry.COLUMN_NAME_IMAGE_4 + TEXT_TYPE + COMMA_SEP +
+                    TableSchema.CategoryEntry.COLUMN_NAME_ITEM_COUNT + INTEGER_TYPE + COMMA_SEP +
                     TableSchema.CategoryEntry.COLUMN_NAME_STATUS + TEXT_TYPE + COMMA_SEP +
                     TableSchema.CategoryEntry.COLUMN_NAME_MODIFY_TIME + INTEGER_TYPE + COMMA_SEP +
                     PRIMARY + " (" +
-                    TableSchema.CategoryEntry.COLUMN_NAME_ID + ") " +
-                    " )";
+                        TableSchema.CategoryEntry.COLUMN_NAME_ID + ") " + 
+            " )";
     private static final String SQL_DELETE_CATEGORY_TABLE =
             "DROP TABLE IF EXISTS " + TableSchema.CategoryEntry.TABLE_NAME;
 
@@ -84,11 +85,13 @@ public class DbHelper extends SQLiteOpenHelper {
                     TableSchema.CommodityEntry.COLUMN_NAME_IN_DISCOUNT + INTEGER_TYPE + COMMA_SEP +
                     TableSchema.CommodityEntry.COLUMN_NAME_IN_STOCK + INTEGER_TYPE + COMMA_SEP +
                     TableSchema.CommodityEntry.COLUMN_NAME_CATEGORY_ID + INTEGER_TYPE + COMMA_SEP +
+                    TableSchema.CommodityEntry.COLUMN_NAME_WEEKLY_SALES + INTEGER_TYPE + COMMA_SEP +
+                    TableSchema.CommodityEntry.COLUMN_NAME_WEEKLY_RETURNS + INTEGER_TYPE + COMMA_SEP +
                     TableSchema.CommodityEntry.COLUMN_NAME_STATUS + TEXT_TYPE + COMMA_SEP +
                     TableSchema.CommodityEntry.COLUMN_NAME_MODIFY_TIME + INTEGER_TYPE + COMMA_SEP +
                     PRIMARY + " (" +
-                    TableSchema.CommodityEntry.COLUMN_NAME_ID + ") " +
-                    " )";
+                        TableSchema.CommodityEntry.COLUMN_NAME_ID + ") " + 
+            " )";
     private static final String SQL_DELETE_COMMODITY_TABLE =
             "DROP TABLE IF EXISTS " + TableSchema.CommodityEntry.TABLE_NAME;
 
@@ -100,8 +103,8 @@ public class DbHelper extends SQLiteOpenHelper {
                     TableSchema.ExpressmanEntry.COLUMN_NAME_THUMBNAIL + TEXT_TYPE + COMMA_SEP +
                     TableSchema.ExpressmanEntry.COLUMN_NAME_PHONE + TEXT_TYPE + COMMA_SEP +
                     PRIMARY + " (" +
-                    TableSchema.ExpressmanEntry.COLUMN_NAME_ID + ") " +
-                    " )";
+                        TableSchema.ExpressmanEntry.COLUMN_NAME_ID + ") " + 
+            " )";
     private static final String SQL_DELETE_EXPRESSMAN_TABLE =
             "DROP TABLE IF EXISTS " + TableSchema.ExpressmanEntry.TABLE_NAME;
 
@@ -115,8 +118,8 @@ public class DbHelper extends SQLiteOpenHelper {
                     TableSchema.MessageEntry.COLUMN_NAME_STATUS + TEXT_TYPE + COMMA_SEP +
                     TableSchema.MessageEntry.COLUMN_NAME_MODIFY_TIME + INTEGER_TYPE + COMMA_SEP +
                     PRIMARY + " (" +
-                    TableSchema.MessageEntry.COLUMN_NAME_ID + ") " +
-                    " )";
+                        TableSchema.MessageEntry.COLUMN_NAME_ID + ") " + 
+            " )";
     private static final String SQL_DELETE_MESSAGE_TABLE =
             "DROP TABLE IF EXISTS " + TableSchema.MessageEntry.TABLE_NAME;
 
@@ -131,8 +134,8 @@ public class DbHelper extends SQLiteOpenHelper {
                     TableSchema.OrderEntry.COLUMN_NAME_PAYMENT + REAL_TYPE + COMMA_SEP +
                     TableSchema.OrderEntry.COLUMN_NAME_STATUS + TEXT_TYPE + COMMA_SEP +
                     PRIMARY + " (" +
-                    TableSchema.OrderEntry.COLUMN_NAME_ID + ") " +
-                    " )";
+                        TableSchema.OrderEntry.COLUMN_NAME_ID + ") " + 
+            " )";
     private static final String SQL_DELETE_ORDER_TABLE =
             "DROP TABLE IF EXISTS " + TableSchema.OrderEntry.TABLE_NAME;
 
@@ -153,8 +156,8 @@ public class DbHelper extends SQLiteOpenHelper {
                     TableSchema.SellerEntry.COLUMN_NAME_PAYMENT_CARD + TEXT_TYPE + COMMA_SEP +
                     TableSchema.SellerEntry.COLUMN_NAME_MODIFY_TIME + INTEGER_TYPE + COMMA_SEP +
                     PRIMARY + " (" +
-                    TableSchema.SellerEntry.COLUMN_NAME_ID + ") " +
-                    " )";
+                        TableSchema.SellerEntry.COLUMN_NAME_ID + ") " + 
+            " )";
     private static final String SQL_DELETE_SELLER_TABLE =
             "DROP TABLE IF EXISTS " + TableSchema.SellerEntry.TABLE_NAME;
 

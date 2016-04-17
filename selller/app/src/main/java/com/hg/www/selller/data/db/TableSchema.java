@@ -11,11 +11,11 @@ public final class TableSchema {
         INTEGER_TYPE,
         REAL_TYPE
     }
-
+    
     public static class Column {
         public String name = "";
         public ColumnType type = ColumnType.TEXT_TYPE;
-
+        
         public Column(String name, ColumnType type) {
             this.name = name;
             this.type = type;
@@ -73,6 +73,7 @@ public final class TableSchema {
         public static final String COLUMN_NAME_IMAGE_2 = "image_2";
         public static final String COLUMN_NAME_IMAGE_3 = "image_3";
         public static final String COLUMN_NAME_IMAGE_4 = "image_4";
+        public static final String COLUMN_NAME_ITEM_COUNT = "item_count";
         public static final String COLUMN_NAME_STATUS = "status";
         public static final String COLUMN_NAME_MODIFY_TIME = "modify_time";
         public static final Column[] COLUMNS = new Column[] {
@@ -84,6 +85,7 @@ public final class TableSchema {
                 new Column(COLUMN_NAME_IMAGE_2, ColumnType.TEXT_TYPE),
                 new Column(COLUMN_NAME_IMAGE_3, ColumnType.TEXT_TYPE),
                 new Column(COLUMN_NAME_IMAGE_4, ColumnType.TEXT_TYPE),
+                new Column(COLUMN_NAME_ITEM_COUNT, ColumnType.INTEGER_TYPE),
                 new Column(COLUMN_NAME_STATUS, ColumnType.TEXT_TYPE),
                 new Column(COLUMN_NAME_MODIFY_TIME, ColumnType.INTEGER_TYPE),
         };
@@ -108,6 +110,8 @@ public final class TableSchema {
         public static final String COLUMN_NAME_IN_DISCOUNT = "in_discount";
         public static final String COLUMN_NAME_IN_STOCK = "in_stock";
         public static final String COLUMN_NAME_CATEGORY_ID = "category_id";
+        public static final String COLUMN_NAME_WEEKLY_SALES = "weekly_sales";
+        public static final String COLUMN_NAME_WEEKLY_RETURNS = "weekly_returns";
         public static final String COLUMN_NAME_STATUS = "status";
         public static final String COLUMN_NAME_MODIFY_TIME = "modify_time";
         public static final Column[] COLUMNS = new Column[] {
@@ -128,6 +132,8 @@ public final class TableSchema {
                 new Column(COLUMN_NAME_IN_DISCOUNT, ColumnType.INTEGER_TYPE),
                 new Column(COLUMN_NAME_IN_STOCK, ColumnType.INTEGER_TYPE),
                 new Column(COLUMN_NAME_CATEGORY_ID, ColumnType.INTEGER_TYPE),
+                new Column(COLUMN_NAME_WEEKLY_SALES, ColumnType.INTEGER_TYPE),
+                new Column(COLUMN_NAME_WEEKLY_RETURNS, ColumnType.INTEGER_TYPE),
                 new Column(COLUMN_NAME_STATUS, ColumnType.TEXT_TYPE),
                 new Column(COLUMN_NAME_MODIFY_TIME, ColumnType.INTEGER_TYPE),
         };

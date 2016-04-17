@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">小蜜蜂</string>
+
+    <string name="tab_seller">买货</string>
+    <string name="tab_order">订单</string>
+
+    <string name="process_dialog_title">正在处理</string>
+    <string name="process_dialog_content">请稍候</string>
+
+    <string name="error_remote_server_failed">服务器出了点问题</string>
+    <string name="error_network">网络出了点问题</string>
+
+    <string name="extra_pull_args">extra_pull_args</string>
+    <string name="extra_post_data">extra_post_data</string>
+    <string name="extra_seller_id">extra_seller_id</string>
+    <string name="extra_seller_title">extra_seller_title</string>
+
+    <string name="category_in_hot">热卖</string>
+    <string name="category_in_discount">特价</string>
+
+</resources>

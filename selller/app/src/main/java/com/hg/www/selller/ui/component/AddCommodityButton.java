@@ -7,17 +7,24 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.hg.www.selller.GlobalContext;
 import com.hg.www.selller.R;
 import com.hg.www.selller.data.api.CategoryApi;
+import com.hg.www.selller.data.db.TableSchema;
 import com.hg.www.selller.data.define.Category;
+import com.hg.www.selller.service.CategoryService;
+import com.hg.www.selller.service.HttpAsyncTask;
 import com.hg.www.selller.ui.CaptureActivity;
 import com.hg.www.selller.ui.EditCommodityActivity;
 
 public class AddCommodityButton {
+    public FloatingActionButton btnScan = null;
+    public FloatingActionButton btnAddCommodity = null;
+    public FloatingActionButton btnAddCategory = null;
 
     public AddCommodityButton(final Fragment fragment, final View view, final int parent) {
         final Activity activity = fragment.getActivity();
@@ -30,7 +37,7 @@ public class AddCommodityButton {
 
     private void init(final Activity activity, final View view, final int parent) {
 
-        final FloatingActionButton btnScan = (FloatingActionButton) view.findViewById(R.id.action_scan);
+        btnScan = (FloatingActionButton) view.findViewById(R.id.action_scan);
         btnScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -40,7 +47,7 @@ public class AddCommodityButton {
             }
         });
 
-        final FloatingActionButton btnAddCommodity = (FloatingActionButton) view.findViewById(R.id.action_add_commodity);
+        btnAddCommodity = (FloatingActionButton) view.findViewById(R.id.action_add_commodity);
         btnAddCommodity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,30 +57,7 @@ public class AddCommodityButton {
             }
         });
 
-        final FloatingActionButton btnAddCategory = (FloatingActionButton) view.findViewById(R.id.action_add_category);
-        btnAddCategory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LayoutInflater layoutInflater = LayoutInflater.from(activity);
-                View promptView = layoutInflater.inflate(R.layout.dialog_add_category, null);
-                final EditText editText = (EditText) promptView.findViewById(R.id.input);
-
-                new AlertDialogWrapper.Builder(activity)
-                        .setView(promptView)
-                        .setNegativeButton(R.string.btn_cancel, null)
-                        .setPositiveButton(R.string.btn_confirm, new DialogInterface.OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                String title = editText.getText().toString();
-                                final Category category = CategoryApi.getInstance().createCategory();
-                                // add
-                            }
-
-                        })
-                        .show();
-            }
-        });
+        btnAddCategory = (FloatingActionButton) view.findViewById(R.id.action_add_category);
         if (parent != 0) {
             btnAddCategory.setVisibility(View.GONE);
         }

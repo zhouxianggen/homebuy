@@ -25,13 +25,13 @@
     <color name="drawer_item_text_checked">@color/primary</color>
 
     <color name="black">#000</color>
-    <color name="money">#ffd900</color>
-    <color name="count">#34a853</color>
-    <color name="notify">#ffff0000</color>
+    <color name="money">#f67c1a</color>
+    <color name="count">#338d11</color>
+    <color name="notify">#e53238</color>
     <color name="button">#34a853</color>
     <color name="main_background">#e8eded</color>
     <color name="sub_background">#fefefe</color>
-    <color name="sub_text">#8e8e93</color>
+    <color name="sub_text">#b4a996</color>
 
     <color name="black_semi_transparent">#B2000000</color>
     <color name="half_black">#808080</color>

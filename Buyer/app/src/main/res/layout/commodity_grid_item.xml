@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    card_view:cardBackgroundColor="#fff"
+    card_view:cardCornerRadius="2dp"
+    card_view:cardElevation="1dp">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:background="?android:attr/selectableItemBackground">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/image_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            card_view:cardCornerRadius="2dp"
+            card_view:cardElevation="0dp">
+
+            <com.android.volley.toolbox.NetworkImageView
+                android:id="@+id/thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"/>
+        </android.support.v7.widget.CardView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/image_card"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:layout_height="20dp"
+                android:gravity="start"
+                android:textColor="@color/font_color_black"
+                android:text="commodity title"
+                android:textSize="18sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dip"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:maxLines="1"
+                    android:textColor="@color/font_color_blue"
+                    android:text="0.09"/>
+
+                <ImageView
+                    android:id="@+id/add_to_cart"
+                    android:paddingLeft="20.0dip"
+                    android:paddingTop="20.0dip"
+                    android:paddingRight="10.0dip"
+                    android:paddingBottom="10.0dip"
+                    android:layout_width="44.0dip"
+                    android:layout_height="44.0dip"
+                    android:src="@drawable/btn_addtocart_s"
+                    android:scaleType="centerInside"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true" />
+
+                <TextView
+                    android:id="@+id/count_badge"
+                    android:textSize="10sp"
+                    android:textColor="@color/font_color_white"
+                    android:gravity="center"
+                    android:background="@drawable/btn_addtocart_s_in"
+                    android:paddingLeft="15.0dip"
+                    android:paddingRight="4.0dip"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10.0dip"
+                    android:layout_marginBottom="9.5dip"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true" />
+
+            </RelativeLayout>
+        </LinearLayout>
+    </RelativeLayout>
+</android.support.v7.widget.CardView>
