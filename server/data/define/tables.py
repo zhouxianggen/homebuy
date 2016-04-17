@@ -18,7 +18,12 @@ tables_for_buyer = []
 tables_for_buyer.append(('buyer', 'BuyerEntry'))
 tables_for_buyer.append(('order', 'OrderEntry'))
 tables_for_buyer.append(('seller', 'SellerEntry'))
+tables_for_buyer.append(('seller_service_area', 'SellerServiceAreaEntry'))
 tables_for_buyer.append(('commodity', 'CommodityEntry'))
+tables_for_buyer.append(('barcode', 'BarcodeEntry'))
+tables_for_buyer.append(('category', 'CategoryEntry'))
+tables_for_buyer.append(('expressman', 'ExpressmanEntry'))
+tables_for_buyer.append(('message', 'MessageEntry'))
 
 package_name = 'com.hg.www.buyer.data.db'
 tables = tables_for_buyer

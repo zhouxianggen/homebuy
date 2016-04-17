@@ -1,4 +1,4 @@
-package com.hg.www.buyer.data.db
+package com.hg.www.buyer.data.db;
 
 import android.provider.BaseColumns;
 
@@ -31,18 +31,24 @@ public final class TableSchema {
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_NAME = "name";
         public static final String COLUMN_NAME_PHONE = "phone";
+        public static final String COLUMN_NAME_IMEI = "imei";
         public static final String COLUMN_NAME_ADDRESS_1 = "address_1";
         public static final String COLUMN_NAME_ADDRESS_2 = "address_2";
         public static final String COLUMN_NAME_ADDRESS_3 = "address_3";
         public static final String COLUMN_NAME_ADDRESS_4 = "address_4";
+        public static final String COLUMN_NAME_STATUS = "status";
+        public static final String COLUMN_NAME_MODIFY_TIME = "modify_time";
         public static final Column[] COLUMNS = new Column[] {
                 new Column(COLUMN_NAME_ID, ColumnType.TEXT_TYPE),
                 new Column(COLUMN_NAME_NAME, ColumnType.TEXT_TYPE),
                 new Column(COLUMN_NAME_PHONE, ColumnType.TEXT_TYPE),
+                new Column(COLUMN_NAME_IMEI, ColumnType.TEXT_TYPE),
                 new Column(COLUMN_NAME_ADDRESS_1, ColumnType.TEXT_TYPE),
                 new Column(COLUMN_NAME_ADDRESS_2, ColumnType.TEXT_TYPE),
                 new Column(COLUMN_NAME_ADDRESS_3, ColumnType.TEXT_TYPE),
                 new Column(COLUMN_NAME_ADDRESS_4, ColumnType.TEXT_TYPE),
+                new Column(COLUMN_NAME_STATUS, ColumnType.TEXT_TYPE),
+                new Column(COLUMN_NAME_MODIFY_TIME, ColumnType.INTEGER_TYPE),
         };
     }
 
@@ -57,6 +63,7 @@ public final class TableSchema {
         public static final String COLUMN_NAME_AMOUNT = "amount";
         public static final String COLUMN_NAME_PAYMENT = "payment";
         public static final String COLUMN_NAME_STATUS = "status";
+        public static final String COLUMN_NAME_MODIFY_TIME = "modify_time";
         public static final Column[] COLUMNS = new Column[] {
                 new Column(COLUMN_NAME_ID, ColumnType.INTEGER_TYPE),
                 new Column(COLUMN_NAME_BUYER_ID, ColumnType.TEXT_TYPE),
@@ -67,6 +74,7 @@ public final class TableSchema {
                 new Column(COLUMN_NAME_AMOUNT, ColumnType.INTEGER_TYPE),
                 new Column(COLUMN_NAME_PAYMENT, ColumnType.REAL_TYPE),
                 new Column(COLUMN_NAME_STATUS, ColumnType.TEXT_TYPE),
+                new Column(COLUMN_NAME_MODIFY_TIME, ColumnType.INTEGER_TYPE),
         };
     }
 
@@ -85,6 +93,7 @@ public final class TableSchema {
         public static final String COLUMN_NAME_PAYMENT_ID = "payment_id";
         public static final String COLUMN_NAME_PAYMENT_BANK = "payment_bank";
         public static final String COLUMN_NAME_PAYMENT_CARD = "payment_card";
+        public static final String COLUMN_NAME_STATUS = "status";
         public static final String COLUMN_NAME_MODIFY_TIME = "modify_time";
         public static final Column[] COLUMNS = new Column[] {
                 new Column(COLUMN_NAME_ID, ColumnType.INTEGER_TYPE),
@@ -100,7 +109,18 @@ public final class TableSchema {
                 new Column(COLUMN_NAME_PAYMENT_ID, ColumnType.TEXT_TYPE),
                 new Column(COLUMN_NAME_PAYMENT_BANK, ColumnType.TEXT_TYPE),
                 new Column(COLUMN_NAME_PAYMENT_CARD, ColumnType.TEXT_TYPE),
+                new Column(COLUMN_NAME_STATUS, ColumnType.TEXT_TYPE),
                 new Column(COLUMN_NAME_MODIFY_TIME, ColumnType.INTEGER_TYPE),
+        };
+    }
+
+    public static abstract class SellerServiceAreaEntry extends Entry {
+        public static final String TABLE_NAME = "seller_service_area";
+        public static final String COLUMN_NAME_SELLER_ID = "seller_id";
+        public static final String COLUMN_NAME_AREA = "area";
+        public static final Column[] COLUMNS = new Column[] {
+                new Column(COLUMN_NAME_SELLER_ID, ColumnType.INTEGER_TYPE),
+                new Column(COLUMN_NAME_AREA, ColumnType.TEXT_TYPE),
         };
     }
 
@@ -149,6 +169,92 @@ public final class TableSchema {
                 new Column(COLUMN_NAME_CATEGORY, ColumnType.TEXT_TYPE),
                 new Column(COLUMN_NAME_WEEKLY_SALES, ColumnType.INTEGER_TYPE),
                 new Column(COLUMN_NAME_WEEKLY_RETURNS, ColumnType.INTEGER_TYPE),
+                new Column(COLUMN_NAME_STATUS, ColumnType.TEXT_TYPE),
+                new Column(COLUMN_NAME_MODIFY_TIME, ColumnType.INTEGER_TYPE),
+        };
+    }
+
+    public static abstract class BarcodeEntry extends Entry {
+        public static final String TABLE_NAME = "barcode";
+        public static final String COLUMN_NAME_SELLER_ID = "seller_id";
+        public static final String COLUMN_NAME_CODE = "code";
+        public static final String COLUMN_NAME_ITEM_NAME = "item_name";
+        public static final String COLUMN_NAME_ITEM_SIZE = "item_size";
+        public static final String COLUMN_NAME_UNIT_NO = "unit_no";
+        public static final String COLUMN_NAME_PRODUCT_AREA = "product_area";
+        public static final String COLUMN_NAME_MODIFY_TIME = "modify_time";
+        public static final Column[] COLUMNS = new Column[] {
+                new Column(COLUMN_NAME_SELLER_ID, ColumnType.INTEGER_TYPE),
+                new Column(COLUMN_NAME_CODE, ColumnType.TEXT_TYPE),
+                new Column(COLUMN_NAME_ITEM_NAME, ColumnType.TEXT_TYPE),
+                new Column(COLUMN_NAME_ITEM_SIZE, ColumnType.TEXT_TYPE),
+                new Column(COLUMN_NAME_UNIT_NO, ColumnType.TEXT_TYPE),
+                new Column(COLUMN_NAME_PRODUCT_AREA, ColumnType.TEXT_TYPE),
+                new Column(COLUMN_NAME_MODIFY_TIME, ColumnType.INTEGER_TYPE),
+        };
+    }
+
+    public static abstract class CategoryEntry extends Entry {
+        public static final String TABLE_NAME = "category";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_SELLER_ID = "seller_id";
+        public static final String COLUMN_NAME_TITLE = "title";
+        public static final String COLUMN_NAME_PARENT = "parent";
+        public static final String COLUMN_NAME_TYPE = "type";
+        public static final String COLUMN_NAME_IMAGE_1 = "image_1";
+        public static final String COLUMN_NAME_IMAGE_2 = "image_2";
+        public static final String COLUMN_NAME_IMAGE_3 = "image_3";
+        public static final String COLUMN_NAME_IMAGE_4 = "image_4";
+        public static final String COLUMN_NAME_ITEM_COUNT = "item_count";
+        public static final String COLUMN_NAME_STATUS = "status";
+        public static final String COLUMN_NAME_MODIFY_TIME = "modify_time";
+        public static final Column[] COLUMNS = new Column[] {
+                new Column(COLUMN_NAME_ID, ColumnType.INTEGER_TYPE),
+                new Column(COLUMN_NAME_SELLER_ID, ColumnType.INTEGER_TYPE),
+                new Column(COLUMN_NAME_TITLE, ColumnType.TEXT_TYPE),
+                new Column(COLUMN_NAME_PARENT, ColumnType.INTEGER_TYPE),
+                new Column(COLUMN_NAME_TYPE, ColumnType.TEXT_TYPE),
+                new Column(COLUMN_NAME_IMAGE_1, ColumnType.TEXT_TYPE),
+                new Column(COLUMN_NAME_IMAGE_2, ColumnType.TEXT_TYPE),
+                new Column(COLUMN_NAME_IMAGE_3, ColumnType.TEXT_TYPE),
+                new Column(COLUMN_NAME_IMAGE_4, ColumnType.TEXT_TYPE),
+                new Column(COLUMN_NAME_ITEM_COUNT, ColumnType.INTEGER_TYPE),
+                new Column(COLUMN_NAME_STATUS, ColumnType.TEXT_TYPE),
+                new Column(COLUMN_NAME_MODIFY_TIME, ColumnType.INTEGER_TYPE),
+        };
+    }
+
+    public static abstract class ExpressmanEntry extends Entry {
+        public static final String TABLE_NAME = "expressman";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_NAME = "name";
+        public static final String COLUMN_NAME_PSWD = "pswd";
+        public static final String COLUMN_NAME_THUMBNAIL = "thumbnail";
+        public static final String COLUMN_NAME_PHONE = "phone";
+        public static final Column[] COLUMNS = new Column[] {
+                new Column(COLUMN_NAME_ID, ColumnType.INTEGER_TYPE),
+                new Column(COLUMN_NAME_NAME, ColumnType.TEXT_TYPE),
+                new Column(COLUMN_NAME_PSWD, ColumnType.TEXT_TYPE),
+                new Column(COLUMN_NAME_THUMBNAIL, ColumnType.TEXT_TYPE),
+                new Column(COLUMN_NAME_PHONE, ColumnType.TEXT_TYPE),
+        };
+    }
+
+    public static abstract class MessageEntry extends Entry {
+        public static final String TABLE_NAME = "message";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_TYPE = "type";
+        public static final String COLUMN_NAME_CONTENT = "content";
+        public static final String COLUMN_NAME_SENDER = "sender";
+        public static final String COLUMN_NAME_RECEIVER = "receiver";
+        public static final String COLUMN_NAME_STATUS = "status";
+        public static final String COLUMN_NAME_MODIFY_TIME = "modify_time";
+        public static final Column[] COLUMNS = new Column[] {
+                new Column(COLUMN_NAME_ID, ColumnType.INTEGER_TYPE),
+                new Column(COLUMN_NAME_TYPE, ColumnType.TEXT_TYPE),
+                new Column(COLUMN_NAME_CONTENT, ColumnType.TEXT_TYPE),
+                new Column(COLUMN_NAME_SENDER, ColumnType.INTEGER_TYPE),
+                new Column(COLUMN_NAME_RECEIVER, ColumnType.INTEGER_TYPE),
                 new Column(COLUMN_NAME_STATUS, ColumnType.TEXT_TYPE),
                 new Column(COLUMN_NAME_MODIFY_TIME, ColumnType.INTEGER_TYPE),
         };

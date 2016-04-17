@@ -43,7 +43,7 @@ def gen_schema(table_name, columns, entry_name):
     s += '            "DROP TABLE IF EXISTS " + TableSchema.%s.TABLE_NAME;\n\n' % entry_name
     return s
 
-HEADER = "package %s" % package_name
+HEADER = "package %s;" % package_name
 HEADER += """
 
 import android.content.Context;

@@ -38,7 +38,7 @@ def gen_schema(table_name, columns, class_name):
     s += '    }\n\n'
     return s
 
-HEADER = "package %s" % package_name
+HEADER = "package %s;" % package_name
 HEADER += """
 
 import android.provider.BaseColumns;
