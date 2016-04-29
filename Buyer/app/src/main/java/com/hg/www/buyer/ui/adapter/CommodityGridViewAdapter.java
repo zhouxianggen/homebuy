@@ -1,16 +1,23 @@
 package com.hg.www.buyer.ui.adapter;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Typeface;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
+import com.hg.www.buyer.GlobalContext;
 import com.hg.www.buyer.R;
 import com.hg.www.buyer.SystemUtils;
 import com.hg.www.buyer.data.db.TableSchema;
@@ -22,9 +29,15 @@ import java.util.List;
 public class CommodityGridViewAdapter extends BaseAdapter {
     private Context mContext;
     public List<Commodity> commodities;
+    public static GridViewHolder mHolder = null;
+    private int mWidth;
+    private int mHeight;
 
     public CommodityGridViewAdapter(Context c) {
         mContext = c;
+        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+        mWidth = (metrics.widthPixels)/2;
+        mHeight = mWidth + (mWidth/3);
     }
 
     public int getCount() {
@@ -41,25 +54,44 @@ public class CommodityGridViewAdapter extends BaseAdapter {
 
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view;
-        Commodity commodity = commodities.get(position);
         if (convertView == null) {
-            view = LayoutInflater.from(parent.getContext()).inflate(
+            mHolder = new GridViewHolder();
+            convertView = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.commodity_grid_item, parent, false);
-            NetworkImageView imageView = (NetworkImageView) view.findViewById(R.id.thumbnail);
-            imageView.setImageUrl(
-                    commodity.getStringProperty(TableSchema.CommodityEntry.COLUMN_NAME_THUMBNAIL),
-                    VolleyApi.getInstance().getImageLoader()
-            );
-            TextView title = (TextView) view.findViewById(R.id.title);
-            title.setText(commodity.getStringProperty(TableSchema.CommodityEntry.COLUMN_NAME_TITLE));
-            TextView price = (TextView) view.findViewById(R.id.price);
-            price.setText(String.valueOf(commodity.getFloatProperty(TableSchema.CommodityEntry.COLUMN_NAME_PRICE)));
-            int width = SystemUtils.getScreenWidth() / 3;
-            view.setLayoutParams(new GridView.LayoutParams(GridView.AUTO_FIT, (int)(width * 1.5)));
+            mHolder.viewThumbnail = (NetworkImageView) convertView.findViewById(R.id.thumbnail);
+            mHolder.viewTitle = (TextView) convertView.findViewById(R.id.title);
+            mHolder.viewPrice = (TextView) convertView.findViewById(R.id.price);
+            mHolder.btnBuy = (Button) convertView.findViewById(R.id.btn_buy);
+
+            //Typeface tff = Typeface.createFromAsset(mContext.getAssets(), "fonts/STXiHei.ttf");
+            //mHolder.viewTitle.setTypeface(tff);
+
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mHolder.viewThumbnail.getLayoutParams();
+            params.width = mWidth;
+            params.height = mWidth;
+            mHolder.viewThumbnail.setLayoutParams(params);
+
+            convertView.setTag(mHolder);
         } else {
-            view = convertView;
+            mHolder = (GridViewHolder) convertView.getTag();
         }
-        return view;
+
+        Commodity commodity = commodities.get(position);
+        mHolder.viewThumbnail.setImageUrl(
+                commodity.getStringProperty(TableSchema.CommodityEntry.COLUMN_NAME_THUMBNAIL),
+                VolleyApi.getInstance().getImageLoader()
+        );
+        mHolder.viewTitle.setText(commodity.getStringProperty(TableSchema.CommodityEntry.COLUMN_NAME_TITLE));
+        mHolder.viewPrice.setText(String.format(GlobalContext.getInstance().getString(R.string.price),
+                        commodity.getFloatProperty(TableSchema.CommodityEntry.COLUMN_NAME_PRICE)));
+
+        return convertView;
+    }
+
+    public static class GridViewHolder {
+        public NetworkImageView viewThumbnail;
+        public TextView viewTitle;
+        public TextView viewPrice;
+        public Button btnBuy;
     }
 }

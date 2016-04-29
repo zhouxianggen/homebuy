@@ -43,4 +43,12 @@
         <item name="textAllCaps">false</item>
     </style>
 
+    <style name="ActionButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:layout_width">60dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">13sp</item>
+        <item name="colorButtonNormal">@color/brand_color</item>
+        <item name="android:textColor">@color/font_color_white</item>
+    </style>
+
 </resources>

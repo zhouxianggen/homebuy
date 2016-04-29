@@ -2,7 +2,8 @@
 <resources>
     <color name="colorPrimary">#ff45ae3c</color>
     <color name="colorPrimaryDark">#ff3b9d33</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#ff45ae3c</color>
+    <!--<color name="colorAccent">#FF4081</color>-->
     <color name="textColorPrimary">#ffffffff</color>
     <color name="windowBackground">#3324671d</color>
     <color name="navigationBarColor">#3324671d</color>
@@ -21,6 +22,7 @@
 
     <color name="font_color_ych">#ffb310</color>
     <color name="font_color_alert">#ffff7800</color>
+    <color name="font_color_price">#ffff7800</color>
     <color name="font_color_blue">#ff25add4</color>
     <color name="font_color_brand">#ff45ae3c</color>
     <color name="font_color_hint">#ffc0c0c0</color>

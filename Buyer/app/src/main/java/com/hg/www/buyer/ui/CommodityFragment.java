@@ -40,6 +40,7 @@ public class CommodityFragment extends Fragment {
         adapter = new CommodityGridViewAdapter(context);
         adapter.commodities = CommodityApi.getInstance().getSellerCategoryCommodities(sellerId, category);
         gridView.setAdapter(adapter);
+        gridView.setNumColumns(2);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,

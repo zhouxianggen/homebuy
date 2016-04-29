@@ -18,4 +18,7 @@
     <string name="category_in_hot">热卖</string>
     <string name="category_in_discount">特价</string>
 
+    <string name="price">¥%.2f</string>
+    <string name="btn_buy">购买</string>
+
 </resources>
