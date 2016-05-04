@@ -97,6 +97,12 @@ public class CommodityGridViewAdapter extends BaseAdapter {
         mHolder.viewTitle.setText(commodity.getStringProperty(TableSchema.CommodityEntry.COLUMN_NAME_TITLE));
         mHolder.viewPrice.setText(String.format(GlobalContext.getInstance().getString(R.string.price),
                         commodity.getFloatProperty(TableSchema.CommodityEntry.COLUMN_NAME_PRICE)));
+        int count = CartButton.getInstance().getCommodityCount(commodity);
+        if (count > 0) {
+            mHolder.btnBuy.setText(String.format("%d", count));
+        } else {
+            mHolder.btnBuy.setText(GlobalContext.getInstance().getString(R.string.btn_buy));
+        }
 
         return convertView;
     }

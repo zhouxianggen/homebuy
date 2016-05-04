@@ -30,13 +30,6 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"  />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/btn_cart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/btn_buy"
-        android:layout_marginBottom="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_gravity="bottom|start"
-        app:fabSize="normal" />
+    <include layout="@layout/button_cart"/>
+
 </android.support.design.widget.CoordinatorLayout>

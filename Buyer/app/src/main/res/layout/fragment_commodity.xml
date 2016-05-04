@@ -12,6 +12,7 @@
         android:drawSelectorOnTop="true"
         android:paddingTop="1dp"
         android:paddingBottom="1dp"
+        android:layout_marginBottom="40dp"
         android:verticalSpacing="1dp"
         android:horizontalSpacing="0dp"
         android:background="@color/white"/>

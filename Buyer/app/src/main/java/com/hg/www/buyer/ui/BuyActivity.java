@@ -32,15 +32,12 @@ public class BuyActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private int sellerId;
     private String sellerTitle;
-    private Context context;
-    private FloatingActionButton cartButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_buy);
 
-        context = this;
         Intent intent = getIntent();
         sellerId = intent.getIntExtra(getString(R.string.extra_seller_id), -1);
         sellerTitle = intent.getStringExtra(getString(R.string.extra_seller_title));
@@ -62,6 +59,7 @@ public class BuyActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        CartButton.getInstance().init(this, (FloatingActionButton) findViewById(R.id.btn_cart));
         Log.d(TAG, "onResume");
         BusApi.getInstance().register(this);
         String args = String.format("seller_id=%d", sellerId);

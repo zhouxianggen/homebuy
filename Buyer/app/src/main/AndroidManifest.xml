@@ -22,34 +22,43 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.BuyActivity"></activity>
+        <activity android:name=".ui.BuyActivity" />
 
-        <service android:name="com.hg.www.buyer.service.CommodityService" android:exported="true">
+        <service
+            android:name=".service.CommodityService"
+            android:exported="true">
             <intent-filter>
-                <action android:name="com.hg.www.ACTION_PULL"/>
-                <action android:name="com.hg.www.ACTION_PUSH"/>
-                <action android:name="com.hg.www.ACTION_UPDATE"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="com.hg.www.ACTION_PULL" />
+                <action android:name="com.hg.www.ACTION_PUSH" />
+                <action android:name="com.hg.www.ACTION_UPDATE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".service.SellerService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.hg.www.ACTION_PULL" />
+                <action android:name="com.hg.www.ACTION_PUSH" />
+                <action android:name="com.hg.www.ACTION_UPDATE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".service.OrderService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.hg.www.ACTION_PULL" />
+                <action android:name="com.hg.www.ACTION_PUSH" />
+                <action android:name="com.hg.www.ACTION_UPDATE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </service>
 
-        <service android:name="com.hg.www.buyer.service.SellerService" android:exported="true">
-            <intent-filter>
-                <action android:name="com.hg.www.ACTION_PULL"/>
-                <action android:name="com.hg.www.ACTION_PUSH"/>
-                <action android:name="com.hg.www.ACTION_UPDATE"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </service>
-
-        <service android:name="com.hg.www.buyer.service.OrderService" android:exported="true">
-            <intent-filter>
-                <action android:name="com.hg.www.ACTION_PULL"/>
-                <action android:name="com.hg.www.ACTION_PUSH"/>
-                <action android:name="com.hg.www.ACTION_UPDATE"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </service>
+        <activity android:name=".ui.CartActivity"></activity>
     </application>
 
 </manifest>
