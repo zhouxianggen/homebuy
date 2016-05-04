@@ -2,6 +2,7 @@ package com.hg.www.buyer.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -31,12 +32,15 @@ public class BuyActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private int sellerId;
     private String sellerTitle;
+    private Context context;
+    private FloatingActionButton cartButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_buy);
 
+        context = this;
         Intent intent = getIntent();
         sellerId = intent.getIntExtra(getString(R.string.extra_seller_id), -1);
         sellerTitle = intent.getStringExtra(getString(R.string.extra_seller_title));

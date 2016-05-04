@@ -23,6 +23,7 @@ import com.hg.www.buyer.SystemUtils;
 import com.hg.www.buyer.data.db.TableSchema;
 import com.hg.www.buyer.data.define.Commodity;
 import com.hg.www.buyer.service.VolleyApi;
+import com.hg.www.buyer.ui.CartButton;
 
 import java.util.List;
 
@@ -54,6 +55,8 @@ public class CommodityGridViewAdapter extends BaseAdapter {
 
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
+        Commodity commodity = commodities.get(position);
+
         if (convertView == null) {
             mHolder = new GridViewHolder();
             convertView = LayoutInflater.from(parent.getContext()).inflate(
@@ -62,6 +65,16 @@ public class CommodityGridViewAdapter extends BaseAdapter {
             mHolder.viewTitle = (TextView) convertView.findViewById(R.id.title);
             mHolder.viewPrice = (TextView) convertView.findViewById(R.id.price);
             mHolder.btnBuy = (Button) convertView.findViewById(R.id.btn_buy);
+            mHolder.commodity = commodity;
+
+            mHolder.btnBuy.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    GridViewHolder holder = (GridViewHolder) v.getTag();
+                    int count = CartButton.getInstance().addCommodity(holder.commodity);
+                    holder.btnBuy.setText(String.format("%d", count));
+                }
+            });
 
             //Typeface tff = Typeface.createFromAsset(mContext.getAssets(), "fonts/STXiHei.ttf");
             //mHolder.viewTitle.setTypeface(tff);
@@ -71,12 +84,12 @@ public class CommodityGridViewAdapter extends BaseAdapter {
             params.height = mWidth;
             mHolder.viewThumbnail.setLayoutParams(params);
 
+            mHolder.btnBuy.setTag(mHolder);
             convertView.setTag(mHolder);
         } else {
             mHolder = (GridViewHolder) convertView.getTag();
         }
 
-        Commodity commodity = commodities.get(position);
         mHolder.viewThumbnail.setImageUrl(
                 commodity.getStringProperty(TableSchema.CommodityEntry.COLUMN_NAME_THUMBNAIL),
                 VolleyApi.getInstance().getImageLoader()
@@ -93,5 +106,6 @@ public class CommodityGridViewAdapter extends BaseAdapter {
         public TextView viewTitle;
         public TextView viewPrice;
         public Button btnBuy;
+        public Commodity commodity;
     }
 }

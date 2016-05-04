@@ -45,7 +45,7 @@ public class CommodityFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                //
+                // go to detail page
             }
         });
 
