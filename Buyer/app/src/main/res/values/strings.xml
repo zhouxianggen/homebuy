@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">小蜜蜂</string>
+    <string name="open">open navigation drawer</string>
+    <string name="close">close navigation drawer</string>
+    <string name="navigation_set">设置</string>
+    <string name="navigation_exit">退出</string>
 
     <string name="tab_seller">买货</string>
     <string name="tab_order">订单</string>

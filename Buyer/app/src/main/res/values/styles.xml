@@ -3,44 +3,45 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textColorPrimary">@color/textColorPrimary</item>
-        <item name="android:windowBackground">@color/windowBackground</item>
+        <item name="windowActionBar">true</item>
     </style>
 
-    <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">
-        <item name="tabIndicatorColor">@color/bg_main_light</item>
-        <item name="tabIndicatorHeight">3dip</item>
-        <item name="tabPaddingStart">16.0dip</item>
-        <item name="tabPaddingEnd">16.0dip</item>
-        <item name="tabBackground">@color/brand_color</item>
-        <item name="tabTextAppearance">@style/MyCustomTabTextAppearance</item>
-        <item name="tabSelectedTextColor">@color/font_color_white</item>
+    <style name="Theme.Main" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
-    <style name="MyCustomTabTextAppearance" parent="TextAppearance.Design.Tab">
-        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
-        <item name="android:textSize">14.0sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/font_color_secondary</item>
-        <item name="android:ellipsize">marquee</item>
-        <item name="android:maxWidth">180.0dip</item>
-        <item name="android:maxLines">2</item>
-        <item name="textAllCaps">true</item>
+
+    <style name="MyTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabIndicatorColor">@color/indicator</item>
+        <item name="tabIndicatorHeight">2dp</item>
+        <item name="tabPaddingStart">12dp</item>
+        <item name="tabPaddingEnd">12dp</item>
+        <item name="tabBackground">?attr/selectableItemBackground</item>
+        <item name="tabTextAppearance">@style/MyTabTextAppearance</item>
+        <item name="tabSelectedTextColor">@color/indicator</item>
+    </style>
+
+    <style name="MyTabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/textColorPrimary</item>
     </style>
 
     <style name="CategoryTabLayout" parent="Widget.Design.TabLayout">
-        <item name="tabIndicatorColor">@color/textColorPrimary</item>
+        <item name="tabIndicatorColor">@color/indicator</item>
         <item name="tabIndicatorHeight">2dip</item>
-        <item name="tabTextAppearance">@style/MyCustomTabTextAppearance</item>
+        <item name="tabBackground">?attr/selectableItemBackground</item>
+        <item name="tabTextAppearance">@style/CategoryTabTextAppearance</item>
+        <item name="tabSelectedTextColor">@color/indicator</item>
     </style>
+
     <style name="CategoryTabTextAppearance" parent="TextAppearance.Design.Tab">
-        <item name="android:textSize">14.0sp</item>
+        <item name="android:textSize">16.0sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="textAllCaps">false</item>
+        <item name="android:textColor">@color/textColorPrimary</item>
     </style>
 
     <style name="ActionButton" parent="Widget.AppCompat.Button.Colored">
