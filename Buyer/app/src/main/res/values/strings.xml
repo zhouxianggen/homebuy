@@ -5,6 +5,11 @@
     <string name="navigation_set">设置</string>
     <string name="navigation_exit">退出</string>
 
+    <string name="activity_cart">购物车</string>
+
+    <string name="buyer_address">收货地址</string>
+    <string name="commodity_title">商品标题</string>
+
     <string name="tab_seller">买货</string>
     <string name="tab_order">订单</string>
 
@@ -23,6 +28,9 @@
     <string name="category_in_discount">特价</string>
 
     <string name="price">¥%.2f</string>
+    <string name="payment">共¥%.2f</string>
+
     <string name="btn_buy">购买</string>
+    <string name="btn_commit">下单</string>
 
 </resources>
