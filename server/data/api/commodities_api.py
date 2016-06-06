@@ -7,7 +7,7 @@ __date__    = "2016-03-23"
 import os, sys
 import json
 import time
-from mysql_api import mysql
+from mysql_api import mysql, get_instance
 from multi_resource_api import MultiResourceApi
 CWD = os.path.dirname(os.path.abspath(__file__))
 sys.path.append('%s/../define' % CWD)
@@ -31,7 +31,7 @@ class CommoditiesApi(MultiResourceApi):
 
         where = "WHERE %s='%s'" % (self.entry.COLUMN_NAME_SELLER_ID, seller_id) 
         other = "ORDER BY %s" % (self.entry.COLUMN_NAME_MODIFY_TIME)
-        rows = mysql.select(self.entry.TABLE_NAME, self.entry.COLUMNS, where, other)
+        rows = get_instance().select(self.entry.TABLE_NAME, self.entry.COLUMNS, where, other)
         if rows == None:
             resp['status'] = SERVER_MYSQL_ERROR
             return json.dumps(resp, ensure_ascii=False)

@@ -7,7 +7,7 @@ __date__    = "2016-03-23"
 import os, sys
 import json
 import time
-from mysql_api import mysql
+from mysql_api import mysql, get_instance
 from multi_resource_api import MultiResourceApi
 CWD = os.path.dirname(os.path.abspath(__file__))
 sys.path.append('%s/../define' % CWD)
@@ -24,7 +24,7 @@ class SellersApi(MultiResourceApi):
 
         columns = [SellerServiceAreaEntry.COLUMN_NAME_SELLER_ID]
         where = "WHERE %s='%s'" % (SellerServiceAreaEntry.COLUMN_NAME_AREA, area) 
-        rows = mysql.select(SellerServiceAreaEntry.TABLE_NAME, columns, where)
+        rows = get_instance().select(SellerServiceAreaEntry.TABLE_NAME, columns, where)
         if rows == None:
             resp['status'] = SERVER_MYSQL_ERROR
             return json.dumps(resp, ensure_ascii=False)

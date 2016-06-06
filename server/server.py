@@ -34,6 +34,7 @@ class Server(tornado.web.Application):
         )
         handlers = [
             (r"/", DefaultRequestHandler),
+            (r"/text/(.*)", tornado.web.StaticFileHandler, {"path": "./static/text"}, ),
             (r"/seller", SellerRequestHandler),
             (r"/seller/commodities", SellerCommoditiesRequestHandler),
             (r"/seller/commodity", SellerCommodityRequestHandler),
@@ -101,8 +102,8 @@ class SellerCategoryRequestHandler(tornado.web.RequestHandler):
 
 class BuyerRequestHandler(tornado.web.RequestHandler):
     def get(self):
-        buyer_id = self.get_argument('id')
-        resp = buyer_api.instance.get(seller_id)
+        id = self.get_argument('id')
+        resp = buyer_api.instance.get(id)
         self.write(resp)
      
     def post(self):
